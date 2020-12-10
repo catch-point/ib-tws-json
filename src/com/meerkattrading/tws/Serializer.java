@@ -18,8 +18,6 @@ package com.meerkattrading.tws;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -31,8 +29,13 @@ import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 
+import com.ib.client.Bar;
 import com.ib.client.ContractCondition;
 import com.ib.client.ExecutionCondition;
+import com.ib.client.HistogramEntry;
+import com.ib.client.HistoricalTick;
+import com.ib.client.HistoricalTickBidAsk;
+import com.ib.client.HistoricalTickLast;
 import com.ib.client.MarginCondition;
 import com.ib.client.OperatorCondition;
 import com.ib.client.OrderCondition;
@@ -40,6 +43,8 @@ import com.ib.client.PercentChangeCondition;
 import com.ib.client.PriceCondition;
 import com.ib.client.SoftDollarTier;
 import com.ib.client.TagValue;
+import com.ib.client.TickAttribBidAsk;
+import com.ib.client.TickAttribLast;
 import com.ib.client.TimeCondition;
 import com.ib.client.VolumeCondition;
 
@@ -62,16 +67,10 @@ public class Serializer {
 			return JsonValue.TRUE;
 		} else if (object instanceof Boolean && !(((Boolean) object).booleanValue())) {
 			return JsonValue.FALSE;
-		} else if (object instanceof BigDecimal) {
-			return Json.createValue((BigDecimal) object);
-		} else if (object instanceof BigInteger) {
-			return Json.createValue((BigInteger) object);
-		} else if (object instanceof Double) {
-			return Json.createValue((Double) object);
 		} else if (object instanceof Integer) {
 			return Json.createValue((Integer) object);
-		} else if (object instanceof Long) {
-			return Json.createValue((Long) object);
+		} else if (object instanceof Number) {
+			return Json.createValue(object.toString());
 		} else if (object instanceof String) {
 			return stringToJson((String) object);
 		} else if (object instanceof Map.Entry<?, ?>) {
@@ -90,6 +89,20 @@ public class Serializer {
 			return tagValueToJson((TagValue) object);
 		} else if (object instanceof SoftDollarTier) {
 			return softDollarTierToJson((SoftDollarTier) object);
+		} else if (object instanceof HistogramEntry) {
+			return histogramEntryToJson((HistogramEntry) object);
+		} else if (object instanceof Bar) {
+			return barToJson((Bar) object);
+		} else if (object instanceof HistoricalTick) {
+			return historicalTickToJson((HistoricalTick) object);
+		} else if (object instanceof HistoricalTickBidAsk) {
+			return historicalTickBidAskToJson((HistoricalTickBidAsk) object);
+		} else if (object instanceof HistoricalTickLast) {
+			return historicalTickLastToJson((HistoricalTickLast) object);
+		} else if (object instanceof TickAttribBidAsk) {
+			return tickAttribBidAskToJson((TickAttribBidAsk) object);
+		} else if (object instanceof TickAttribLast) {
+			return tickAttribLastToJson((TickAttribLast) object);
 		} else if (object instanceof Exception) {
 			return exceptionToJson((Exception) object);
 		} else {
@@ -109,7 +122,7 @@ public class Serializer {
 			throws IllegalAccessException, InvocationTargetException {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		builder.add("key", stringToJson(entry.getKey().toString()));
-		builder.add("value", objectToJsonValue(entry.getKey().toString(), type.getComponentType()));
+		builder.add("value", objectToJsonValue(entry.getValue().toString(), type.getComponentType()));
 		return builder.build();
 	}
 
@@ -141,11 +154,12 @@ public class Serializer {
 	}
 
 	private JsonValue enumToJson(Object object) {
-		return stringToJson(object.toString());
+		return stringToJson(((Enum<?>)object).name());
 	}
 
 	private JsonValue orderConditionToJson(OrderCondition oc) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
+		builder.add("type", enumToJson(oc.type()));
 		builder.add("conjunctionConnection", oc.conjunctionConnection());
 		if (oc instanceof ExecutionCondition) {
 			builder.add("exchange", ((ExecutionCondition) oc).exchange());
@@ -156,26 +170,38 @@ public class Serializer {
 			builder.add("isMore", ((OperatorCondition) oc).isMore());
 		}
 		if (oc instanceof MarginCondition) {
-			builder.add("percent", ((MarginCondition) oc).percent());
+			builder.add("percent", numberToJson(((MarginCondition) oc).percent()));
 		}
 		if (oc instanceof ContractCondition) {
-			builder.add("conId", ((ContractCondition) oc).conId());
+			builder.add("conId", numberToJson(((ContractCondition) oc).conId()));
 			builder.add("exchange", ((ContractCondition) oc).exchange());
 		}
 		if (oc instanceof PercentChangeCondition) {
-			builder.add("changePercent", ((PercentChangeCondition) oc).changePercent());
+			builder.add("changePercent", numberToJson(((PercentChangeCondition) oc).changePercent()));
 		}
 		if (oc instanceof PriceCondition) {
-			builder.add("price", ((PriceCondition) oc).price());
-			builder.add("triggerMethod", ((PriceCondition) oc).triggerMethod());
+			builder.add("price", numberToJson(((PriceCondition) oc).price()));
+			builder.add("triggerMethod", numberToJson(((PriceCondition) oc).triggerMethod()));
 		}
 		if (oc instanceof TimeCondition) {
 			builder.add("time", ((TimeCondition) oc).time());
 		}
 		if (oc instanceof VolumeCondition) {
-			builder.add("volume", ((VolumeCondition) oc).volume());
+			builder.add("volume", numberToJson(((VolumeCondition) oc).volume()));
 		}
 		return builder.build();
+	}
+
+	private JsonValue numberToJson(Integer number) {
+		if (number == null)
+			return JsonValue.NULL;
+		return Json.createValue(number);
+	}
+
+	private JsonValue numberToJson(Number number) {
+		if (number == null)
+			return JsonValue.NULL;
+		return Json.createValue(number.toString());
 	}
 
 	private JsonValue tagValueToJson(TagValue object) {
@@ -187,14 +213,85 @@ public class Serializer {
 
 	private JsonValue softDollarTierToJson(SoftDollarTier object) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("name", object.name());
-		builder.add("value", object.value());
-		builder.add("displayName", object.toString());
+		if (object.name() != null)
+			builder.add("name", object.name());
+		if (object.value() != null)
+			builder.add("value", object.value());
+		if (object.toString() != null)
+			builder.add("displayName", object.toString());
 		return builder.build();
 	}
 
-	private JsonValue exceptionToJson(Exception exc) {
-		return stringToJson(exc.getMessage());
+	private JsonValue histogramEntryToJson(HistogramEntry object) {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		builder.add("price", numberToJson(object.price));
+		builder.add("size", numberToJson(object.size));
+		return builder.build();
+	}
+
+	private JsonValue barToJson(Bar object) {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		builder.add("time", object.time());
+		builder.add("open", numberToJson(object.open()));
+		builder.add("high", numberToJson(object.high()));
+		builder.add("low", numberToJson(object.low()));
+		builder.add("close", numberToJson(object.close()));
+		builder.add("volume", numberToJson(object.volume()));
+		builder.add("count", numberToJson(object.count()));
+		builder.add("wap", numberToJson(object.wap()));
+		return builder.build();
+	}
+
+	private JsonValue historicalTickToJson(HistoricalTick object) {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		builder.add("time", numberToJson(object.time()));
+		builder.add("price", numberToJson(object.price()));
+		builder.add("size", numberToJson(object.size()));
+		return builder.build();
+	}
+
+	private JsonValue historicalTickBidAskToJson(HistoricalTickBidAsk object) {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		builder.add("time", numberToJson(object.time()));
+		builder.add("tickAttribBidAsk", tickAttribBidAskToJson(object.tickAttribBidAsk()));
+		builder.add("priceBid", numberToJson(object.priceBid()));
+		builder.add("priceAsk", numberToJson(object.priceAsk()));
+		builder.add("sizeBid", numberToJson(object.sizeBid()));
+		builder.add("sizeAsk", numberToJson(object.sizeAsk()));
+		return builder.build();
+	}
+
+	private JsonValue tickAttribBidAskToJson(TickAttribBidAsk object) {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		builder.add("askPastHigh", object.askPastHigh());
+		builder.add("bidPastLow", object.bidPastLow());
+		return builder.build();
+	}
+
+	private JsonValue historicalTickLastToJson(HistoricalTickLast object) {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		builder.add("time", numberToJson(object.time()));
+		builder.add("tickAttribLast", tickAttribLastToJson(object.tickAttribLast()));
+		builder.add("price", numberToJson(object.price()));
+		builder.add("size", numberToJson(object.size()));
+		builder.add("exchange", object.exchange());
+		builder.add("specialConditions", object.specialConditions());
+		return builder.build();
+	}
+
+	private JsonValue tickAttribLastToJson(TickAttribLast object) {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		builder.add("pastLimit", object.pastLimit());
+		builder.add("unreported", object.unreported());
+		return builder.build();
+	}
+
+	private JsonValue exceptionToJson(Exception ex) {
+		if (ex.getMessage() == null) {
+			return stringToJson(ex.toString());
+		} else {
+			return stringToJson(ex.getMessage());
+		}
 	}
 
 	private JsonValue javaObjectToJson(Object object, PropertyType type)
@@ -204,12 +301,26 @@ public class Serializer {
 		for (String key : properties.keySet()) {
 			Method getter = type.getGetterMethod(key);
 			Object value = getter.invoke(object);
-			JsonValue jsonValue = objectToJsonValue(value, properties.get(key));
-			if (value != null && value != Boolean.FALSE) {
+			PropertyType p = properties.get(key);
+			JsonValue jsonValue = objectToJsonValue(value, p);
+			if (value != null && isSet(value, type.getDefaultValue(key))) {
 				builder.add(key, jsonValue);
 			}
 		}
 		return builder.build();
+	}
+
+	private boolean isSet(Object obj, Object defaultValue) {
+		if (obj == null)
+			return defaultValue != null;
+		else if (obj instanceof Boolean)
+			return ((Boolean) obj).booleanValue() != ((Boolean) defaultValue).booleanValue();
+		else if (obj instanceof Number)
+			return !((Number) obj).equals((Number) defaultValue);
+		else if (obj instanceof String)
+			return defaultValue == null || !((String) obj).equals(defaultValue);
+		else
+			return defaultValue == null || !obj.equals(defaultValue);
 	}
 
 }

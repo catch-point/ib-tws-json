@@ -16,6 +16,10 @@
 package com.meerkattrading.tws;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -35,18 +39,18 @@ public class Shell {
 	private LineReader reader;
 
 	public static void main(String[] args) throws InterruptedException, IOException {
-		Printer out = new Printer(System.out);
+		PrintStream out = System.out;
 		System.setOut(System.err);
-		Shell shell = new Shell(out);
+		Shell shell = new Shell(System.in, out, System.err);
 		shell.repl();
 		shell.exit();
 	}
 
-	public Shell(Printer out) throws IOException {
-		this.out = out;
-		controller = new Controller(out);
+	public Shell(InputStream in, OutputStream out, OutputStream log) throws IOException {
+		this.out = new Printer(new PrintWriter(out));
+		controller = new Controller(this.getPrinter());
 		JsonStringParser parser = new JsonStringParser();
-		terminal = TerminalBuilder.builder().system(false).streams(System.in, System.err).build();
+		terminal = TerminalBuilder.builder().system(false).streams(in, log).build();
 		reader = LineReaderBuilder.builder().terminal(terminal).parser(parser).build();
 	}
 
@@ -68,15 +72,10 @@ public class Shell {
 				// Ignore
 			} catch (EndOfFileException e) {
 				break;
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (IllegalAccessException | InvocationTargetException | RuntimeException e) {
+				getPrinter().println("error", e.getMessage() == null ? e.toString() : e.getMessage());
+			} finally {
+				out.flush();
 			}
 		}
 	}
@@ -87,11 +86,12 @@ public class Shell {
 	}
 
 	public void eval(ParsedLine line)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
 		if (line != null) {
 			List<String> split = line.words();
 			String command = split.get(0);
 			try {
+				Controller controller = getController();
 				PropertyType[] types = controller.getParameterTypes(command);
 				Object[] args = new Object[types.length];
 				for (int i = 0; i < args.length; i++) {
@@ -100,14 +100,22 @@ public class Shell {
 				}
 				controller.invoke(command, args);
 			} catch (NoSuchMethodException e) {
-				out.println("error", command + "?");
+				getPrinter().println("error", command + "?");
 			}
 		} else {
-			out.println("error", "Each parameter must be in JSON format");
+			getPrinter().println("error", "Each parameter must be in JSON format");
 		}
 	}
 
-	public void exit() {
-		controller.disconnect();
+	public void exit() throws IOException {
+		getController().eDisconnect();
+	}
+
+	protected Controller getController() throws IOException {
+		return controller;
+	}
+
+	protected Printer getPrinter() throws IOException {
+		return out;
 	}
 }

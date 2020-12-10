@@ -48,6 +48,9 @@ sourceSets {
         java {
             srcDirs = ['test']
         }
+        resources {
+            srcDirs = ['test']
+        }
     }
 }
 
@@ -73,6 +76,7 @@ dependencies {
     implementation 'org.jline:jline:3.17.1'
     implementation 'javax.json:javax.json-api:1.1'
     implementation 'org.glassfish:javax.json:1.1'
+    testImplementation 'junit:junit:4.13'
 }
 
 compileJava {

@@ -1,0 +1,2320 @@
+
+{
+    "accountOperations": [
+        [
+            "reqPositionsMulti",
+            9003,
+            "DU74649",
+            "EUstocks"
+        ],
+        [
+            "reqManagedAccts"
+        ],
+        [
+            "reqFamilyCodes"
+        ],
+        [
+            "reqAccountSummary",
+            9001,
+            "All",
+            "AccountType,NetLiquidation,TotalCashValue,SettledCash,AccruedCash,BuyingPower,EquityWithLoanValue,PreviousEquityWithLoanValue,GrossPositionValue,ReqTEquity,ReqTMargin,SMA,InitMarginReq,MaintMarginReq,AvailableFunds,ExcessLiquidity,Cushion,FullInitMarginReq,FullMaintMarginReq,FullAvailableFunds,FullExcessLiquidity,LookAheadNextChange,LookAheadInitMarginReq ,LookAheadMaintMarginReq,LookAheadAvailableFunds,LookAheadExcessLiquidity,HighestSeverity,DayTradesRemaining,Leverage"
+        ],
+        [
+            "reqAccountSummary",
+            9002,
+            "All",
+            "$LEDGER"
+        ],
+        [
+            "reqAccountSummary",
+            9003,
+            "All",
+            "$LEDGER:EUR"
+        ],
+        [
+            "reqAccountSummary",
+            9004,
+            "All",
+            "$LEDGER:ALL"
+        ],
+        [
+            "cancelAccountSummary",
+            9001
+        ],
+        [
+            "cancelAccountSummary",
+            9002
+        ],
+        [
+            "cancelAccountSummary",
+            9003
+        ],
+        [
+            "cancelAccountSummary",
+            9004
+        ],
+        [
+            "reqAccountUpdates",
+            true,
+            "U150462"
+        ],
+        [
+            "reqAccountUpdates",
+            false,
+            "U150462"
+        ],
+        [
+            "reqAccountUpdatesMulti",
+            9002,
+            "U150462",
+            "EUstocks",
+            true
+        ],
+        [
+            "reqPositions"
+        ],
+        [
+            "cancelPositions"
+        ]
+    ],
+    "bracketSample": [
+        [
+            "placeOrder",
+            104,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            {
+                "lmtPrice": "30.0",
+                "orderId": 104,
+                "totalQuantity": "100.0",
+                "transmit": false
+            }
+        ],
+        [
+            "placeOrder",
+            105,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            {
+                "action": "SELL",
+                "lmtPrice": "40.0",
+                "orderId": 105,
+                "parentId": 104,
+                "totalQuantity": "100.0",
+                "transmit": false
+            }
+        ],
+        [
+            "placeOrder",
+            106,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            {
+                "action": "SELL",
+                "auxPrice": "20.0",
+                "orderId": 106,
+                "orderType": "STP",
+                "parentId": 104,
+                "totalQuantity": "100.0"
+            }
+        ]
+    ],
+    "bulletins": [
+        [
+            "reqNewsBulletins",
+            true
+        ],
+        [
+            "cancelNewsBulletins"
+        ]
+    ],
+    "continuousFuturesOperations": [
+        [
+            "reqContractDetails",
+            18001,
+            {
+                "exchange": "GLOBEX",
+                "secType": "CONTFUT",
+                "symbol": "ES"
+            }
+        ],
+        [
+            "reqHistoricalData",
+            18002,
+            {
+                "exchange": "GLOBEX",
+                "secType": "CONTFUT",
+                "symbol": "ES"
+            },
+            "20201209 22:57:03",
+            "1 Y",
+            "1 month",
+            "TRADES",
+            0,
+            1,
+            false,
+            null
+        ],
+        [
+            "cancelHistoricalData",
+            18002
+        ]
+    ],
+    "contractOperations": [
+        [
+            "reqContractDetails",
+            210,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "OPT",
+                "symbol": "FISV"
+            }
+        ],
+        [
+            "reqContractDetails",
+            211,
+            {
+                "currency": "GBP",
+                "exchange": "IDEALPRO",
+                "secType": "CASH",
+                "symbol": "EUR"
+            }
+        ],
+        [
+            "reqContractDetails",
+            212,
+            {
+                "conid": 285191782,
+                "exchange": "SMART"
+            }
+        ],
+        [
+            "reqContractDetails",
+            213,
+            {
+                "currency": "USD",
+                "exchange": "GLOBEX",
+                "lastTradeDateOrContractMonth": "20180316",
+                "multiplier": "50",
+                "right": "Call",
+                "secType": "FOP",
+                "strike": "2800.0",
+                "symbol": "ES"
+            }
+        ],
+        [
+            "reqContractDetails",
+            214,
+            {
+                "currency": "USD",
+                "exchange": "GLOBEX",
+                "lastTradeDateOrContractMonth": "201803",
+                "secType": "FUT",
+                "symbol": "ES"
+            }
+        ],
+        [
+            "reqMatchingSymbols",
+            211,
+            "IB"
+        ]
+    ],
+    "fundamentals": [
+        [
+            "reqFundamentalData",
+            8001,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "ReportsFinSummary",
+            null
+        ],
+        [
+            "reqFundamentalData",
+            8002,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "ReportSnapshot",
+            null
+        ],
+        [
+            "reqFundamentalData",
+            8003,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "ReportRatios",
+            null
+        ],
+        [
+            "reqFundamentalData",
+            8004,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "ReportsFinStatements",
+            null
+        ],
+        [
+            "reqFundamentalData",
+            8005,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "RESC",
+            null
+        ],
+        [
+            "reqFundamentalData",
+            8006,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "CalendarReport",
+            null
+        ],
+        [
+            "cancelFundamentalData",
+            8001
+        ]
+    ],
+    "hedgeSample": [
+        [
+            "placeOrder",
+            102,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            {
+                "lmtPrice": "10.0",
+                "orderId": 102,
+                "totalQuantity": "100.0",
+                "transmit": false
+            }
+        ],
+        [
+            "placeOrder",
+            103,
+            {
+                "currency": "GBP",
+                "exchange": "IDEALPRO",
+                "secType": "CASH",
+                "symbol": "EUR"
+            },
+            {
+                "hedgeType": "Fx",
+                "orderType": "MKT",
+                "parentId": 102
+            }
+        ]
+    ],
+    "histogram": [
+        [
+            "reqHistogramData",
+            4002,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            false,
+            "3 days"
+        ],
+        [
+            "cancelHistogramData",
+            4002
+        ]
+    ],
+    "historicalDataRequests": [
+        [
+            "reqHeadTimestamp",
+            4003,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "TRADES",
+            1,
+            1
+        ],
+        [
+            "cancelHeadTimestamp",
+            4003
+        ],
+        [
+            "reqHistoricalData",
+            4001,
+            {
+                "currency": "GBP",
+                "exchange": "IDEALPRO",
+                "secType": "CASH",
+                "symbol": "EUR"
+            },
+            "20200609 22:57:03",
+            "1 M",
+            "1 day",
+            "MIDPOINT",
+            1,
+            1,
+            false,
+            null
+        ],
+        [
+            "reqHistoricalData",
+            4002,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            "20200609 22:57:03",
+            "10 D",
+            "1 min",
+            "TRADES",
+            1,
+            1,
+            false,
+            null
+        ],
+        [
+            "cancelHistoricalData",
+            4001
+        ],
+        [
+            "cancelHistoricalData",
+            4002
+        ]
+    ],
+    "historicalTicks": [
+        [
+            "reqHistoricalTicks",
+            18001,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            "20170712 21:39:33",
+            null,
+            10,
+            "TRADES",
+            1,
+            true,
+            null
+        ],
+        [
+            "reqHistoricalTicks",
+            18002,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            "20170712 21:39:33",
+            null,
+            10,
+            "BID_ASK",
+            1,
+            true,
+            null
+        ],
+        [
+            "reqHistoricalTicks",
+            18003,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            "20170712 21:39:33",
+            null,
+            10,
+            "MIDPOINT",
+            1,
+            true,
+            null
+        ]
+    ],
+    "marketDataType": [
+        [
+            "reqMarketDataType",
+            2
+        ]
+    ],
+    "marketDepthOperations": [
+        [
+            "reqMktDepthExchanges"
+        ],
+        [
+            "reqMktDepth",
+            2001,
+            {
+                "currency": "GBP",
+                "exchange": "IDEALPRO",
+                "secType": "CASH",
+                "symbol": "EUR"
+            },
+            5,
+            false,
+            null
+        ],
+        [
+            "cancelMktDepth",
+            2001,
+            false
+        ],
+        [
+            "reqMktDepth",
+            2002,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            5,
+            true,
+            null
+        ],
+        [
+            "cancelMktDepth",
+            2002,
+            true
+        ]
+    ],
+    "marketRuleOperations": [
+        [
+            "reqContractDetails",
+            17001,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            }
+        ],
+        [
+            "reqContractDetails",
+            17002,
+            {
+                "conid": 285191782,
+                "exchange": "SMART"
+            }
+        ],
+        [
+            "reqMarketRule",
+            26
+        ],
+        [
+            "reqMarketRule",
+            240
+        ]
+    ],
+    "marketScanners": [
+        [
+            "reqScannerParameters"
+        ],
+        [
+            "reqScannerSubscription",
+            7001,
+            {
+                "instrument": "IND.US",
+                "locationCode": "IND.US",
+                "scanCode": "HIGH_OPT_VOLUME_PUT_CALL_RATIO"
+            },
+            null,
+            null
+        ],
+        [
+            "reqScannerSubscription",
+            7002,
+            {
+                "instrument": "STK",
+                "locationCode": "STK.US.MAJOR",
+                "scanCode": "HOT_BY_VOLUME"
+            },
+            null,
+            [
+                {
+                    "tag": "usdMarketCapAbove",
+                    "value": "10000"
+                },
+                {
+                    "tag": "optVolumeAbove",
+                    "value": "1000"
+                },
+                {
+                    "tag": "avgVolumeAbove",
+                    "value": "100000000"
+                }
+            ]
+        ],
+        [
+            "reqScannerSubscription",
+            7003,
+            {
+                "instrument": "NATCOMB",
+                "locationCode": "NATCOMB.OPT.US",
+                "scanCode": "COMBO_LATEST_TRADE"
+            },
+            null,
+            [
+                {
+                    "tag": "underConID",
+                    "value": "265598"
+                }
+            ]
+        ],
+        [
+            "cancelScannerSubscription",
+            7001
+        ],
+        [
+            "cancelScannerSubscription",
+            7002
+        ],
+        [
+            "cancelScannerSubscription",
+            7003
+        ]
+    ],
+    "newsOperations": [
+        [
+            "reqMktData",
+            10001,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            "mdoff,292",
+            false,
+            false,
+            null
+        ],
+        [
+            "cancelMktData",
+            10001
+        ],
+        [
+            "reqNewsProviders"
+        ],
+        [
+            "reqNewsArticle",
+            10002,
+            "BZ",
+            "BZ$04507322",
+            null
+        ],
+        [
+            "reqHistoricalNews",
+            10003,
+            8314,
+            "BZ+FLY",
+            "",
+            "",
+            10,
+            null
+        ]
+    ],
+    "orderOperations": [
+        [
+            "reqIds",
+            -1
+        ],
+        [
+            "reqAllOpenOrders"
+        ],
+        [
+            "reqAutoOpenOrders",
+            true
+        ],
+        [
+            "reqOpenOrders"
+        ],
+        [
+            "placeOrder",
+            101,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            {
+                "action": "SELL",
+                "lmtPrice": "50.0",
+                "totalQuantity": "1.0"
+            }
+        ],
+        [
+            "placeOrder",
+            102,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "lmtPrice": "150.0",
+                "orderType": "None",
+                "totalQuantity": "1.0"
+            }
+        ],
+        [
+            "placeOrder",
+            103,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            {
+                "account": "DU119915",
+                "orderType": "MKT",
+                "totalQuantity": "100.0"
+            }
+        ],
+        [
+            "placeOrder",
+            104,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            {
+                "action": "SELL",
+                "faGroup": "Group_Equal_Quantity",
+                "faMethod": "EqualQuantity",
+                "lmtPrice": "2000.0",
+                "totalQuantity": "200.0"
+            }
+        ],
+        [
+            "placeOrder",
+            105,
+            {
+                "currency": "GBP",
+                "exchange": "IDEALPRO",
+                "secType": "CASH",
+                "symbol": "EUR"
+            },
+            {
+                "faGroup": "Pct_Change",
+                "faMethod": "PctChange",
+                "faPercentage": "100",
+                "orderType": "MKT"
+            }
+        ],
+        [
+            "placeOrder",
+            106,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            {
+                "faProfile": "Percent_60_40",
+                "lmtPrice": "100.0",
+                "totalQuantity": "200.0"
+            }
+        ],
+        [
+            "placeOrder",
+            107,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            {
+                "account": "DF12345",
+                "lmtPrice": "100.0",
+                "modelCode": "Technology",
+                "totalQuantity": "200.0"
+            }
+        ],
+        [
+            "reqExecutions",
+            10001,
+            {
+            }
+        ],
+        [
+            "cancelOrder",
+            107
+        ],
+        [
+            "reqGlobalCancel"
+        ],
+        [
+            "reqCompletedOrders",
+            false
+        ]
+    ],
+    "pnlSingle": [
+        [
+            "reqPnLSingle",
+            17001,
+            "DUD00029",
+            "",
+            268084
+        ],
+        [
+            "cancelPnLSingle",
+            17001
+        ],
+        [
+            "reqPnLSingle",
+            17001,
+            "DUD00029",
+            "",
+            268084
+        ],
+        [
+            "cancelPnLSingle",
+            17001
+        ]
+    ],
+    "rerouteCFDOperations": [
+        [
+            "reqMktData",
+            16001,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "CFD",
+                "symbol": "IBM"
+            },
+            "",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            16002,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "secType": "CFD",
+                "symbol": "BMW"
+            },
+            "",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            16003,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "CFD",
+                "symbol": "EUR"
+            },
+            "",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktDepth",
+            16004,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "CFD",
+                "symbol": "IBM"
+            },
+            10,
+            false,
+            null
+        ],
+        [
+            "reqMktDepth",
+            16005,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "secType": "CFD",
+                "symbol": "BMW"
+            },
+            10,
+            false,
+            null
+        ],
+        [
+            "reqMktDepth",
+            16006,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "CFD",
+                "symbol": "EUR"
+            },
+            10,
+            false,
+            null
+        ]
+    ],
+    "testAlgoSamples": [
+        [
+            "placeOrder",
+            103,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "auxPrice": "0.01",
+                "lmtPrice": "189.0",
+                "orderType": "REL",
+                "scaleAutoReset": true,
+                "scaleInitFillQty": 40,
+                "scaleInitLevelSize": 2000,
+                "scaleInitPosition": 10,
+                "scalePriceAdjustInterval": 3600,
+                "scalePriceAdjustValue": "189.0",
+                "scalePriceIncrement": "0.02",
+                "scaleProfitOffset": "2.0",
+                "scaleRandomPercent": true,
+                "scaleSubsLevelSize": 500,
+                "totalQuantity": "70000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            104,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "maxPctVol",
+                        "value": "0.1"
+                    },
+                    {
+                        "tag": "riskAversion",
+                        "value": "Aggressive"
+                    },
+                    {
+                        "tag": "startTime",
+                        "value": "09:00:00 CET"
+                    },
+                    {
+                        "tag": "endTime",
+                        "value": "16:00:00 CET"
+                    },
+                    {
+                        "tag": "forceCompletion",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "allowPastEndTime",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "monetaryValue",
+                        "value": "100000.0"
+                    }
+                ],
+                "algoStrategy": "ArrivalPx",
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            105,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "displaySize",
+                        "value": "10"
+                    },
+                    {
+                        "tag": "startTime",
+                        "value": "09:00:00 CET"
+                    },
+                    {
+                        "tag": "endTime",
+                        "value": "16:00:00 CET"
+                    },
+                    {
+                        "tag": "allowPastEndTime",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "monetaryValue",
+                        "value": "100000.0"
+                    }
+                ],
+                "algoStrategy": "DarkIce",
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            106,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "componentSize",
+                        "value": "10"
+                    },
+                    {
+                        "tag": "timeBetweenOrders",
+                        "value": "60"
+                    },
+                    {
+                        "tag": "randomizeTime20",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "randomizeSize55",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "giveUp",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "catchUp",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "waitForFill",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "activeTimeStart",
+                        "value": "20161010-12:00:00 GMT"
+                    },
+                    {
+                        "tag": "activeTimeEnd",
+                        "value": "20161010-16:00:00 GMT"
+                    }
+                ],
+                "algoStrategy": "AD",
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            107,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "strategyType",
+                        "value": "Marketable"
+                    },
+                    {
+                        "tag": "startTime",
+                        "value": "09:00:00 CET"
+                    },
+                    {
+                        "tag": "endTime",
+                        "value": "16:00:00 CET"
+                    },
+                    {
+                        "tag": "allowPastEndTime",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "monetaryValue",
+                        "value": "100000.0"
+                    }
+                ],
+                "algoStrategy": "Twap",
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            108,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "maxPctVol",
+                        "value": "0.2"
+                    },
+                    {
+                        "tag": "startTime",
+                        "value": "09:00:00 CET"
+                    },
+                    {
+                        "tag": "endTime",
+                        "value": "16:00:00 CET"
+                    },
+                    {
+                        "tag": "allowPastEndTime",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "noTakeLiq",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "speedUp",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "monetaryValue",
+                        "value": "100000.0"
+                    }
+                ],
+                "algoStrategy": "Vwap",
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            109,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "lastTradeDateOrContractMonth": "20170120",
+                "multiplier": "100",
+                "right": "Call",
+                "secType": "OPT",
+                "strike": "615.0",
+                "symbol": "GOOG"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "maxPctVol",
+                        "value": "0.1"
+                    },
+                    {
+                        "tag": "riskAversion",
+                        "value": "Aggressive"
+                    },
+                    {
+                        "tag": "forceCompletion",
+                        "value": "1"
+                    }
+                ],
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            110,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "lastTradeDateOrContractMonth": "20170120",
+                "multiplier": "100",
+                "right": "Call",
+                "secType": "OPT",
+                "strike": "615.0",
+                "symbol": "GOOG"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "maxPctVol",
+                        "value": "0.3"
+                    }
+                ],
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            111,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "adaptivePriority",
+                        "value": "Normal"
+                    }
+                ],
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            112,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "maxPctVol",
+                        "value": "0.5"
+                    },
+                    {
+                        "tag": "riskAversion",
+                        "value": "Neutral"
+                    },
+                    {
+                        "tag": "startTime",
+                        "value": "12:00:00 EST"
+                    },
+                    {
+                        "tag": "forceCompletion",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "monetaryValue",
+                        "value": "100000.0"
+                    }
+                ],
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            113,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "pctVol",
+                        "value": "0.5"
+                    },
+                    {
+                        "tag": "startTime",
+                        "value": "12:00:00 EST"
+                    },
+                    {
+                        "tag": "endTime",
+                        "value": "14:00:00 EST"
+                    },
+                    {
+                        "tag": "noTakeLiq",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "monetaryValue",
+                        "value": "100000.0"
+                    }
+                ],
+                "algoStrategy": "PctVol",
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            114,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "pctVol",
+                        "value": "0.1"
+                    },
+                    {
+                        "tag": "deltaPctVol",
+                        "value": "0.05"
+                    },
+                    {
+                        "tag": "minPctVol4Px",
+                        "value": "0.01"
+                    },
+                    {
+                        "tag": "maxPctVol4Px",
+                        "value": "0.2"
+                    },
+                    {
+                        "tag": "startTime",
+                        "value": "12:00:00 EST"
+                    },
+                    {
+                        "tag": "endTime",
+                        "value": "14:00:00 EST"
+                    },
+                    {
+                        "tag": "noTakeLiq",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "monetaryValue",
+                        "value": "100000.0"
+                    }
+                ],
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            115,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "startPctVol",
+                        "value": "0.2"
+                    },
+                    {
+                        "tag": "endPctVol",
+                        "value": "0.4"
+                    },
+                    {
+                        "tag": "startTime",
+                        "value": "12:00:00 EST"
+                    },
+                    {
+                        "tag": "endTime",
+                        "value": "14:00:00 EST"
+                    },
+                    {
+                        "tag": "noTakeLiq",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "monetaryValue",
+                        "value": "100000.0"
+                    }
+                ],
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            116,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "startPctVol",
+                        "value": "0.2"
+                    },
+                    {
+                        "tag": "endPctVol",
+                        "value": "0.4"
+                    },
+                    {
+                        "tag": "startTime",
+                        "value": "12:00:00 EST"
+                    },
+                    {
+                        "tag": "endTime",
+                        "value": "14:00:00 EST"
+                    },
+                    {
+                        "tag": "noTakeLiq",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "monetaryValue",
+                        "value": "100000.0"
+                    }
+                ],
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            117,
+            {
+                "currency": "USD",
+                "exchange": "JEFFALGO",
+                "secType": "STK",
+                "symbol": "AAPL"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "StartTime",
+                        "value": "10:00:00 EST"
+                    },
+                    {
+                        "tag": "EndTime",
+                        "value": "16:00:00 EST"
+                    },
+                    {
+                        "tag": "RelativeLimit",
+                        "value": "10.0"
+                    },
+                    {
+                        "tag": "MaxVolumeRate",
+                        "value": "10.0"
+                    },
+                    {
+                        "tag": "ExcludeAuctions",
+                        "value": "Exclude_Both"
+                    },
+                    {
+                        "tag": "TriggerPrice",
+                        "value": "130.0"
+                    },
+                    {
+                        "tag": "WowPrice",
+                        "value": "135.0"
+                    },
+                    {
+                        "tag": "MinFillSize",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "WowOrderPct",
+                        "value": "10.0"
+                    },
+                    {
+                        "tag": "WowMode",
+                        "value": "Patience"
+                    },
+                    {
+                        "tag": "IsBuyBack",
+                        "value": "0"
+                    },
+                    {
+                        "tag": "WowReference",
+                        "value": "Midpoint"
+                    }
+                ],
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            118,
+            {
+                "currency": "USD",
+                "exchange": "CSFBALGO",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "StartTime",
+                        "value": "10:00:00 EST"
+                    },
+                    {
+                        "tag": "EndTime",
+                        "value": "16:00:00 EST"
+                    },
+                    {
+                        "tag": "ExecStyle",
+                        "value": "Patient"
+                    },
+                    {
+                        "tag": "MinPercent",
+                        "value": "10"
+                    },
+                    {
+                        "tag": "MaxPercent",
+                        "value": "20"
+                    },
+                    {
+                        "tag": "DisplaySize",
+                        "value": "100"
+                    },
+                    {
+                        "tag": "Auction",
+                        "value": "Default"
+                    },
+                    {
+                        "tag": "BlockFinder",
+                        "value": "0"
+                    },
+                    {
+                        "tag": "BlockPrice",
+                        "value": "40.0"
+                    },
+                    {
+                        "tag": "MinBlockSize",
+                        "value": "100"
+                    },
+                    {
+                        "tag": "MaxBlockSize",
+                        "value": "100"
+                    },
+                    {
+                        "tag": "IWouldPrice",
+                        "value": "35.0"
+                    }
+                ],
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ],
+        [
+            "placeOrder",
+            119,
+            {
+                "currency": "USD",
+                "exchange": "QBALGO",
+                "lastTradeDateOrContractMonth": "202003",
+                "secType": "FUT",
+                "symbol": "ES"
+            },
+            {
+                "algoParams": [
+                    {
+                        "tag": "StartTime",
+                        "value": "10:00:00 EST"
+                    },
+                    {
+                        "tag": "EndTime",
+                        "value": "16:00:00 EST"
+                    },
+                    {
+                        "tag": "Benchmark",
+                        "value": "TWAP"
+                    },
+                    {
+                        "tag": "PercentVolume",
+                        "value": "0.25"
+                    },
+                    {
+                        "tag": "NoCleanUp",
+                        "value": "1"
+                    }
+                ],
+                "lmtPrice": "1.0",
+                "totalQuantity": "1000.0"
+            }
+        ]
+    ],
+    "tickByTickOperations": [
+        [
+            "reqTickByTickData",
+            19001,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            "Last",
+            0,
+            false
+        ],
+        [
+            "reqTickByTickData",
+            19002,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            "AllLast",
+            0,
+            false
+        ],
+        [
+            "reqTickByTickData",
+            19003,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            "BidAsk",
+            0,
+            true
+        ],
+        [
+            "reqTickByTickData",
+            19004,
+            {
+                "currency": "GBP",
+                "exchange": "IDEALPRO",
+                "secType": "CASH",
+                "symbol": "EUR"
+            },
+            "MidPoint",
+            0,
+            false
+        ],
+        [
+            "cancelTickByTickData",
+            19001
+        ],
+        [
+            "cancelTickByTickData",
+            19002
+        ],
+        [
+            "cancelTickByTickData",
+            19003
+        ],
+        [
+            "cancelTickByTickData",
+            19004
+        ],
+        [
+            "reqTickByTickData",
+            19005,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            "Last",
+            10,
+            false
+        ],
+        [
+            "reqTickByTickData",
+            19006,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            "AllLast",
+            10,
+            false
+        ],
+        [
+            "reqTickByTickData",
+            19007,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            "BidAsk",
+            10,
+            false
+        ],
+        [
+            "reqTickByTickData",
+            19008,
+            {
+                "currency": "GBP",
+                "exchange": "IDEALPRO",
+                "secType": "CASH",
+                "symbol": "EUR"
+            },
+            "MidPoint",
+            10,
+            true
+        ],
+        [
+            "cancelTickByTickData",
+            19005
+        ],
+        [
+            "cancelTickByTickData",
+            19006
+        ],
+        [
+            "cancelTickByTickData",
+            19007
+        ],
+        [
+            "cancelTickByTickData",
+            19008
+        ]
+    ],
+    "tickDataOperations": [
+        [
+            "reqMktData",
+            1001,
+            {
+                "comboLegs": [
+                    {
+                        "action": "BUY",
+                        "conid": 43645865,
+                        "exchange": "SMART",
+                        "ratio": 1
+                    },
+                    {
+                        "action": "SELL",
+                        "conid": 9408,
+                        "exchange": "SMART",
+                        "ratio": 1
+                    }
+                ],
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "BAG",
+                "symbol": "MCD"
+            },
+            "",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqSmartComponents",
+            1013,
+            "a6"
+        ],
+        [
+            "reqMktData",
+            1003,
+            {
+                "comboLegs": [
+                    {
+                        "action": "BUY",
+                        "conid": 195538625,
+                        "exchange": "CFE",
+                        "ratio": 1
+                    },
+                    {
+                        "action": "SELL",
+                        "conid": 197436571,
+                        "exchange": "CFE",
+                        "ratio": 1
+                    }
+                ],
+                "currency": "USD",
+                "exchange": "CFE",
+                "secType": "BAG",
+                "symbol": "VIX"
+            },
+            "",
+            true,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1004,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            "233,236,258",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1005,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "mdoff,292:BZ",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1006,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "mdoff,292:BT",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1007,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "mdoff,292:FLY",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1008,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "mdoff,292:MT",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1009,
+            {
+                "exchange": "BRF",
+                "secType": "NEWS",
+                "symbol": "BRF:BRF_ALL"
+            },
+            "mdoff,292",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1010,
+            {
+                "exchange": "BZ",
+                "secType": "NEWS",
+                "symbol": "BZ:BZ_ALL"
+            },
+            "mdoff,292",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1011,
+            {
+                "exchange": "FLY",
+                "secType": "NEWS",
+                "symbol": "FLY:FLY_ALL"
+            },
+            "mdoff,292",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1012,
+            {
+                "exchange": "MT",
+                "secType": "NEWS",
+                "symbol": "MT:MT_ALL"
+            },
+            "mdoff,292",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1002,
+            {
+                "currency": "EUR",
+                "exchange": "DTB",
+                "localSymbol": "C DBK  DEC 20  1600",
+                "secType": "OPT"
+            },
+            "",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1014,
+            {
+                "currency": "USD",
+                "exchange": "GLOBEX",
+                "lastTradeDateOrContractMonth": "201803",
+                "secType": "FUT",
+                "symbol": "ES"
+            },
+            "mdoff,588",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1015,
+            {
+                "currency": "USD",
+                "exchange": "GLOBEX",
+                "lastTradeDateOrContractMonth": "201803",
+                "secType": "FUT",
+                "symbol": "ES"
+            },
+            "",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1016,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            "mdoff,105",
+            false,
+            false,
+            null
+        ],
+        [
+            "cancelMktData",
+            1001
+        ],
+        [
+            "cancelMktData",
+            1002
+        ],
+        [
+            "cancelMktData",
+            1003
+        ],
+        [
+            "cancelMktData",
+            1014
+        ],
+        [
+            "cancelMktData",
+            1015
+        ],
+        [
+            "cancelMktData",
+            1016
+        ],
+        [
+            "reqMktData",
+            1001,
+            {
+                "comboLegs": [
+                    {
+                        "action": "BUY",
+                        "conid": 43645865,
+                        "exchange": "SMART",
+                        "ratio": 1
+                    },
+                    {
+                        "action": "SELL",
+                        "conid": 9408,
+                        "exchange": "SMART",
+                        "ratio": 1
+                    }
+                ],
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "BAG",
+                "symbol": "MCD"
+            },
+            "",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqSmartComponents",
+            1013,
+            "a6"
+        ],
+        [
+            "reqMktData",
+            1003,
+            {
+                "comboLegs": [
+                    {
+                        "action": "BUY",
+                        "conid": 195538625,
+                        "exchange": "CFE",
+                        "ratio": 1
+                    },
+                    {
+                        "action": "SELL",
+                        "conid": 197436571,
+                        "exchange": "CFE",
+                        "ratio": 1
+                    }
+                ],
+                "currency": "USD",
+                "exchange": "CFE",
+                "secType": "BAG",
+                "symbol": "VIX"
+            },
+            "",
+            true,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1004,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            "233,236,258",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1005,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "mdoff,292:BZ",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1006,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "mdoff,292:BT",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1007,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "mdoff,292:FLY",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1008,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            "mdoff,292:MT",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1009,
+            {
+                "exchange": "BRF",
+                "secType": "NEWS",
+                "symbol": "BRF:BRF_ALL"
+            },
+            "mdoff,292",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1010,
+            {
+                "exchange": "BZ",
+                "secType": "NEWS",
+                "symbol": "BZ:BZ_ALL"
+            },
+            "mdoff,292",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1011,
+            {
+                "exchange": "FLY",
+                "secType": "NEWS",
+                "symbol": "FLY:FLY_ALL"
+            },
+            "mdoff,292",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1012,
+            {
+                "exchange": "MT",
+                "secType": "NEWS",
+                "symbol": "MT:MT_ALL"
+            },
+            "mdoff,292",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1002,
+            {
+                "currency": "EUR",
+                "exchange": "DTB",
+                "localSymbol": "C DBK  DEC 20  1600",
+                "secType": "OPT"
+            },
+            "",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1014,
+            {
+                "currency": "USD",
+                "exchange": "GLOBEX",
+                "lastTradeDateOrContractMonth": "201803",
+                "secType": "FUT",
+                "symbol": "ES"
+            },
+            "mdoff,588",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1015,
+            {
+                "currency": "USD",
+                "exchange": "GLOBEX",
+                "lastTradeDateOrContractMonth": "201803",
+                "secType": "FUT",
+                "symbol": "ES"
+            },
+            "",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1016,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            "mdoff,105",
+            false,
+            false,
+            null
+        ],
+        [
+            "cancelMktData",
+            1001
+        ],
+        [
+            "cancelMktData",
+            1002
+        ],
+        [
+            "cancelMktData",
+            1003
+        ],
+        [
+            "cancelMktData",
+            1014
+        ],
+        [
+            "cancelMktData",
+            1015
+        ],
+        [
+            "cancelMktData",
+            1016
+        ]
+    ],
+    "tickOptionComputations": [
+        [
+            "reqMktData",
+            2001,
+            {
+                "currency": "USD",
+                "exchange": "GLOBEX",
+                "lastTradeDateOrContractMonth": "20180316",
+                "multiplier": "50",
+                "right": "Call",
+                "secType": "FOP",
+                "strike": "2800.0",
+                "symbol": "ES"
+            },
+            "",
+            false,
+            false,
+            null
+        ],
+        [
+            "cancelMktData",
+            2001
+        ]
+    ],
+    "whatIfSamples": [
+        [
+            "placeOrder",
+            105,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "lmtPrice": "120.0",
+                "totalQuantity": "200.0",
+                "whatIf": true
+            }
+        ]
+    ]
+}

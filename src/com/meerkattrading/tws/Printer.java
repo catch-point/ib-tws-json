@@ -15,19 +15,23 @@
  */
 package com.meerkattrading.tws;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Printer {
-	private final PrintStream out;
+	private final PrintWriter out;
 	private final Serializer serializer = new Serializer();
 	private final Map<Type, PropertyType> types = new HashMap<>();
 
-	public Printer(PrintStream out) {
+	public Printer(PrintWriter out) {
 		this.out = out;
+	}
+
+	public void flush() {
+		out.flush();
 	}
 
 	public void println(String command, String arg) {

@@ -1,0 +1,402 @@
+
+{
+    "ContractDetails": [
+        [
+            "bondContractDetails",
+            100,
+            {
+                "contract": {
+                    "currency": "USD",
+                    "exchange": "SMART",
+                    "secType": "BOND",
+                    "symbol": "912828C57"
+                }
+            }
+        ],
+        [
+            "contractDetails",
+            100,
+            {
+                "contract": {
+                    "currency": "GBP",
+                    "exchange": "IDEALPRO",
+                    "secType": "CASH",
+                    "symbol": "EUR"
+                }
+            }
+        ],
+        [
+            "scannerData",
+            7001,
+            0,
+            {
+                "contract": {
+                    "currency": "USD",
+                    "exchange": "ISLAND",
+                    "secType": "STK",
+                    "symbol": "IBKR"
+                }
+            },
+            "distance",
+            "benchmark",
+            "projection",
+            "legsStr"
+        ]
+    ],
+    "CommissionReport": [
+        [
+            "commissionReport",
+            {
+                "commission": "0.7",
+                "currency": "USD",
+                "execId": "ExecId",
+                "realizedPNL": "123.45"
+            }
+        ]
+    ],
+    "Order": [
+        [
+            "completedOrder",
+            {
+                "currency": "USD",
+                "exchange": "GLOBEX",
+                "lastTradeDateOrContractMonth": "201803",
+                "secType": "FUT",
+                "symbol": "ES"
+            },
+            {
+                "orderType": "MKT",
+                "totalQuantity": "1.0"
+            },
+            null
+        ],
+        [
+            "openOrder",
+            400,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            {
+                "conditions": [
+                    {
+                        "type": "Price",
+                        "conjunctionConnection": false,
+                        "isMore": false,
+                        "conId": 208813720,
+                        "exchange": "SMART",
+                        "price": "600.0",
+                        "triggerMethod": 0
+                    },
+                    {
+                        "type": "Execution",
+                        "conjunctionConnection": true,
+                        "exchange": "IDEALPRO",
+                        "secType": "CASH",
+                        "symbol": "EUR.USD"
+                    },
+                    {
+                        "type": "Margin",
+                        "conjunctionConnection": false,
+                        "isMore": true,
+                        "percent": 30
+                    },
+                    {
+                        "type": "PercentChange",
+                        "conjunctionConnection": true,
+                        "isMore": true,
+                        "conId": 208813720,
+                        "exchange": "SMART",
+                        "changePercent": "15.0"
+                    },
+                    {
+                        "type": "Time",
+                        "conjunctionConnection": false,
+                        "isMore": true,
+                        "time": "20160118 23:59:59"
+                    },
+                    {
+                        "type": "Volume",
+                        "conjunctionConnection": true,
+                        "isMore": false,
+                        "conId": 208813720,
+                        "exchange": "SMART",
+                        "volume": 100
+                    }
+                ],
+                "conditionsCancelOrder": true,
+                "orderType": "MKT",
+                "totalQuantity": "100.0"
+            },
+            null
+        ]
+    ],
+    "DeltaNeutralContract": [
+        [
+            "deltaNeutralValidation",
+            500,
+            {
+                "conid": 285191782,
+                "delta": "0.5",
+                "price": "10.4"
+            }
+        ]
+    ],
+    "Execution": [
+        [
+            "execDetails",
+            700,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "CMDTY",
+                "symbol": "XAUUSD"
+            },
+            {
+                "avgPrice": "2000.0",
+                "lastLiquidity": "Added"
+            }
+        ]
+    ],
+    "FamilyCode": [
+        [
+            "familyCodes",
+            [
+                {
+                    "accountID": "U112233",
+                    "familyCodeStr": "F445566A"
+                }
+            ]
+        ]
+    ],
+    "HistogramEntry": [
+        [
+            "histogramData",
+            15001,
+            [
+                {
+                    "price": "150.0",
+                    "size": "1"
+                }
+            ]
+        ]
+    ],
+    "Bar": [
+        [
+            "historicalData",
+            800,
+            {
+                "time": "2020-12-12 12:00:00",
+                "open": "9.0",
+                "high": "11.0",
+                "low": "8.0",
+                "close": "10.0",
+                "volume": "1",
+                "count": 1,
+                "wap": "10.0"
+            }
+        ]
+    ],
+    "HistoricalTick": [
+        [
+            "historicalTicks",
+            900,
+            [
+                {
+                    "time": "1607553315442",
+                    "price": "100.0",
+                    "size": "10"
+                }
+            ],
+            true
+        ]
+    ],
+    "HistoricalTickBidAsk": [
+        [
+            "historicalTicksBidAsk",
+            1000,
+            [
+                {
+                    "time": "1607553315442",
+                    "tickAttribBidAsk": {
+                        "askPastHigh": false,
+                        "bidPastLow": false
+                    },
+                    "priceBid": "100.0",
+                    "priceAsk": "101.0",
+                    "sizeBid": "10",
+                    "sizeAsk": "10"
+                }
+            ],
+            true
+        ]
+    ],
+    "HistoricalTickLast": [
+        [
+            "historicalTicksLast",
+            1000,
+            [
+                {
+                    "time": "1607553315442",
+                    "tickAttribLast": {
+                        "pastLimit": false,
+                        "unreported": false
+                    },
+                    "price": "100.0",
+                    "size": "10",
+                    "exchange": "NYSE",
+                    "specialConditions": "n/a"
+                }
+            ],
+            true
+        ]
+    ],
+    "DepthMktDataDescription": [
+        [
+            "mktDepthExchanges",
+            [
+                {
+                    "aggGroup": 32,
+                    "exchange": "NYSE",
+                    "listingExch": "NYSE",
+                    "secType": "STK",
+                    "serviceDataType": "STK"
+                }
+            ]
+        ]
+    ],
+    "NewsProvider": [
+        [
+            "newsProviders",
+            [
+                {
+                    "providerCode": "CBC",
+                    "providerName": "CBC News"
+                }
+            ]
+        ]
+    ],
+    "Map": [
+        [
+            "smartComponents",
+            13002,
+            {
+                "1": {
+                    "key": "ARCA",
+                    "value": "P"
+                }
+            }
+        ]
+    ],
+    "Set": [
+        [
+            "securityDefinitionOptionalParameter",
+            13003,
+            "NYSE",
+            285191782,
+            "Tech",
+            "100",
+            [
+                "220122"
+            ],
+            [
+                "100.0"
+            ]
+        ]
+    ],
+    "SoftDollarTiers": [
+        [
+            "softDollarTiers",
+            1200,
+            [
+                {
+                    "name": "t1",
+                    "value": "0.01",
+                    "displayName": "Tier 1"
+                },
+                {
+                }
+            ]
+        ]
+    ],
+    "ContractDescription": [
+        [
+            "symbolSamples",
+            1300,
+            [
+                {
+                    "contract": {
+                        "currency": "USD",
+                        "exchange": "SMART",
+                        "secType": "STK",
+                        "symbol": "GOOG"
+                    },
+                    "derivativeSecTypes": [
+                        "OPT"
+                    ]
+                }
+            ]
+        ]
+    ],
+    "TickAttrib": [
+        [
+            "tickPrice",
+            1400,
+            1,
+            "10.0",
+            {
+                "canAutoExecute": true,
+                "pastLimit": true,
+                "preOpen": true
+            }
+        ]
+    ],
+    "TickAttribLast": [
+        [
+            "tickByTickAllLast",
+            1500,
+            1,
+            "1607553315442",
+            "10.0",
+            1,
+            {
+                "pastLimit": false,
+                "unreported": false
+            },
+            "NYSE",
+            ""
+        ]
+    ],
+    "TickAttribBidAsk": [
+        [
+            "tickByTickBidAsk",
+            1600,
+            "1607553315442",
+            "9.0",
+            "11.0",
+            1,
+            1,
+            {
+                "askPastHigh": false,
+                "bidPastLow": false
+            }
+        ]
+    ],
+    "Numbers": [
+        [
+            "tickByTickMidPoint",
+            2147483647,
+            "9223372036854775807",
+            "1.7976931348623157E308"
+        ],
+        [
+            "tickByTickMidPoint",
+            -2147483648,
+            "-9223372036854775808",
+            "4.9E-324"
+        ]
+    ]
+}

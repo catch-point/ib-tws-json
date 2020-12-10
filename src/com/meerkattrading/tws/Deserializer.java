@@ -16,13 +16,19 @@
 package com.meerkattrading.tws;
 
 import java.io.StringReader;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.json.Json;
 import javax.json.JsonNumber;
@@ -32,8 +38,13 @@ import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonParsingException;
 
+import com.ib.client.Bar;
 import com.ib.client.ContractCondition;
 import com.ib.client.ExecutionCondition;
+import com.ib.client.HistogramEntry;
+import com.ib.client.HistoricalTick;
+import com.ib.client.HistoricalTickBidAsk;
+import com.ib.client.HistoricalTickLast;
 import com.ib.client.MarginCondition;
 import com.ib.client.OperatorCondition;
 import com.ib.client.OrderCondition;
@@ -42,6 +53,8 @@ import com.ib.client.PercentChangeCondition;
 import com.ib.client.PriceCondition;
 import com.ib.client.SoftDollarTier;
 import com.ib.client.TagValue;
+import com.ib.client.TickAttribBidAsk;
+import com.ib.client.TickAttribLast;
 import com.ib.client.TimeCondition;
 import com.ib.client.VolumeCondition;
 
@@ -64,6 +77,14 @@ public class Deserializer {
 			throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
 		if (ptype.isList()) {
 			return jsonToListOf(obj, ptype.getComponentType());
+		} else if (ptype.isArray()) {
+			return jsonToArrayOf(obj, ptype.getComponentType());
+		} else if (ptype.isSet()) {
+			return jsonToSetOf(obj, ptype.getComponentType());
+		} else if (ptype.isMap()) {
+			return jsonToMapOf(obj, ptype.getComponentType());
+		} else if (ptype.isEntry()) {
+			return jsonToEntry(obj, ptype.getComponentType());
 		} else {
 			Class<?> type = (Class<?>) ptype.getJavaType();
 			if (type == Boolean.TYPE || type == Boolean.class) {
@@ -72,6 +93,8 @@ public class Deserializer {
 				return jsonToObject(obj);
 			} else if (type.isAssignableFrom(String.class)) {
 				return jsonToString(obj);
+			} else if (type == Character.TYPE || type.isAssignableFrom(Character.class)) {
+				return jsonToCharacter(obj);
 			} else if (type.isAssignableFrom(Number.class)) {
 				return jsonToNumber(obj);
 			} else if (type.isAssignableFrom(BigDecimal.class)) {
@@ -96,6 +119,20 @@ public class Deserializer {
 				return jsonToTagValue(obj);
 			} else if (type.isAssignableFrom(SoftDollarTier.class)) {
 				return jsonToSoftDollarTier(obj);
+			} else if (type.isAssignableFrom(HistogramEntry.class)) {
+				return jsonToHistogramEntry(obj);
+			} else if (type.isAssignableFrom(Bar.class)) {
+				return jsonToBar(obj);
+			} else if (type.isAssignableFrom(HistoricalTick.class)) {
+				return jsonToHistoricalTick(obj);
+			} else if (type.isAssignableFrom(HistoricalTickBidAsk.class)) {
+				return jsonToHistoricalTickBidAsk(obj);
+			} else if (type.isAssignableFrom(TickAttribBidAsk.class)) {
+				return jsonToTickAttribBidAsk(obj);
+			} else if (type.isAssignableFrom(HistoricalTickLast.class)) {
+				return jsonToHistoricalTickLast(obj);
+			} else if (type.isAssignableFrom(TickAttribLast.class)) {
+				return jsonToTickAttribLast(obj);
 			} else {
 				return jsonToJavaObject(obj, ptype);
 			}
@@ -104,7 +141,8 @@ public class Deserializer {
 
 	private List<?> jsonToListOf(JsonValue obj, PropertyType type)
 			throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
-		if (obj == null) return null;
+		if (obj == null)
+			return null;
 		switch (obj.getValueType()) {
 		case NULL:
 			return null;
@@ -121,8 +159,48 @@ public class Deserializer {
 		}
 	}
 
+	private Object[] jsonToArrayOf(JsonValue obj, PropertyType type)
+			throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
+		if (obj == null || obj.getValueType() == ValueType.NULL)
+			return null;
+		List<?> list = jsonToListOf(obj, type);
+		Object[] array = (Object[]) Array.newInstance((Class<?>)type.getJavaType(), list.size());
+		return list.toArray(array);
+	}
+
+	private Set<?> jsonToSetOf(JsonValue obj, PropertyType type)
+			throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
+		if (obj == null || obj.getValueType() == ValueType.NULL)
+			return null;
+		else
+			return new LinkedHashSet<Object>(jsonToListOf(obj, type));
+	}
+
+	private Map<?, ?> jsonToMapOf(JsonValue obj, PropertyType type)
+			throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
+		if (obj == null || obj.getValueType() == ValueType.NULL)
+			return null;
+		Map<Object, Object> map = new LinkedHashMap<>();
+		for (String key : obj.asJsonObject().keySet()) {
+			Object k = jsonToJava(Json.createValue(key), type.getKeyType());
+			Object v = jsonToJava(obj.asJsonObject().get(key), type);
+			map.put(k, v);
+		}
+		return map;
+	}
+
+	private Map.Entry<String, ?> jsonToEntry(JsonValue obj, PropertyType type)
+			throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
+		if (obj == null || obj.getValueType() == ValueType.NULL)
+			return null;
+		String key = obj.asJsonObject().getString("key");
+		JsonValue value = obj.asJsonObject().get("value");
+		return new AbstractMap.SimpleEntry<String, Object>(key, jsonToJava(value, type));
+	}
+
 	private boolean jsonToBoolean(JsonValue obj) {
-		if (obj == null) return false;
+		if (obj == null)
+			return false;
 		switch (obj.getValueType()) {
 		case NULL:
 		case FALSE:
@@ -135,7 +213,8 @@ public class Deserializer {
 	}
 
 	private Object jsonToObject(JsonValue obj) {
-		if (obj == null) return null;
+		if (obj == null)
+			return null;
 		switch (obj.getValueType()) {
 		case NULL:
 			return null;
@@ -160,7 +239,8 @@ public class Deserializer {
 	}
 
 	private String jsonToString(JsonValue obj) {
-		if (obj == null) return null;
+		if (obj == null)
+			return null;
 		switch (obj.getValueType()) {
 		case NULL:
 			return null;
@@ -171,8 +251,15 @@ public class Deserializer {
 		}
 	}
 
+	private Character jsonToCharacter(JsonValue obj) {
+		if (obj == null || obj.getValueType() == ValueType.NULL)
+			return null;
+		return jsonToString(obj).charAt(0);
+	}
+
 	private Number jsonToNumber(JsonValue obj) {
-		if (obj == null) return 0;
+		if (obj == null)
+			return 0;
 		switch (obj.getValueType()) {
 		case NULL:
 		case FALSE:
@@ -189,7 +276,8 @@ public class Deserializer {
 	}
 
 	private BigDecimal jsonToBigDecimal(JsonValue obj) {
-		if (obj == null) return null;
+		if (obj == null)
+			return null;
 		switch (obj.getValueType()) {
 		case NULL:
 		case FALSE:
@@ -206,7 +294,8 @@ public class Deserializer {
 	}
 
 	private BigInteger jsonToBigInteger(JsonValue obj) {
-		if (obj == null) return null;
+		if (obj == null)
+			return null;
 		switch (obj.getValueType()) {
 		case NULL:
 		case FALSE:
@@ -223,7 +312,8 @@ public class Deserializer {
 	}
 
 	private double jsonToDouble(JsonValue obj) {
-		if (obj == null) return 0;
+		if (obj == null)
+			return 0;
 		switch (obj.getValueType()) {
 		case NULL:
 		case FALSE:
@@ -240,7 +330,8 @@ public class Deserializer {
 	}
 
 	private int jsonToInteger(JsonValue obj) {
-		if (obj == null) return 0;
+		if (obj == null)
+			return 0;
 		switch (obj.getValueType()) {
 		case NULL:
 		case FALSE:
@@ -257,7 +348,8 @@ public class Deserializer {
 	}
 
 	private long jsonToLong(JsonValue obj) {
-		if (obj == null) return 0;
+		if (obj == null)
+			return 0;
 		switch (obj.getValueType()) {
 		case NULL:
 		case FALSE:
@@ -274,7 +366,8 @@ public class Deserializer {
 	}
 
 	private Object[] jsonToObjectArray(JsonValue obj) {
-		if (obj == null) return null;
+		if (obj == null)
+			return null;
 		switch (obj.getValueType()) {
 		case NULL:
 			return null;
@@ -292,7 +385,8 @@ public class Deserializer {
 	}
 
 	private List<?> jsonToList(JsonValue obj) {
-		if (obj == null) return null;
+		if (obj == null)
+			return null;
 		switch (obj.getValueType()) {
 		case NULL:
 			return null;
@@ -302,7 +396,8 @@ public class Deserializer {
 	}
 
 	private Object jsonToEnum(JsonValue obj, Class<?> enum_type) {
-		if (obj == null) return null;
+		if (obj == null)
+			return null;
 		switch (obj.getValueType()) {
 		case NULL:
 			return null;
@@ -323,30 +418,36 @@ public class Deserializer {
 			((ExecutionCondition) oc).exchange(o.getString("exchange"));
 			((ExecutionCondition) oc).secType(o.getString("secType"));
 			((ExecutionCondition) oc).symbol(o.getString("symbol"));
+			return oc;
 		case Margin:
-			((OperatorCondition) oc).isMore(o.getBoolean("isMore"));
-			((MarginCondition) oc).percent(o.getInt("percent"));
+			((OperatorCondition) oc).isMore(jsonToBoolean(o.get("isMore")));
+			((MarginCondition) oc).percent(jsonToInteger(o.get("percent")));
+			return oc;
 		case PercentChange:
-			((OperatorCondition) oc).isMore(o.getBoolean("isMore"));
-			((ContractCondition) oc).conId(o.getInt("conId"));
+			((OperatorCondition) oc).isMore(jsonToBoolean(o.get("isMore")));
+			((ContractCondition) oc).conId(jsonToInteger(o.get("conId")));
 			((ContractCondition) oc).exchange(o.getString("exchange"));
-			((PercentChangeCondition) oc).changePercent(o.getJsonNumber("changePercent").doubleValue());
+			((PercentChangeCondition) oc).changePercent(jsonToDouble(o.get("changePercent")));
+			return oc;
 		case Price:
-			((OperatorCondition) oc).isMore(o.getBoolean("isMore"));
-			((ContractCondition) oc).conId(o.getInt("conId"));
+			((OperatorCondition) oc).isMore(jsonToBoolean(o.get("isMore")));
+			((ContractCondition) oc).conId(jsonToInteger(o.get("conId")));
 			((ContractCondition) oc).exchange(o.getString("exchange"));
-			((PriceCondition) oc).price(o.getJsonNumber("price").doubleValue());
-			((PriceCondition) oc).triggerMethod(o.getInt("triggerMethod"));
+			((PriceCondition) oc).price(jsonToDouble(o.get("price")));
+			((PriceCondition) oc).triggerMethod(jsonToInteger(o.get("triggerMethod")));
+			return oc;
 		case Time:
-			((OperatorCondition) oc).isMore(o.getBoolean("isMore"));
+			((OperatorCondition) oc).isMore(jsonToBoolean(o.get("isMore")));
 			((TimeCondition) oc).time(o.getString("time"));
+			return oc;
 		case Volume:
-			((OperatorCondition) oc).isMore(o.getBoolean("isMore"));
-			((ContractCondition) oc).conId(o.getInt("conId"));
+			((OperatorCondition) oc).isMore(jsonToBoolean(o.get("isMore")));
+			((ContractCondition) oc).conId(jsonToInteger(o.get("conId")));
 			((ContractCondition) oc).exchange(o.getString("exchange"));
-			((VolumeCondition) oc).volume(o.getInt("volume"));
+			((VolumeCondition) oc).volume(jsonToInteger(o.get("volume")));
+			return oc;
 		}
-		return oc;
+		throw new AssertionError("Unhandled OrderConditionType " + type);
 	}
 
 	private TagValue jsonToTagValue(JsonValue obj) {
@@ -360,7 +461,84 @@ public class Deserializer {
 		if (obj == null || obj.getValueType() == ValueType.NULL)
 			return null;
 		JsonObject o = obj.asJsonObject();
-		return new SoftDollarTier(o.getString("name"), o.getString("value"), o.getString("displayName"));
+		return new SoftDollarTier(jsonToString(o.get("name")), jsonToString(o.get("value")), jsonToString(o.get("displayName")));
+	}
+
+	private HistogramEntry jsonToHistogramEntry(JsonValue obj) {
+		if (obj == null || obj.getValueType() == ValueType.NULL)
+			return null;
+		JsonObject o = obj.asJsonObject();
+		return new HistogramEntry(jsonToDouble(o.get("price")), jsonToLong(o.get("size")));
+	}
+
+	private Bar jsonToBar(JsonValue obj) {
+		if (obj == null || obj.getValueType() == ValueType.NULL)
+			return null;
+		JsonObject o = obj.asJsonObject();
+		String time = o.getString("time");
+		double open = jsonToDouble(o.get("open"));
+		double high = jsonToDouble(o.get("high"));
+		double low = jsonToDouble(o.get("low"));
+		double close = jsonToDouble(o.get("close"));
+		long volume = jsonToLong(o.get("volume"));
+		int count = jsonToInteger(o.get("count"));
+		double wap = jsonToDouble(o.get("wap"));
+		return new Bar(time, open, high, low, close, volume, count, wap);
+	}
+
+	private HistoricalTick jsonToHistoricalTick(JsonValue obj) {
+		if (obj == null || obj.getValueType() == ValueType.NULL)
+			return null;
+		JsonObject o = obj.asJsonObject();
+		long time = jsonToLong(o.get("time"));
+		double price = jsonToDouble(o.get("price"));
+		long size = jsonToLong(o.get("size"));
+		return new HistoricalTick(time, price, size);
+	}
+
+	private HistoricalTickBidAsk jsonToHistoricalTickBidAsk(JsonValue obj) {
+		if (obj == null || obj.getValueType() == ValueType.NULL)
+			return null;
+		JsonObject o = obj.asJsonObject();
+		long time = jsonToLong(o.get("time"));
+		TickAttribBidAsk attrib = jsonToTickAttribBidAsk(o.get("tickAttribBidAsk"));
+		double priceBid = jsonToDouble(o.get("priceBid"));
+		double priceAsk = jsonToDouble(o.get("priceAsk"));
+		long sizeBid = jsonToLong(o.get("sizeBid"));
+		long sizeAsk = jsonToLong(o.get("sizeAsk"));
+		return new HistoricalTickBidAsk(time, attrib, priceBid, priceAsk, sizeBid, sizeAsk);
+	}
+
+	private TickAttribBidAsk jsonToTickAttribBidAsk(JsonValue value) {
+		if (value == null || value.getValueType() == ValueType.NULL)
+			return null;
+		JsonObject obj = value.asJsonObject();
+		TickAttribBidAsk o = new TickAttribBidAsk();
+		o.askPastHigh(jsonToBoolean(obj.get("askPastHigh")));
+		o.bidPastLow(jsonToBoolean(obj.get("bidPastLow")));
+		return o;
+	}
+
+	private HistoricalTickLast jsonToHistoricalTickLast(JsonValue obj) {
+		if (obj == null || obj.getValueType() == ValueType.NULL)
+			return null;
+		JsonObject o = obj.asJsonObject();
+		long time = jsonToLong(o.get("time"));
+		TickAttribLast attrib = jsonToTickAttribLast(o.get("tickAttribLast"));
+		double price = jsonToDouble(o.get("price"));
+		long size = jsonToLong(o.get("size"));
+		return new HistoricalTickLast(time, attrib, price, size, o.getString("exchange"),
+				o.getString("specialConditions"));
+	}
+
+	private TickAttribLast jsonToTickAttribLast(JsonValue value) {
+		if (value == null || value.getValueType() == ValueType.NULL)
+			return null;
+		JsonObject obj = value.asJsonObject();
+		TickAttribLast o = new TickAttribLast();
+		o.pastLimit(jsonToBoolean(obj.get("pastLimit")));
+		o.unreported(jsonToBoolean(obj.get("unreported")));
+		return o;
 	}
 
 	private Object jsonToJavaObject(JsonValue obj, PropertyType ptype)
@@ -375,7 +553,13 @@ public class Deserializer {
 			for (String key : properties.keySet()) {
 				if (obj.asJsonObject().containsKey(key)) {
 					Object value = jsonToJava(obj.asJsonObject().get(key), properties.get(key));
-					ptype.getSetterMethod(key).invoke(object, value);
+					Method setter = ptype.getSetterMethod(key);
+					if (value != null && value instanceof Enum<?>
+							&& Integer.TYPE.equals(setter.getParameterTypes()[0])) {
+						setter.invoke(object, ((Enum<?>) value).ordinal());
+					} else {
+						setter.invoke(object, value);
+					}
 				}
 			}
 			return object;

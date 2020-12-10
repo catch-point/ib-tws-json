@@ -157,7 +157,7 @@ public class JsonStringParser implements Parser {
 			int start = pos;
 			if ('-' == charAt(buffer, pos))
 				pos++;
-			if ('1' <= charAt(buffer, pos) && charAt(buffer, pos) < '9') {
+			if ('1' <= charAt(buffer, pos) && charAt(buffer, pos) <= '9') {
 				while (Character.isDigit(charAt(buffer, pos)))
 					pos++;
 			}
@@ -201,10 +201,13 @@ public class JsonStringParser implements Parser {
 			int start = pos;
 			read('[');
 			readWhiteSpace();
-			do {
+			while (']' != charAt(buffer, pos)) {
 				readValue();
 				readWhiteSpace();
-			} while (',' == charAt(buffer, pos));
+				if (',' != charAt(buffer, pos))
+					break;
+				read(',');
+			}
 			read(']');
 			return buffer.subSequence(start, pos);
 		}

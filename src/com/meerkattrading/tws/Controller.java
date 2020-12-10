@@ -19,9 +19,11 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -38,45 +40,67 @@ import com.ib.client.EWrapper;
 public class Controller {
 	private final Logger logger = Logger.getLogger(Shell.class.getName());
 	private final Map<String, Method> commands = new TreeMap<>();
-	private final Map<String, PropertyType> properties = new TreeMap<>();
+	private final Map<Type, PropertyType> properties = new HashMap<>();
+	private final EJavaSignal signal = new EJavaSignal();
 	private Printer out;
-	private EJavaSignal signal = new EJavaSignal();
-	private EWrapper ewrapper;
 	private EClientSocket client;
 	private Thread thread;
 
 	public Controller(Printer out) throws IOException {
 		this.out = out;
-		ewrapper = EWrapperHandler.newInstance(out);
-		client = new EClientSocket(ewrapper, signal);
-		for (Method method : EClient.class.getDeclaredMethods()) {
-			if (method.getReturnType() == Void.TYPE && Modifier.isPublic(method.getModifiers())) {
-				addCommand(method.getName(), method);
-			}
-		}
+		EWrapper wrapper = EWrapperHandler.newInstance(out);
+		this.client = new EClientSocket(wrapper, getSignal());
 		for (Method method : Controller.class.getDeclaredMethods()) {
 			if (method.getReturnType() == Void.TYPE && Modifier.isPublic(method.getModifiers())) {
 				addCommand(method.getName(), method);
 			}
 		}
+		Object client = getClient();
+		for (Class<?> face : getAllInterfaces(client.getClass())) {
+			for (Method method : face.getMethods()) {
+				if (method.getReturnType() == Void.TYPE && Modifier.isPublic(method.getModifiers())
+						&& !Object.class.equals(method.getDeclaringClass())) {
+					addCommand(method.getName(), method);
+				}
+			}
+		}
+		for (Method method : client.getClass().getMethods()) {
+			if (method.getReturnType() == Void.TYPE && Modifier.isPublic(method.getModifiers())
+					&& !Object.class.equals(method.getDeclaringClass())) {
+				addCommand(method.getName(), method);
+			}
+		}
 		for (Method method : commands.values()) {
-			for (Class<?> type : method.getParameterTypes()) {
-				PropertyType propertySet = new PropertyType(type);
-				addPropertySet(propertySet);
+			for (Type type : method.getGenericParameterTypes()) {
+				addPropertyType(new PropertyType(type));
 			}
 		}
 	}
 
-	public synchronized void connect(String host, int port, int clientId, boolean extraAuth) {
-		client.eConnect(host, port, clientId, extraAuth);
-		final EReader reader = new EReader(client, signal);
+	private static Collection<Class<?>> getAllInterfaces(Class<?> type) {
+		Collection<Class<?>> array = new HashSet<Class<?>>();
+		if (type == null) return array;
+		array.addAll(getAllInterfaces(type.getSuperclass()));
+		array.addAll(Arrays.asList(type.getInterfaces()));
+		for (Class<?> face : type.getInterfaces()) {
+			array.addAll(getAllInterfaces(face));
+		}
+		return array;
+	}
+
+	public synchronized void eConnect(String host, int port, int clientId, boolean extraAuth) {
+		if (getEClient().isConnected()) {
+			getEClient().eDisconnect();
+		}
+		((EClientSocket) getEClient()).eConnect(host, port, clientId, extraAuth);
+		final EReader reader = new EReader((EClientSocket) getEClient(), getSignal());
 
 		reader.start();
 		// An additional thread is created in this program design to empty the messaging
 		// queue
 		thread = new Thread(() -> {
-			while (client.isConnected()) {
-				signal.waitForSignal();
+			while (getEClient().isConnected()) {
+				getSignal().waitForSignal();
 				try {
 					reader.processMsgs();
 				} catch (Exception e) {
@@ -87,14 +111,10 @@ public class Controller {
 		thread.start();
 	}
 
-	public synchronized void disconnect() {
-		if (client.isConnected()) {
-			client.eDisconnect();
+	public synchronized void eDisconnect() {
+		if (getEClient().isConnected()) {
+			getEClient().eDisconnect();
 		}
-	}
-
-	public void eDisconnect() {
-		disconnect();
 	}
 
 	public void exit() {
@@ -102,23 +122,23 @@ public class Controller {
 	}
 
 	public void serverVersion() {
-		out.println("serverVersion", client.serverVersion());
+		out.println("serverVersion", getEClient().serverVersion());
 	}
 
 	public void isConnected() {
-		out.println("isConnected", client.isConnected());
+		out.println("isConnected", getEClient().isConnected());
 	}
 
 	public void connectedHost() {
-		out.println("onnectedHost", client.connectedHost());
+		out.println("onnectedHost", getEClient().connectedHost());
 	}
 
 	public void isUseV100Plus() {
-		out.println("isUseV100Plus", client.isUseV100Plus());
+		out.println("isUseV100Plus", getEClient().isUseV100Plus());
 	}
 
 	public void optionalCapabilities() {
-		out.println("optionalCapabilities", client.optionalCapabilities());
+		out.println("optionalCapabilities", getEClient().optionalCapabilities());
 	}
 
 	public void faMsgTypeName(int type) {
@@ -126,7 +146,7 @@ public class Controller {
 	}
 
 	public void getTwsConnectionTime() {
-		out.println("getTwsConnectionTime", client.getTwsConnectionTime());
+		out.println("getTwsConnectionTime", getEClient().getTwsConnectionTime());
 	}
 
 	public void help(String name) throws IllegalAccessException, InvocationTargetException {
@@ -142,17 +162,21 @@ public class Controller {
 				args[i] = types[i].getSimpleName();
 			}
 			out.println("help", args);
-		} else if (properties.containsKey(name)) {
-			PropertyType set = properties.get(name);
-			Object[] values = set.getValues();
-			if (values == null) {
-				for (Entry<String, PropertyType> e : set.getProperties().entrySet()) {
-					out.println("help", e.getKey(), e.getValue().getSimpleName());
-				}
-			} else {
-				out.println("help", values);
-			}
 		} else {
+			for (Type type : properties.keySet()) {
+				if (type.getTypeName().contains(name)) {
+					PropertyType set = properties.get(type);
+					Object[] values = set.getValues();
+					if (values == null) {
+						for (Entry<String, PropertyType> e : set.getProperties().entrySet()) {
+							out.println("help", e.getKey(), e.getValue().getSimpleName());
+						}
+					} else {
+						out.println("help", values);
+					}
+					return; // found
+				}
+			}
 			out.println("error", name + "?");
 		}
 	}
@@ -163,15 +187,7 @@ public class Controller {
 			Type[] types = method.getGenericParameterTypes();
 			PropertyType[] ptypes = new PropertyType[types.length];
 			for (int i = 0; i < types.length; i++) {
-				if (types[i] instanceof Class<?>) {
-					ptypes[i] = properties.get(((Class<?>) types[i]).getSimpleName());
-				} else {
-					assert types[i] instanceof ParameterizedType
-							&& ((ParameterizedType) types[i]).getRawType() == List.class;
-					Type ctype = ((ParameterizedType) types[i]).getActualTypeArguments()[0];
-					assert ctype instanceof Class<?>;
-					ptypes[i] = properties.get("[" + ((Class<?>) ctype).getSimpleName() + "]");
-				}
+				ptypes[i] = properties.get(types[i]);
 			}
 			return ptypes;
 		} else {
@@ -186,11 +202,27 @@ public class Controller {
 			if (method.getDeclaringClass().isInstance(this)) {
 				return method.invoke(this, args);
 			} else {
-				return method.invoke(client, args);
+				return method.invoke(getClient(), args);
 			}
 		} else {
 			throw new NoSuchMethodException(command);
 		}
+	}
+
+	protected EClient getEClient() {
+		return (EClient) client;
+	}
+
+	protected Object getClient() {
+		return client;
+	}
+
+	protected Object getWrapper() {
+		return getEClient().wrapper();
+	}
+
+	protected EJavaSignal getSignal() {
+		return signal;
 	}
 
 	private void addCommand(String command, Method method) {
@@ -204,14 +236,15 @@ public class Controller {
 		}
 	}
 
-	private void addPropertySet(PropertyType propertySet) {
-		if (!properties.containsKey(propertySet.getSimpleName())) {
-			properties.put(propertySet.getSimpleName(), propertySet);
-			if (propertySet.isList()) {
-				addPropertySet(propertySet.getComponentType());
+	private void addPropertyType(PropertyType ptype) {
+		if (ptype != null && !properties.containsKey(ptype.getJavaType())) {
+			properties.put(ptype.getJavaType(), ptype);
+			if (ptype.isList() || ptype.isSet() || ptype.isArray() || ptype.isEntry()
+					|| ptype.isMap()) {
+				addPropertyType(ptype.getComponentType());
 			} else {
-				for (PropertyType pset : propertySet.getProperties().values()) {
-					addPropertySet(pset);
+				for (PropertyType pset : ptype.getProperties().values()) {
+					addPropertyType(pset);
 				}
 			}
 		}
