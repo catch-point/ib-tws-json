@@ -22,9 +22,9 @@ See https://www.interactivebrokers.com/en/index.php?f=14099#tws-software
 Usage
 -----
 
-Pass EClient calls on one line to stdin. Prefix with the method name, followed by each parameter prefixed by one or more spaces. Every parameter must be encoded in JSON.
+Pass EClient calls to stdin. Prefix with the method name, followed by each parameter prefixed by white spaces. Every parameter must be encoded in JSON. JSON values span multiple lines.
 
-Calls to EWrapper are serialized to stdout. Prefixed by the method name, followed by each parameter prefixed by a tab character. Every parameter is serialized as JSON.
+Calls to EWrapper are serialized to stdout, one per line. Prefixed by the method name, followed by each parameter prefixed by a tab character. Every parameter is serialized as JSON.
 
 The command "help" is available to show a list of EClient+ calls and if passed the name of a method or type, it will show more.
 
@@ -33,7 +33,7 @@ Type "exit" to quit.
 For example consider the calls below.
 
 ```
-java -cp TwsApi.jar:jline.jar:javax.json-1.1.jar:javax.json-api-1.1.jar:tws-shell.jar com.meerkattrading.tws.Shell << EOF
+java -cp TwsApi.jar:tws-shell.jar com.meerkattrading.tws.Shell << EOF
 connect "localhost" 7496 0
 reqIds -1
 reqAllOpenOrders

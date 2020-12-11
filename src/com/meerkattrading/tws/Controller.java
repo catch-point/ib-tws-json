@@ -15,6 +15,7 @@
  */
 package com.meerkattrading.tws;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,8 +29,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.logging.Logger;
-
-import org.jline.reader.EndOfFileException;
 
 import com.ib.client.EClient;
 import com.ib.client.EClientSocket;
@@ -117,8 +116,8 @@ public class Controller {
 		}
 	}
 
-	public void exit() {
-		throw new EndOfFileException("exit");
+	public void exit() throws EOFException {
+		throw new EOFException("exit");
 	}
 
 	public void serverVersion() {
@@ -154,27 +153,29 @@ public class Controller {
 			for (String command : commands.keySet()) {
 				out.println("help", command);
 			}
+			out.println("helpEnd");
 		} else if (commands.containsKey(name)) {
 			Method method = commands.get(name);
 			Class<?>[] types = method.getParameterTypes();
-			Object[] args = new String[types.length];
 			for (int i = 0; i < types.length; i++) {
-				args[i] = types[i].getSimpleName();
+				out.println("help", types[i].getSimpleName());
 			}
-			out.println("help", args);
+			out.println("helpEnd");
 		} else {
-			for (Type type : properties.keySet()) {
-				if (type.getTypeName().contains(name)) {
-					PropertyType set = properties.get(type);
-					Object[] values = set.getValues();
+			for (PropertyType ptype : properties.values()) {
+				if (ptype.getSimpleName().equals(name)) {
+					Object[] values = ptype.getValues();
 					if (values == null) {
-						for (Entry<String, PropertyType> e : set.getProperties().entrySet()) {
+						for (Entry<String, PropertyType> e : ptype.getProperties().entrySet()) {
 							out.println("help", e.getKey(), e.getValue().getSimpleName());
 						}
 					} else {
-						out.println("help", values);
+						for (Object value : values) {
+							out.println("help", value);
+						}
 					}
-					return; // found
+					out.println("helpEnd");
+					return;
 				}
 			}
 			out.println("error", name + "?");

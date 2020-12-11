@@ -73,7 +73,6 @@ repositories {
 
 dependencies {
     compile files("$buildDir/dependencies/twsapi/IBJts/source/JavaClient/TwsApi.jar")
-    implementation 'org.jline:jline:3.17.1'
     implementation 'javax.json:javax.json-api:1.1'
     implementation 'org.glassfish:javax.json:1.1'
     testImplementation 'junit:junit:4.13'
@@ -85,6 +84,8 @@ compileJava {
     targetCompatibility = 8
 }
 
+configurations.implementation.setCanBeResolved(true)
+
 jar {
     manifest {
         attributes(
@@ -93,5 +94,9 @@ jar {
             "Main-Class": "com.meerkattrading.tws.Shell"
         )
     }
+    exclude('com/ib/**')
+    from {
+		configurations.implementation.collect {it.isDirectory() ? it: zipTree(it)}
+	}
 }
 

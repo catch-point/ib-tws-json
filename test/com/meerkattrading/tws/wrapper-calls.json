@@ -189,13 +189,13 @@
             "historicalData",
             800,
             {
-                "time": "2020-12-12 12:00:00",
-                "open": "9.0",
+                "close": "10.0",
+                "count": 1,
                 "high": "11.0",
                 "low": "8.0",
-                "close": "10.0",
+                "open": "9.0",
+                "time": "2020-12-12 12:00:00",
                 "volume": "1",
-                "count": 1,
                 "wap": "10.0"
             }
         ]
@@ -206,9 +206,9 @@
             900,
             [
                 {
-                    "time": "1607553315442",
                     "price": "100.0",
-                    "size": "10"
+                    "size": "10",
+                    "time": "1607553315442"
                 }
             ],
             true
@@ -220,15 +220,15 @@
             1000,
             [
                 {
-                    "time": "1607553315442",
-                    "tickAttribBidAsk": {
-                        "askPastHigh": false,
-                        "bidPastLow": false
-                    },
-                    "priceBid": "100.0",
                     "priceAsk": "101.0",
+                    "priceBid": "100.0",
+                    "sizeAsk": "10",
                     "sizeBid": "10",
-                    "sizeAsk": "10"
+                    "tickAttribBidAsk": {
+                        "askPastHigh": true,
+                        "bidPastLow": true
+                    },
+                    "time": "1607553315442"
                 }
             ],
             true
@@ -240,15 +240,15 @@
             1000,
             [
                 {
-                    "time": "1607553315442",
-                    "tickAttribLast": {
-                        "pastLimit": false,
-                        "unreported": false
-                    },
+                    "exchange": "NYSE",
                     "price": "100.0",
                     "size": "10",
-                    "exchange": "NYSE",
-                    "specialConditions": "n/a"
+                    "specialConditions": "n/a",
+                    "tickAttribLast": {
+                        "pastLimit": true,
+                        "unreported": true
+                    },
+                    "time": "1607553315442"
                 }
             ],
             true
@@ -363,8 +363,8 @@
             "10.0",
             1,
             {
-                "pastLimit": false,
-                "unreported": false
+                "pastLimit": true,
+                "unreported": true
             },
             "NYSE",
             ""
@@ -380,8 +380,8 @@
             1,
             1,
             {
-                "askPastHigh": false,
-                "bidPastLow": false
+                "askPastHigh": true,
+                "bidPastLow": true
             }
         ]
     ],

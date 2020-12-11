@@ -22,6 +22,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,35 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PropertyType {
+	private static final Set<String> GETTERS = new LinkedHashSet<String>() {
+		private static final long serialVersionUID = 2321538364094288074L;
+
+		{
+			add("public double com.ib.client.Bar.close()");
+			add("public int com.ib.client.Bar.count()");
+			add("public double com.ib.client.Bar.high()");
+			add("public double com.ib.client.Bar.low()");
+			add("public double com.ib.client.Bar.open()");
+			add("public java.lang.String com.ib.client.Bar.time()");
+			add("public long com.ib.client.Bar.volume()");
+			add("public double com.ib.client.Bar.wap()");
+			add("public double com.ib.client.HistoricalTick.price()");
+			add("public long com.ib.client.HistoricalTick.size()");
+			add("public long com.ib.client.HistoricalTick.time()");
+			add("public double com.ib.client.HistoricalTickBidAsk.priceAsk()");
+			add("public double com.ib.client.HistoricalTickBidAsk.priceBid()");
+			add("public long com.ib.client.HistoricalTickBidAsk.sizeAsk()");
+			add("public long com.ib.client.HistoricalTickBidAsk.sizeBid()");
+			add("public com.ib.client.TickAttribBidAsk com.ib.client.HistoricalTickBidAsk.tickAttribBidAsk()");
+			add("public long com.ib.client.HistoricalTickBidAsk.time()");
+			add("public java.lang.String com.ib.client.HistoricalTickLast.exchange()");
+			add("public double com.ib.client.HistoricalTickLast.price()");
+			add("public long com.ib.client.HistoricalTickLast.size()");
+			add("public java.lang.String com.ib.client.HistoricalTickLast.specialConditions()");
+			add("public com.ib.client.TickAttribLast com.ib.client.HistoricalTickLast.tickAttribLast()");
+			add("public long com.ib.client.HistoricalTickLast.time()");
+		}
+	};
 	private final Logger logger = Logger.getLogger(PropertyType.class.getName());
 	private final Type type;
 	private final Map<String, Method> getters = new TreeMap<>();
@@ -81,7 +111,8 @@ public class PropertyType {
 			}
 			Iterator<String> giter = getters.keySet().iterator();
 			while (giter.hasNext()) {
-				if (!setters.containsKey(giter.next())) {
+				String getter = giter.next();
+				if (!setters.containsKey(getter) && !GETTERS.contains(getters.get(getter).toString())) {
 					giter.remove();
 				}
 			}
@@ -105,7 +136,10 @@ public class PropertyType {
 	}
 
 	public String toString() {
-		return getSimpleName() + getProperties().keySet().toString();
+		if (getProperties().isEmpty())
+			return getSimpleName();
+		else
+			return getSimpleName() + getProperties().keySet().toString();
 	}
 
 	public Type getJavaType() {

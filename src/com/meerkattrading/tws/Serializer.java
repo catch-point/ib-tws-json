@@ -29,13 +29,9 @@ import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 
-import com.ib.client.Bar;
 import com.ib.client.ContractCondition;
 import com.ib.client.ExecutionCondition;
 import com.ib.client.HistogramEntry;
-import com.ib.client.HistoricalTick;
-import com.ib.client.HistoricalTickBidAsk;
-import com.ib.client.HistoricalTickLast;
 import com.ib.client.MarginCondition;
 import com.ib.client.OperatorCondition;
 import com.ib.client.OrderCondition;
@@ -43,8 +39,6 @@ import com.ib.client.PercentChangeCondition;
 import com.ib.client.PriceCondition;
 import com.ib.client.SoftDollarTier;
 import com.ib.client.TagValue;
-import com.ib.client.TickAttribBidAsk;
-import com.ib.client.TickAttribLast;
 import com.ib.client.TimeCondition;
 import com.ib.client.VolumeCondition;
 
@@ -91,18 +85,6 @@ public class Serializer {
 			return softDollarTierToJson((SoftDollarTier) object);
 		} else if (object instanceof HistogramEntry) {
 			return histogramEntryToJson((HistogramEntry) object);
-		} else if (object instanceof Bar) {
-			return barToJson((Bar) object);
-		} else if (object instanceof HistoricalTick) {
-			return historicalTickToJson((HistoricalTick) object);
-		} else if (object instanceof HistoricalTickBidAsk) {
-			return historicalTickBidAskToJson((HistoricalTickBidAsk) object);
-		} else if (object instanceof HistoricalTickLast) {
-			return historicalTickLastToJson((HistoricalTickLast) object);
-		} else if (object instanceof TickAttribBidAsk) {
-			return tickAttribBidAskToJson((TickAttribBidAsk) object);
-		} else if (object instanceof TickAttribLast) {
-			return tickAttribLastToJson((TickAttribLast) object);
 		} else if (object instanceof Exception) {
 			return exceptionToJson((Exception) object);
 		} else {
@@ -154,7 +136,7 @@ public class Serializer {
 	}
 
 	private JsonValue enumToJson(Object object) {
-		return stringToJson(((Enum<?>)object).name());
+		return stringToJson(((Enum<?>) object).name());
 	}
 
 	private JsonValue orderConditionToJson(OrderCondition oc) {
@@ -226,63 +208,6 @@ public class Serializer {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		builder.add("price", numberToJson(object.price));
 		builder.add("size", numberToJson(object.size));
-		return builder.build();
-	}
-
-	private JsonValue barToJson(Bar object) {
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("time", object.time());
-		builder.add("open", numberToJson(object.open()));
-		builder.add("high", numberToJson(object.high()));
-		builder.add("low", numberToJson(object.low()));
-		builder.add("close", numberToJson(object.close()));
-		builder.add("volume", numberToJson(object.volume()));
-		builder.add("count", numberToJson(object.count()));
-		builder.add("wap", numberToJson(object.wap()));
-		return builder.build();
-	}
-
-	private JsonValue historicalTickToJson(HistoricalTick object) {
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("time", numberToJson(object.time()));
-		builder.add("price", numberToJson(object.price()));
-		builder.add("size", numberToJson(object.size()));
-		return builder.build();
-	}
-
-	private JsonValue historicalTickBidAskToJson(HistoricalTickBidAsk object) {
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("time", numberToJson(object.time()));
-		builder.add("tickAttribBidAsk", tickAttribBidAskToJson(object.tickAttribBidAsk()));
-		builder.add("priceBid", numberToJson(object.priceBid()));
-		builder.add("priceAsk", numberToJson(object.priceAsk()));
-		builder.add("sizeBid", numberToJson(object.sizeBid()));
-		builder.add("sizeAsk", numberToJson(object.sizeAsk()));
-		return builder.build();
-	}
-
-	private JsonValue tickAttribBidAskToJson(TickAttribBidAsk object) {
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("askPastHigh", object.askPastHigh());
-		builder.add("bidPastLow", object.bidPastLow());
-		return builder.build();
-	}
-
-	private JsonValue historicalTickLastToJson(HistoricalTickLast object) {
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("time", numberToJson(object.time()));
-		builder.add("tickAttribLast", tickAttribLastToJson(object.tickAttribLast()));
-		builder.add("price", numberToJson(object.price()));
-		builder.add("size", numberToJson(object.size()));
-		builder.add("exchange", object.exchange());
-		builder.add("specialConditions", object.specialConditions());
-		return builder.build();
-	}
-
-	private JsonValue tickAttribLastToJson(TickAttribLast object) {
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("pastLimit", object.pastLimit());
-		builder.add("unreported", object.unreported());
 		return builder.build();
 	}
 

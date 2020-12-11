@@ -15,27 +15,21 @@
  */
 package com.meerkattrading.tws;
 
+import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.jline.reader.EndOfFileException;
-import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.ParsedLine;
-import org.jline.reader.UserInterruptException;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
-
 public class Shell {
 	private final Deserializer deserializer = new Deserializer();
 	private Controller controller;
 	private Printer out;
-	private Terminal terminal;
 	private LineReader reader;
 
 	public static void main(String[] args) throws InterruptedException, IOException {
@@ -49,58 +43,69 @@ public class Shell {
 	public Shell(InputStream in, OutputStream out, OutputStream log) throws IOException {
 		this.out = new Printer(new PrintWriter(out));
 		controller = new Controller(this.getPrinter());
-		JsonStringParser parser = new JsonStringParser();
-		terminal = TerminalBuilder.builder().system(false).streams(in, log).build();
-		reader = LineReaderBuilder.builder().terminal(terminal).parser(parser).build();
+		reader = new LineReader(new BufferedReader(new InputStreamReader(in)));
 	}
 
 	public void repl() throws InterruptedException, IOException {
 		while (true) {
 			try {
-				try {
-					eval(read());
-				} catch (InvocationTargetException e) {
-					try {
-						throw e.getCause();
-					} catch (RuntimeException cause) {
-						throw cause;
-					} catch (Throwable cause) {
-						throw e;
-					}
-				}
-			} catch (UserInterruptException e) {
-				// Ignore
-			} catch (EndOfFileException e) {
+				rep("");
+			} catch (EOFException e) {
 				break;
-			} catch (IllegalAccessException | InvocationTargetException | RuntimeException e) {
-				getPrinter().println("error", e.getMessage() == null ? e.toString() : e.getMessage());
 			} finally {
 				out.flush();
 			}
 		}
 	}
 
-	public ParsedLine read() {
-		reader.readLine();
-		return reader.getParsedLine();
+	private void rep(CharSequence prefix) throws IOException {
+		try {
+			ParsedInput input = reader.readLine(prefix);
+			try {
+				eval(input);
+			} catch (MoreInputExpected e) {
+				rep(input.getInput() + "\n");
+			}
+		} catch (SyntaxError | IllegalAccessException | InvocationTargetException | RuntimeException e) {
+			getPrinter().println("error", e.getMessage() == null ? e.toString() : e.getMessage());
+		}
 	}
 
-	public void eval(ParsedLine line)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
+	public void eval(ParsedInput line)
+			throws IllegalAccessException, InvocationTargetException, IOException, MoreInputExpected {
 		if (line != null) {
-			List<String> split = line.words();
-			String command = split.get(0);
+			List<String> values = line.getParsedValues();
+			String command = values.get(0);
 			try {
 				Controller controller = getController();
 				PropertyType[] types = controller.getParameterTypes(command);
+				if (values.size() < types.length + 1) {
+					for (int i = values.size() - 1; i < types.length; i++) {
+						if (types[i].isPrimitive()) {
+							throw new MoreInputExpected(
+									"Expecting " + (types.length - values.size()) + " more value(s)");
+						}
+					}
+				} else if (values.size() > types.length + 1) {
+					throw new IllegalArgumentException("Expected " + (values.size() - types.length) + " less value(s)");
+				}
 				Object[] args = new Object[types.length];
 				for (int i = 0; i < args.length; i++) {
-					String json = i + 1 < split.size() ? split.get(i + 1) : "null";
+					String json = i + 1 < values.size() ? values.get(i + 1) : "null";
 					args[i] = deserializer.deserialize(json, types[i]);
 				}
 				controller.invoke(command, args);
 			} catch (NoSuchMethodException e) {
 				getPrinter().println("error", command + "?");
+			} catch (InvocationTargetException e) {
+				try {
+					throw e.getCause();
+				} catch (RuntimeException | IllegalAccessException | InvocationTargetException | IOException
+						| MoreInputExpected cause) {
+					throw cause;
+				} catch (Throwable cause) {
+					throw e;
+				}
 			}
 		} else {
 			getPrinter().println("error", "Each parameter must be in JSON format");
