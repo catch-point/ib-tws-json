@@ -19,6 +19,10 @@ See https://www.interactivebrokers.com/en/index.php?f=14099#tws-software
 * A working knowledge of the API programming language.
 * This project makes use of gradle build tool. See https://gradle.org/
 
+TWS needs to operate in English so that the various dialogues can be recognised. You can set TWS's language by starting it manually (ie without passing a password) and selecting the language on the initial login dialog. TWS will remember this language setting when you subsequently use with the command.
+
+Note that you do not need an IBKR account to try this out, as you can use IBKR's Free Trial offer, for which there is a link at the top of the homepage on their website.
+
 Usage
 -----
 
@@ -30,16 +34,36 @@ The command "help" is available to show a list of EClient+ calls and if passed t
 
 Type "exit" to quit.
 
-For example consider the calls below.
+For example consider the auto script below that records the NetLiquidation of the account into a file.
 
 ```
-java -cp TwsApi.jar:tws-shell.jar com.meerkattrading.tws.Shell << EOF
-connect "localhost" 7496 0
-reqIds -1
-reqAllOpenOrders
-reqAutoOpenOrders true
-reqOpenOrders
-placeOrder 282 { "symbol":"IBKR", "secType": "STK", "exchange": "ISLAND"} { "action":"SELL", "orderType":"LMT", "totalQuantity": 1, "lmtPrice": 50}
-disconnect
+./tws-shell.sh >> NetLiquidation.tsv << EOF
+open    "live"  {
+    "AcceptIncomingConnectionAction":"reject",
+    "AcceptNonBrokerageAccountWarning":true,
+    "AllowBlindTrading":true,
+    "DismissNSEComplianceNotice": true,
+    "DismissPasswordExpiryWarning": true,
+    "ExistingSessionDetectedAction": "secondary",
+    "ExitAfterSecondFactorAuthenticationTimeout": false,
+    "LogComponents": "never",
+    "MinimizeMainWindow": false,
+    "ReadOnlyLogin": true,
+    "SecondFactorAuthenticationExitInterval":40,
+    "ShowAllTrades":true,
+    "StoreSettingsOnServer":false,
+    "SuppressInfoMessages": true
+}   {
+    "IBAPIBase64UserName": "dXNlcm5hbWU=",
+    "IBAPIBase64Password": "cGFzc3dvcmQ="
+}
+enableAPI   7496  true
+sleep   2000
+eConnect    "localhost" 7496    0  false
+sleep   2000
+reqCurrentTime
+reqAccountSummary   1000    "All"   "NetLiquidation"
+sleep   2000
+exit
 EOF
 ```

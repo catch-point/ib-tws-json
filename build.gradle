@@ -55,17 +55,29 @@ sourceSets {
 }
 
 // @seeAlso https://github.com/michel-kraemer/gradle-download-task
-task downloadZipFile(type: Download) {
+task downloadTWSAPIZipFile(type: Download) {
     src 'http://interactivebrokers.github.io/downloads/twsapi_macunix.976.01.zip'
     dest file("$buildDir/dependencies/twsapi.zip")
 }
 
-task downloadAndUnzipFile(dependsOn: downloadZipFile, type: Copy) {
-    from zipTree(downloadZipFile.dest)
+task downloadAndUnzipTWSAPI(dependsOn: downloadTWSAPIZipFile, type: Copy) {
+    from zipTree(downloadTWSAPIZipFile.dest)
     into file("$buildDir/dependencies/twsapi/")
 }
 
-assemble.dependsOn downloadAndUnzipFile
+assemble.dependsOn downloadAndUnzipTWSAPI
+
+task downloadIBCZipFile(type: Download) {
+    src 'https://github.com/IbcAlpha/IBC/releases/download/3.8.4-beta.2/IBCLinux-3.8.4-beta.2.zip'
+    dest file("$buildDir/dependencies/IBCLinux.zip")
+}
+
+task downloadAndUnzipIBC(dependsOn: downloadIBCZipFile, type: Copy) {
+    from zipTree(downloadIBCZipFile.dest)
+    into file("$buildDir/dependencies/ibclinux/")
+}
+
+assemble.dependsOn downloadAndUnzipIBC
 
 repositories {
     mavenCentral()
@@ -73,8 +85,10 @@ repositories {
 
 dependencies {
     compile files("$buildDir/dependencies/twsapi/IBJts/source/JavaClient/TwsApi.jar")
-    implementation 'javax.json:javax.json-api:1.1'
-    implementation 'org.glassfish:javax.json:1.1'
+    compile files("$buildDir/dependencies/ibclinux/IBC.jar")
+    compile 'javax.json:javax.json-api:1.1'
+    compile 'org.glassfish:javax.json:1.1'
+    compile 'commons-cli:commons-cli:1.4'
     testImplementation 'junit:junit:4.13'
 }
 
@@ -83,8 +97,6 @@ compileJava {
     sourceCompatibility = 8
     targetCompatibility = 8
 }
-
-configurations.implementation.setCanBeResolved(true)
 
 jar {
     manifest {
@@ -96,7 +108,7 @@ jar {
     }
     exclude('com/ib/**')
     from {
-		configurations.implementation.collect {it.isDirectory() ? it: zipTree(it)}
+		configurations.compile.collect {it.isDirectory() ? it: zipTree(it)}
 	}
 }
 

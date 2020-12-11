@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import com.ib.client.EClient;
@@ -36,16 +37,30 @@ import com.ib.client.EJavaSignal;
 import com.ib.client.EReader;
 import com.ib.client.EWrapper;
 
+import ibcalpha.ibc.DefaultMainWindowManager;
+import ibcalpha.ibc.IbcException;
+import ibcalpha.ibc.LoginManager;
+import ibcalpha.ibc.MainWindowManager;
+import ibcalpha.ibc.Settings;
+import ibcalpha.ibc.TWSLifeCycle;
+import ibcalpha.ibc.TradingModeManager;
+
 public class Controller {
 	private final Logger logger = Logger.getLogger(Shell.class.getName());
 	private final Map<String, Method> commands = new TreeMap<>();
 	private final Map<Type, PropertyType> properties = new HashMap<>();
 	private final EJavaSignal signal = new EJavaSignal();
-	private Printer out;
+	private final String ibDir;
+	private final Printer out;
 	private EClientSocket client;
-	private Thread thread;
+	private Thread signalThread;
 
 	public Controller(Printer out) throws IOException {
+		this(System.getProperty("user.dir"), out);
+	}
+
+	public Controller(String ibDir, Printer out) throws IOException {
+		this.ibDir = ibDir;
 		this.out = out;
 		EWrapper wrapper = EWrapperHandler.newInstance(out);
 		this.client = new EClientSocket(wrapper, getSignal());
@@ -78,7 +93,8 @@ public class Controller {
 
 	private static Collection<Class<?>> getAllInterfaces(Class<?> type) {
 		Collection<Class<?>> array = new HashSet<Class<?>>();
-		if (type == null) return array;
+		if (type == null)
+			return array;
 		array.addAll(getAllInterfaces(type.getSuperclass()));
 		array.addAll(Arrays.asList(type.getInterfaces()));
 		for (Class<?> face : type.getInterfaces()) {
@@ -87,9 +103,68 @@ public class Controller {
 		return array;
 	}
 
-	public synchronized void eConnect(String host, int port, int clientId, boolean extraAuth) {
+	public synchronized void open(TradingMode mode, TraderWorkstationSettings settings, Base64LoginManager credentials)
+			throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, NoSuchMethodException,
+			IOException {
+		if (TWSLifeCycle.isOpen()) {
+			close();
+		}
+		boolean isGateway = TWSLifeCycle.class.getClassLoader().getResource("ibgateway/GWClient") != null;
+		Settings.initialise(settings);
+		LoginManager.initialise(credentials);
+		MainWindowManager.initialise(new DefaultMainWindowManager(isGateway));
+		TradingModeManager.initialise(new TradingModeManager() {
+
+			@Override
+			public String getTradingMode() {
+				return mode.name();
+			}
+
+			@Override
+			public void logDiagnosticMessage() {
+				// nothing to say
+			}
+		});
+		if (isGateway) {
+			TWSLifeCycle.open("ibgateway.GWClient", ibDir);
+		} else {
+			TWSLifeCycle.open("jclient.LoginFrame", ibDir);
+		}
+	}
+
+	public synchronized void isOpened() {
+		out.println("isOpened", TWSLifeCycle.isOpen());
+	}
+
+	public void sleep(long ms) throws InterruptedException {
+		Thread.sleep(ms);
+	}
+
+	public synchronized void enableAPI(int portNumber, boolean readOnly)
+			throws InterruptedException, IbcException, ExecutionException {
+		TWSLifeCycle.enableAPI(portNumber, readOnly);
+		out.println("ApiEnabled", portNumber);
+	}
+
+	public synchronized void reconnectData() {
+		TWSLifeCycle.reconnectData();
+	}
+
+	public synchronized void reconnectAccount() {
+		TWSLifeCycle.reconnectAccount();
+	}
+
+	public synchronized void close() {
+		TWSLifeCycle.close();
+	}
+
+	public synchronized void eConnect(String host, int port, int clientId, boolean extraAuth)
+			throws InterruptedException {
 		if (getEClient().isConnected()) {
 			getEClient().eDisconnect();
+		}
+		if (signalThread != null && signalThread.isAlive()) {
+			signalThread.join();
 		}
 		((EClientSocket) getEClient()).eConnect(host, port, clientId, extraAuth);
 		final EReader reader = new EReader((EClientSocket) getEClient(), getSignal());
@@ -97,7 +172,7 @@ public class Controller {
 		reader.start();
 		// An additional thread is created in this program design to empty the messaging
 		// queue
-		thread = new Thread(() -> {
+		signalThread = new Thread(() -> {
 			while (getEClient().isConnected()) {
 				getSignal().waitForSignal();
 				try {
@@ -107,7 +182,7 @@ public class Controller {
 				}
 			}
 		});
-		thread.start();
+		signalThread.start();
 	}
 
 	public synchronized void eDisconnect() {
@@ -117,6 +192,12 @@ public class Controller {
 	}
 
 	public void exit() throws EOFException {
+		if (getEClient().isConnected()) {
+			eDisconnect();
+		}
+		if (TWSLifeCycle.isOpen()) {
+			close();
+		}
 		throw new EOFException("exit");
 	}
 
@@ -240,8 +321,7 @@ public class Controller {
 	private void addPropertyType(PropertyType ptype) {
 		if (ptype != null && !properties.containsKey(ptype.getJavaType())) {
 			properties.put(ptype.getJavaType(), ptype);
-			if (ptype.isList() || ptype.isSet() || ptype.isArray() || ptype.isEntry()
-					|| ptype.isMap()) {
+			if (ptype.isList() || ptype.isSet() || ptype.isArray() || ptype.isEntry() || ptype.isMap()) {
 				addPropertyType(ptype.getComponentType());
 			} else {
 				for (PropertyType pset : ptype.getProperties().values()) {

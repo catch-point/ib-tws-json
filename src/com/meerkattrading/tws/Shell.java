@@ -26,6 +26,13 @@ import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 public class Shell {
 	private final Deserializer deserializer = new Deserializer();
 	private Controller controller;
@@ -33,16 +40,39 @@ public class Shell {
 	private LineReader reader;
 
 	public static void main(String[] args) throws InterruptedException, IOException {
+		String ibDir = System.getProperty("user.dir");
+		Options options = new Options();
+		options.addOption("d", "ibDir", true, "Where TWS will read/store settings");
+		options.addOption("h", "help", false, "This message");
+		CommandLineParser parser = new DefaultParser();
+		try {
+			CommandLine cmd = parser.parse(options, args);
+			if (cmd.hasOption("ibDir")) {
+				ibDir = cmd.getOptionValue("ibDir");
+			}
+			if (cmd.hasOption("help")) {
+				HelpFormatter formatter = new HelpFormatter();
+				formatter.printHelp("tws-shell", options);
+				System.exit(0);
+			}
+		} catch (ParseException exp) {
+			System.err.println(exp.getMessage());
+			System.exit(1);
+		}
 		PrintStream out = System.out;
 		System.setOut(System.err);
-		Shell shell = new Shell(System.in, out, System.err);
+		Shell shell = new Shell(ibDir, System.in, out);
 		shell.repl();
 		shell.exit();
 	}
 
-	public Shell(InputStream in, OutputStream out, OutputStream log) throws IOException {
+	public Shell(InputStream in, OutputStream out) throws IOException {
+		this(System.getProperty("user.dir"), in, out);
+	}
+
+	public Shell(String ibDir, InputStream in, OutputStream out) throws IOException {
 		this.out = new Printer(new PrintWriter(out));
-		controller = new Controller(this.getPrinter());
+		controller = new Controller(ibDir, this.getPrinter());
 		reader = new LineReader(new BufferedReader(new InputStreamReader(in)));
 	}
 

@@ -74,7 +74,7 @@ public class TestWrapperCalls extends TestCase {
 		ByteArrayInputStream in = new ByteArrayInputStream(in_bytes);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
-		Shell shell = new Shell(in, out, System.err) {
+		Shell shell = new Shell(in, out) {
 
 			@Override
 			protected Controller getController() throws IOException {

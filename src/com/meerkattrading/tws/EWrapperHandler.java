@@ -37,6 +37,7 @@ public class EWrapperHandler implements InvocationHandler {
 	@Override
 	public Object invoke(Object that, Method method, Object[] args) throws Throwable {
 		out.println(method.getName(), method.getGenericParameterTypes(), args);
+		out.flush();
 		return null;
 	}
 }
