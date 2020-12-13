@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.ib.client.EClient;
@@ -40,9 +41,10 @@ import com.ib.client.EWrapper;
 import ibcalpha.ibc.DefaultMainWindowManager;
 import ibcalpha.ibc.IbcException;
 import ibcalpha.ibc.LoginManager;
+import ibcalpha.ibc.LoginManager.LoginState;
 import ibcalpha.ibc.MainWindowManager;
 import ibcalpha.ibc.Settings;
-import ibcalpha.ibc.TWSLifeCycle;
+import ibcalpha.ibc.TWSManager;
 import ibcalpha.ibc.TradingModeManager;
 
 public class Controller {
@@ -54,6 +56,8 @@ public class Controller {
 	private final Printer out;
 	private EClientSocket client;
 	private Thread signalThread;
+	private Base64LoginManager login;
+	private Thread loginThread;
 
 	public Controller(Printer out) throws IOException {
 		this(System.getProperty("user.dir"), out);
@@ -105,11 +109,12 @@ public class Controller {
 
 	public synchronized void open(TradingMode mode, TraderWorkstationSettings settings, Base64LoginManager credentials)
 			throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, NoSuchMethodException,
-			IOException {
-		if (TWSLifeCycle.isOpen()) {
-			close();
+			IOException, InterruptedException {
+		if (TWSManager.isOpen()) {
+			throw new IllegalStateException("TWS is already open");
 		}
-		boolean isGateway = TWSLifeCycle.class.getClassLoader().getResource("ibgateway/GWClient") != null;
+		login = credentials;
+		boolean isGateway = TWSManager.class.getClassLoader().getResource("ibgateway/GWClient") != null;
 		Settings.initialise(settings);
 		LoginManager.initialise(credentials);
 		MainWindowManager.initialise(new DefaultMainWindowManager(isGateway));
@@ -125,15 +130,30 @@ public class Controller {
 				// nothing to say
 			}
 		});
+		loginThread = new Thread(() -> {
+			LoginState old_state = LoginState.LOGGED_OUT;
+			while (old_state != LoginState.LOGGED_IN) {
+				synchronized (credentials) {
+					try {
+						credentials.wait();
+						LoginState new_state = credentials.getLoginState();
+						if (!new_state.equals(old_state)) {
+							out.println("login", new_state);
+							old_state = new_state;
+						}
+					} catch (InterruptedException | IllegalAccessException | InvocationTargetException | IOException e) {
+						break;
+					}
+				}
+			}
+		});
+		loginThread.start();
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		if (isGateway) {
-			TWSLifeCycle.open("ibgateway.GWClient", ibDir);
+			TWSManager.open(cl.loadClass("ibgateway.GWClient"), ibDir);
 		} else {
-			TWSLifeCycle.open("jclient.LoginFrame", ibDir);
+			TWSManager.open(cl.loadClass("jclient.LoginFrame"), ibDir);
 		}
-	}
-
-	public synchronized void isOpened() {
-		out.println("isOpened", TWSLifeCycle.isOpen());
 	}
 
 	public void sleep(long ms) throws InterruptedException {
@@ -141,21 +161,21 @@ public class Controller {
 	}
 
 	public synchronized void enableAPI(int portNumber, boolean readOnly)
-			throws InterruptedException, IbcException, ExecutionException {
-		TWSLifeCycle.enableAPI(portNumber, readOnly);
+			throws InterruptedException, IbcException, ExecutionException, IOException {
+		TWSManager.enableAPI(portNumber, readOnly);
 		out.println("ApiEnabled", portNumber);
 	}
 
+	public synchronized void saveSettings() {
+		TWSManager.saveSettings();
+	}
+
 	public synchronized void reconnectData() {
-		TWSLifeCycle.reconnectData();
+		TWSManager.reconnectData();
 	}
 
 	public synchronized void reconnectAccount() {
-		TWSLifeCycle.reconnectAccount();
-	}
-
-	public synchronized void close() {
-		TWSLifeCycle.close();
+		TWSManager.reconnectAccount();
 	}
 
 	public synchronized void eConnect(String host, int port, int clientId, boolean extraAuth)
@@ -178,7 +198,12 @@ public class Controller {
 				try {
 					reader.processMsgs();
 				} catch (Exception e) {
-					System.out.println("Exception: " + e.getMessage());
+					logger.log(Level.SEVERE, e.getMessage(), e);
+					try {
+						out.println("error", e.getMessage());
+					} catch (IOException e1) {
+						// rude!
+					}
 				}
 			}
 		});
@@ -195,41 +220,46 @@ public class Controller {
 		if (getEClient().isConnected()) {
 			eDisconnect();
 		}
-		if (TWSLifeCycle.isOpen()) {
-			close();
+		if (loginThread != null) {
+			loginThread.interrupt();
+		}
+		if (TWSManager.isOpen()) {
+			TWSManager.close();
+		} else if (login != null) {
+			System.exit(1);
 		}
 		throw new EOFException("exit");
 	}
 
-	public void serverVersion() {
+	public void serverVersion() throws IOException {
 		out.println("serverVersion", getEClient().serverVersion());
 	}
 
-	public void isConnected() {
+	public void isConnected() throws IOException {
 		out.println("isConnected", getEClient().isConnected());
 	}
 
-	public void connectedHost() {
+	public void connectedHost() throws IOException {
 		out.println("onnectedHost", getEClient().connectedHost());
 	}
 
-	public void isUseV100Plus() {
+	public void isUseV100Plus() throws IOException {
 		out.println("isUseV100Plus", getEClient().isUseV100Plus());
 	}
 
-	public void optionalCapabilities() {
+	public void optionalCapabilities() throws IOException {
 		out.println("optionalCapabilities", getEClient().optionalCapabilities());
 	}
 
-	public void faMsgTypeName(int type) {
+	public void faMsgTypeName(int type) throws IOException {
 		out.println("faMsgTypeName", EClient.faMsgTypeName(type));
 	}
 
-	public void getTwsConnectionTime() {
+	public void getTwsConnectionTime() throws IOException {
 		out.println("getTwsConnectionTime", getEClient().getTwsConnectionTime());
 	}
 
-	public void help(String name) throws IllegalAccessException, InvocationTargetException {
+	public void help(String name) throws IllegalAccessException, InvocationTargetException, IOException {
 		if (name == null || name.length() == 0) {
 			for (String command : commands.keySet()) {
 				out.println("help", command);

@@ -1,5 +1,5 @@
 # tws-shell
-Read–eval–print loop for TWS API
+Read–eval–print loop for Interactive Broker's TWS API
 
 Introduction
 ------------
@@ -15,7 +15,7 @@ Users must agree to the terms of the Interactive Broker license, download their 
 See https://www.interactivebrokers.com/en/index.php?f=14099#tws-software
 
 * The TWS API is an interface to TWS or IB Gateway, and as such requires network connectivity to a running instance of one of these programs. They can be downloaded here: https://www.interactivebrokers.com/en/index.php?f=14099#tws-software
-* To obtain the TWS API source and sample code, download the API Components here: http://interactivebrokers.github.io
+* To obtain the TWS API source and sample code to C:\TWS API or ~/IBJts, download the API Components from here: http://interactivebrokers.github.io
 * A working knowledge of the API programming language.
 * This project makes use of gradle build tool. See https://gradle.org/
 
@@ -37,7 +37,7 @@ Type "exit" to quit.
 For example consider the auto script below that records the NetLiquidation of the account into a file.
 
 ```
-./tws-shell.sh >> NetLiquidation.tsv << EOF
+java -jar build/libs/tws-shell*.jar >> NetLiquidation.tsv << EOF
 open    "live"  {
     "AcceptIncomingConnectionAction":"reject",
     "AcceptNonBrokerageAccountWarning":true,

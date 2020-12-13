@@ -19,23 +19,18 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-public class TWSLifeCycle {
+public class TWSManager {
 
 	public synchronized static boolean isOpen() {
 		JFrame jf = MainWindowManager.mainWindowManager().getMainWindow(0, TimeUnit.MILLISECONDS);
 		return jf != null && jf.isDisplayable();
 	}
 
-	public synchronized static void open(String mainClassName, String ibDir) throws IOException, ClassNotFoundException,
+	public synchronized static void open(Class<?> mainClass, String ibDir) throws IOException, ClassNotFoundException,
 			IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
 		createToolkitListener();
-
-		startSavingTwsSettingsAutomatically();
-
 		JtsIniManager.initialise(getJtsIniFilePath(ibDir));
-		startTws(mainClassName, ibDir);
-
+		startTws(mainClass, ibDir);
 	}
 
 	public synchronized static void close() {
@@ -85,6 +80,10 @@ public class TWSLifeCycle {
 		} finally {
 			ConfigDialogManager.configDialogManager().releaseConfigDialog();
 		}
+	}
+
+	public static synchronized void saveSettings() {
+        Utils.invokeMenuItem(MainWindowManager.mainWindowManager().getMainWindow(), new String[] {"File", "Save Settings"});
 	}
 
 	public synchronized static void reconnectData() {
@@ -162,19 +161,13 @@ public class TWSLifeCycle {
 		return ibDir;
 	}
 
-	private static void startSavingTwsSettingsAutomatically() {
-		TwsSettingsSaver.getInstance().initialise();
-	}
-
-	private static void startTws(String mainClassName, String ibDir) throws ClassNotFoundException, IllegalAccessException,
+	private static void startTws(Class<?> mainClass, String ibDir) throws ClassNotFoundException, IllegalAccessException,
 			InvocationTargetException, NoSuchMethodException, IOException {
 		if (Settings.settings().getBoolean("ShowAllTrades", false)) {
 			Utils.showTradesLogWindow();
 		}
 		String[] twsArgs = new String[1];
 		twsArgs[0] = getTWSSettingsDirectory(ibDir);
-		LoginManager.loginManager().startSession();
-		Class<?> mainClass = Thread.currentThread().getContextClassLoader().loadClass(mainClassName);
 		mainClass.getMethod("main", String[].class).invoke(null, (Object) twsArgs);
 	}
 

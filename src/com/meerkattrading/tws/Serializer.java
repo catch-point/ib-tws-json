@@ -21,6 +21,8 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -43,6 +45,7 @@ import com.ib.client.TimeCondition;
 import com.ib.client.VolumeCondition;
 
 public class Serializer {
+	private final Logger logger = Logger.getLogger(Serializer.class.getName());
 	private final JsonWriterFactory factory = Json.createWriterFactory(Collections.emptyMap());
 
 	public String serialize(Object object, PropertyType type) throws IllegalAccessException, InvocationTargetException {
@@ -212,6 +215,7 @@ public class Serializer {
 	}
 
 	private JsonValue exceptionToJson(Exception ex) {
+		logger.log(Level.SEVERE, ex.getMessage(), ex);
 		if (ex.getMessage() == null) {
 			return stringToJson(ex.toString());
 		} else {

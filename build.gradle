@@ -103,7 +103,7 @@ jar {
         attributes(
             "Implementation-Title": "TWS Shell",
             "Implementation-Version": version,
-            "Main-Class": "com.meerkattrading.tws.Shell"
+            "Main-Class": "com.meerkattrading.tws.Bootstrap"
         )
     }
     exclude('com/ib/**')

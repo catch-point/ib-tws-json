@@ -42,6 +42,12 @@ public class Base64LoginManager extends LoginManager {
 		}
 	}
 
+	@Override
+	public synchronized void setLoginState(LoginState arg0) {
+		super.setLoginState(arg0);
+		this.notifyAll();
+	}
+
 	public String FIXBase64UserName() {
 		return this.FIXBase64UserName;
 	}

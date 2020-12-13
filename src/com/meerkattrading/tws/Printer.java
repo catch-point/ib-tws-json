@@ -15,6 +15,7 @@
  */
 package com.meerkattrading.tws;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
@@ -30,11 +31,11 @@ public class Printer {
 		this.out = out;
 	}
 
-	public void flush() {
+	public void flush() throws IOException {
 		out.flush();
 	}
 
-	public void println(String command, String arg) {
+	public void println(String command, String arg) throws IOException {
 		try {
 			println(command, new Object[] { arg });
 		} catch (IllegalAccessException cause) {
@@ -44,7 +45,7 @@ public class Printer {
 		}
 	}
 
-	public void println(String command, Number arg) {
+	public void println(String command, Number arg) throws IOException {
 		try {
 			println(command, new Object[] { arg });
 		} catch (IllegalAccessException cause) {
@@ -54,7 +55,7 @@ public class Printer {
 		}
 	}
 
-	public void println(String command, Boolean arg) {
+	public void println(String command, Boolean arg) throws IOException {
 		try {
 			println(command, new Object[] { arg });
 		} catch (IllegalAccessException cause) {
@@ -64,7 +65,8 @@ public class Printer {
 		}
 	}
 
-	public void println(String command, Object... args) throws IllegalAccessException, InvocationTargetException {
+	public void println(String command, Object... args)
+			throws IllegalAccessException, InvocationTargetException, IOException {
 		if (args == null || args.length < 1) {
 			out.println(command);
 		} else {
@@ -79,10 +81,11 @@ public class Printer {
 			}
 			out.println(sb.toString());
 		}
+		flush();
 	}
 
 	public void println(String command, Type[] types, Object... args)
-			throws IllegalAccessException, InvocationTargetException {
+			throws IllegalAccessException, InvocationTargetException, IOException {
 		if (args == null || args.length < 1) {
 			out.println(command);
 		} else {
@@ -97,6 +100,7 @@ public class Printer {
 			}
 			out.println(sb.toString());
 		}
+		flush();
 	}
 
 	public synchronized PropertyType getPropertyType(Type type) {

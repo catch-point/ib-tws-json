@@ -33,7 +33,6 @@ public class TraderWorkstationSettings extends Settings {
 	private String LogComponents = "never";
 	private boolean MinimizeMainWindow = false;
 	private boolean ReadOnlyLogin = false;
-	private String SaveTwsSettingsAt = "";
 	private int SecondFactorAuthenticationExitInterval = 40;
 	private boolean ShowAllTrades = false;
 	private boolean StoreSettingsOnServer = false;
@@ -136,14 +135,6 @@ public class TraderWorkstationSettings extends Settings {
 
 	public void ReadOnlyLogin(boolean ReadOnlyLogin) {
 		this.ReadOnlyLogin = ReadOnlyLogin;
-	}
-
-	public String SaveTwsSettingsAt() {
-		return this.SaveTwsSettingsAt;
-	}
-
-	public void SaveTwsSettingsAt(String SaveTwsSettingsAt) {
-		this.SaveTwsSettingsAt = SaveTwsSettingsAt;
 	}
 
 	public int SecondFactorAuthenticationExitInterval() {

@@ -21,10 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -34,36 +35,48 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 public class Shell {
+	private final Logger logger = Logger.getLogger(Shell.class.getName());
 	private final Deserializer deserializer = new Deserializer();
 	private Controller controller;
 	private Printer out;
 	private LineReader reader;
 
 	public static void main(String[] args) throws InterruptedException, IOException {
-		String ibDir = System.getProperty("user.dir");
 		Options options = new Options();
-		options.addOption("d", "ibDir", true, "Where TWS will read/store settings");
+		options.addOption(null, "tws-settings-path", true, "Where TWS will read/store settings");
 		options.addOption("h", "help", false, "This message");
 		CommandLineParser parser = new DefaultParser();
+		CommandLine cmd;
 		try {
-			CommandLine cmd = parser.parse(options, args);
-			if (cmd.hasOption("ibDir")) {
-				ibDir = cmd.getOptionValue("ibDir");
-			}
-			if (cmd.hasOption("help")) {
-				HelpFormatter formatter = new HelpFormatter();
-				formatter.printHelp("tws-shell", options);
-				System.exit(0);
-			}
+			cmd = parser.parse(options, args);
 		} catch (ParseException exp) {
 			System.err.println(exp.getMessage());
 			System.exit(1);
+			return;
 		}
-		PrintStream out = System.out;
+		if (cmd.hasOption("help")) {
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("tws-shell", options);
+			System.exit(0);
+			return;
+		}
+		String ibDir = cmd.hasOption("tws-settings-path") ? cmd.getOptionValue("tws-settings-path")
+				: System.getProperty("user.dir");
+		Shell shell = new Shell(ibDir);
 		System.setOut(System.err);
-		Shell shell = new Shell(ibDir, System.in, out);
 		shell.repl();
 		shell.exit();
+	}
+
+	public Shell() throws IOException {
+		this(System.getProperty("user.dir"));
+	}
+
+	public Shell(String ibDir) throws IOException {
+		PrintWriter writer = new PrintWriter(System.out);
+		this.out = new Printer(writer);
+		controller = new Controller(ibDir, this.getPrinter());
+		reader = new LineReader(new BufferedReader(new InputStreamReader(System.in)));
 	}
 
 	public Shell(InputStream in, OutputStream out) throws IOException {
@@ -71,7 +84,8 @@ public class Shell {
 	}
 
 	public Shell(String ibDir, InputStream in, OutputStream out) throws IOException {
-		this.out = new Printer(new PrintWriter(out));
+		PrintWriter writer = new PrintWriter(out);
+		this.out = new Printer(writer);
 		controller = new Controller(ibDir, this.getPrinter());
 		reader = new LineReader(new BufferedReader(new InputStreamReader(in)));
 	}
@@ -97,6 +111,7 @@ public class Shell {
 				rep(input.getInput() + "\n");
 			}
 		} catch (SyntaxError | IllegalAccessException | InvocationTargetException | RuntimeException e) {
+			logger.log(Level.SEVERE, e.getMessage(), e);
 			getPrinter().println("error", e.getMessage() == null ? e.toString() : e.getMessage());
 		}
 	}
@@ -143,7 +158,7 @@ public class Shell {
 	}
 
 	public void exit() throws IOException {
-		getController().eDisconnect();
+		getController().exit();
 	}
 
 	protected Controller getController() throws IOException {
