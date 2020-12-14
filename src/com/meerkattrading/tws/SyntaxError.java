@@ -15,6 +15,12 @@
  */
 package com.meerkattrading.tws;
 
+/**
+ * Indicates the shell input is not correctly formatted
+ * 
+ * @author James Leigh
+ *
+ */
 public class SyntaxError extends Exception {
 	private static final long serialVersionUID = -6545811434028080509L;
 	private final int line;

@@ -21,6 +21,12 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 
+/**
+ * Reads and verifies the input from the shell
+ * 
+ * @author James Leigh
+ *
+ */
 public class LineReader {
 	private final BufferedReader reader;
 	private final Console console;

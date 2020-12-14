@@ -30,6 +30,12 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Determines the object properties for a Java type
+ * 
+ * @author James Leigh
+ *
+ */
 public class PropertyType {
 	private static final Set<String> GETTERS = new LinkedHashSet<String>() {
 		private static final long serialVersionUID = 2321538364094288074L;

@@ -15,6 +15,13 @@
  */
 package com.meerkattrading.tws;
 
+/**
+ * Indicates that the shell input is not complete and another line should be
+ * read.
+ * 
+ * @author James Leigh
+ *
+ */
 public class MoreInputExpected extends Exception {
 	private static final long serialVersionUID = -2231870598361151206L;
 

@@ -44,6 +44,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+/**
+ * Finds the JRE, VM args, TWS jars, and IB TWS API jar and launches a JVM
+ * 
+ * @author James Leigh
+ *
+ */
 public class Bootstrap {
 	private static final String TWS_API_JAR = "TwsApi.jar";
 	private static final String[] tws_path_search = new String[] { "C:\\Jts\\ibgateway", "C:\\Jts",
@@ -63,6 +69,7 @@ public class Bootstrap {
 		options.addOption(null, "tws-api-path", true, "The TwsApi directory to be searched for TwsApi.jar");
 		options.addOption(null, "tws-api-jar", true, "The TwsApi.jar filename");
 		options.addOption(null, "java-home", true, "The location of the jre to launch");
+		options.addOption(null, "no-prompt", false, "Don't prompt for input");
 		options.addOption("h", "help", false, "This message");
 		CommandLine cmd;
 		CommandLineParser parser = new DefaultParser();
@@ -75,7 +82,7 @@ public class Bootstrap {
 		}
 		if (cmd.hasOption("help")) {
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("tws-shell", options);
+			formatter.printHelp("ib-tws-shell", options);
 			System.exit(0);
 			return;
 		}
@@ -90,7 +97,7 @@ public class Bootstrap {
 		command.addAll(vm_args);
 		command.add("-cp");
 		command.add(cp);
-		command.add(Bootstrap.class.getPackageName() + ".Shell");
+		command.add(Bootstrap.class.getPackage().getName() + ".Shell");
 		command.addAll(Arrays.asList(shell_args));
 		Process shell = new ProcessBuilder(command).redirectInput(Redirect.INHERIT).redirectOutput(Redirect.INHERIT)
 				.redirectError(Redirect.INHERIT).start();
@@ -115,9 +122,9 @@ public class Bootstrap {
 		File install4j = getInstall4j(cmd);
 		if (install4j == null || !install4j.isDirectory())
 			return System.getProperty("java.home");
-		String[] jre_search = new String[] { readFile(new File(install4j, "pref_jre.cfg")),
-				readFile(new File(install4j, "inst_jre.cfg")),
-				new File(new File(new File(new File(install4j, "jre.bundle"), "Contents"), "Home"), "jre").getPath() };
+		String[] jre_search = new String[] {
+				new File(new File(new File(new File(install4j, "jre.bundle"), "Contents"), "Home"), "jre").getPath(),
+				readFile(new File(install4j, "pref_jre.cfg")), readFile(new File(install4j, "inst_jre.cfg")) };
 		for (String jre : jre_search) {
 			if (new File(jre).isDirectory())
 				return jre;
@@ -141,21 +148,27 @@ public class Bootstrap {
 			String version = getJtsVersion(jts_path, cmd);
 			File[] search = version != null
 					? new File[] { new File(new File(jts_path, version), ".install4j"),
-							new File(jts_path, ".install4j"),
 							new File(new File(new File(jts_path, "ibgateway"), version), ".install4j"),
-							new File(new File(jts_path, "ibgateway"), ".install4j") }
-					: new File[] { new File(jts_path, ".install4j") };
+							new File(new File(jts_path, "IB Gateway " + version), ".install4j"),
+							new File(new File(jts_path, "Trader Workstation " + version), ".install4j"),
+							new File(jts_path, ".install4j"), new File(new File(jts_path, "ibgateway"), ".install4j"),
+							new File(new File(jts_path, "IB Gateway"), ".install4j"),
+							new File(new File(jts_path, "Trader Workstation"), ".install4j") }
+					: new File[] { new File(jts_path, ".install4j"),
+							new File(new File(jts_path, "ibgateway"), ".install4j"),
+							new File(new File(jts_path, "IB Gateway"), ".install4j"),
+							new File(new File(jts_path, "Trader Workstation"), ".install4j") };
 			for (File i4j : search) {
 				if (i4j.isDirectory())
 					return i4j;
 			}
 		}
 		if (!cmd.hasOption("tws-path")) {
-			System.err.println("Could not find location of TWS install try --tws-path=...");
+			System.err.println("Could not find .install4j try --tws-path=...");
 		} else if (!cmd.hasOption("tws-version")) {
-			System.err.println("Could not find version of TWS install try --tws-version=...");
+			System.err.println("Could not find .install4j try --tws-version=...");
 		} else {
-			System.err.println("TWS location is missing");
+			System.err.println("Could not find .install4j");
 		}
 		return null;
 
@@ -198,46 +211,63 @@ public class Bootstrap {
 					? new File[] {
 							new File(new File(jts_path, version), isGateway ? "ibgateway.vmoptions" : "tws.vmoptions"),
 							new File(jts_path, isGateway ? "ibgateway.vmoptions" : "tws.vmoptions"),
-							new File(System.getProperty("user.home"),
+							new File(new File(new File(jts_path, "ibgateway"), version), "ibgateway.vmoptions"),
+							new File(new File(jts_path, "IB Gateway " + version), "ibgateway.vmoptions"),
+							new File(new File(jts_path, "Trader Workstation " + version), "tws.vmoptions"),
+							new File(new File(System.getProperty("user.home"), "Jts"),
 									(isGateway ? "ibgateway-" : "tws-") + version + ".vmoptions"),
 							new File(new File(jts_path, "ibgateway"), "ibgateway.vmoptions"),
-							new File(new File(new File(jts_path, "ibgateway"), version), "ibgateway.vmoptions") }
-					: new File[] { new File(jts_path, isGateway ? "ibgateway.vmoptions" : "tws.vmoptions") };
+							new File(new File(jts_path, "IB Gateway"), "ibgateway.vmoptions"),
+							new File(new File(jts_path, "Trader Workstation"), "tws.vmoptions"),
+							new File(new File(System.getProperty("user.home"), "Jts"),
+									isGateway ? "ibgateway.vmoptions" : "tws.vmoptions") }
+					: new File[] { new File(jts_path, isGateway ? "ibgateway.vmoptions" : "tws.vmoptions"),
+							new File(new File(System.getProperty("user.home"), "Jts"),
+									(isGateway ? "ibgateway-" : "tws-") + version + ".vmoptions"),
+							new File(new File(jts_path, "ibgateway"), "ibgateway.vmoptions"),
+							new File(new File(jts_path, "IB Gateway"), "ibgateway.vmoptions"),
+							new File(new File(jts_path, "Trader Workstation"), "tws.vmoptions"),
+							new File(new File(System.getProperty("user.home"), "Jts"),
+									isGateway ? "ibgateway.vmoptions" : "tws.vmoptions") };
 			for (File vmoptions : search) {
 				if (vmoptions.isFile())
 					return vmoptions;
 			}
 		}
 		if (!cmd.hasOption("tws-path")) {
-			System.err.println("Could not find location of TWS install try --tws-path=...");
+			System.err.println("Could not find vmoptions try --tws-path=...");
 		} else if (!cmd.hasOption("tws-version")) {
-			System.err.println("Could not find version of TWS install try --tws-version=...");
+			System.err.println("Could not find vmoptions try --tws-version=...");
 		} else {
-			System.err.println("TWS location is missing");
+			System.err.println("Could not find vmoptions");
 		}
 		return null;
 	}
 
 	private static String getClassPath(CommandLine cmd) throws MalformedURLException {
+		String[] classpath = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+		List<File> jars = new ArrayList<>();
 		Collection<File> jts_jars = getJtsJars(cmd);
 		if (!jts_jars.isEmpty()) {
-			String[] classpath = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
-			List<File> jars = new ArrayList<>(jts_jars.size() + classpath.length);
 			jars.addAll(jts_jars);
-			for (int i = 0; i < classpath.length; i++) {
-				jars.add(new File(classpath[i]));
-			}
-			StringBuilder sb = new StringBuilder();
-			for (File jar : jars) {
-				if (sb.length() > 0) {
-					sb.append(System.getProperty("path.separator"));
-				}
-				sb.append(jar.getPath());
-			}
-			return sb.toString();
-		} else {
-			return null;
 		}
+		File tws_api_jar = getTwsApiJar(cmd);
+		if (tws_api_jar != null) {
+			jars.add(tws_api_jar);
+		} else {
+			System.err.println("Could not find TwsApi.jar try --tws-api-jar=...");
+		}
+		for (int i = 0; i < classpath.length; i++) {
+			jars.add(new File(classpath[i]));
+		}
+		StringBuilder sb = new StringBuilder();
+		for (File jar : jars) {
+			if (sb.length() > 0) {
+				sb.append(System.getProperty("path.separator"));
+			}
+			sb.append(jar.getPath());
+		}
+		return sb.toString();
 	}
 
 	private static Collection<File> getJtsJars(CommandLine cmd) throws MalformedURLException {
@@ -251,12 +281,6 @@ public class Bootstrap {
 				jars.put(key, new File(jars_dir, jar));
 			}
 		}
-		File tws_api_jar = getTwsApiJar(cmd);
-		if (tws_api_jar != null) {
-			jars.put(tws_api_jar.getName(), tws_api_jar);
-		} else {
-			System.err.println("Could not find TwsApi.jar try --tws-api-jar=...");
-		}
 		return jars.values();
 	}
 
@@ -264,22 +288,27 @@ public class Bootstrap {
 		for (String jts_path : getJtsPathSearch(cmd)) {
 			String version = getJtsVersion(jts_path, cmd);
 			File[] search = version != null
-					? new File[] { new File(new File(jts_path, version), "jars"), new File(jts_path, "jars"),
+					? new File[] { new File(new File(jts_path, version), "jars"),
 							new File(new File(new File(jts_path, "ibgateway"), version), "jars"),
 							new File(new File(jts_path, "IB Gateway " + version), "jars"),
-							new File(new File(jts_path, "Trader Workstation " + version), "jars") }
-					: new File[] { new File(jts_path, "jars") };
+							new File(new File(jts_path, "Trader Workstation " + version), "jars"),
+							new File(jts_path, "jars"), new File(new File(jts_path, "ibgateway"), "jars"),
+							new File(new File(jts_path, "IB Gateway"), "jars"),
+							new File(new File(jts_path, "Trader Workstation"), "jars") }
+					: new File[] { new File(jts_path, "jars"), new File(new File(jts_path, "ibgateway"), "jars"),
+							new File(new File(jts_path, "IB Gateway"), "jars"),
+							new File(new File(jts_path, "Trader Workstation"), "jars") };
 			for (File jars : search) {
 				if (jars.isDirectory())
 					return jars;
 			}
 		}
 		if (!cmd.hasOption("tws-path")) {
-			System.err.println("Could not find location of TWS install try --tws-path=...");
+			System.err.println("Could not find jars try --tws-path=...");
 		} else if (!cmd.hasOption("tws-version")) {
-			System.err.println("Could not find version of TWS install try --tws-version=...");
+			System.err.println("Could not find jars try --tws-version=...");
 		} else {
-			System.err.println("TWS location is missing");
+			System.err.println("Could not find jars");
 		}
 		return null;
 	}

@@ -22,6 +22,12 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Serializes the output into JSON
+ * 
+ * @author James Leigh
+ *
+ */
 public class Printer {
 	private final PrintWriter out;
 	private final Serializer serializer = new Serializer();
@@ -35,9 +41,19 @@ public class Printer {
 		out.flush();
 	}
 
+	public void println(String command) throws IOException {
+		try {
+			println(command, new Type[0], new Object[0]);
+		} catch (IllegalAccessException cause) {
+			throw new AssertionError("unexpected", cause);
+		} catch (InvocationTargetException cause) {
+			throw new AssertionError("unexpected", cause);
+		}
+	}
+
 	public void println(String command, String arg) throws IOException {
 		try {
-			println(command, new Object[] { arg });
+			println(command, new Type[] { String.class }, new Object[] { arg });
 		} catch (IllegalAccessException cause) {
 			throw new AssertionError("unexpected", cause);
 		} catch (InvocationTargetException cause) {
@@ -47,7 +63,7 @@ public class Printer {
 
 	public void println(String command, Number arg) throws IOException {
 		try {
-			println(command, new Object[] { arg });
+			println(command, new Type[] { Number.class }, new Object[] { arg });
 		} catch (IllegalAccessException cause) {
 			throw new AssertionError("unexpected", cause);
 		} catch (InvocationTargetException cause) {
@@ -57,7 +73,7 @@ public class Printer {
 
 	public void println(String command, Boolean arg) throws IOException {
 		try {
-			println(command, new Object[] { arg });
+			println(command, new Type[] { Boolean.class }, new Object[] { arg });
 		} catch (IllegalAccessException cause) {
 			throw new AssertionError("unexpected", cause);
 		} catch (InvocationTargetException cause) {
@@ -72,7 +88,8 @@ public class Printer {
 		} else {
 			String[] json = new String[args.length];
 			for (int i = 0; i < args.length; i++) {
-				json[i] = serializer.serialize(args[i], getPropertyType(args[i].getClass()));
+				json[i] = serializer.serialize(args[i],
+						getPropertyType(args[i] == null ? Object.class : args[i].getClass()));
 			}
 			StringBuilder sb = new StringBuilder();
 			sb.append(command);

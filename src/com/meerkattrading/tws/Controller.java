@@ -39,6 +39,7 @@ import com.ib.client.EReader;
 import com.ib.client.EWrapper;
 
 import ibcalpha.ibc.DefaultMainWindowManager;
+import ibcalpha.ibc.ErrorCodes;
 import ibcalpha.ibc.IbcException;
 import ibcalpha.ibc.LoginManager;
 import ibcalpha.ibc.LoginManager.LoginState;
@@ -47,6 +48,12 @@ import ibcalpha.ibc.Settings;
 import ibcalpha.ibc.TWSManager;
 import ibcalpha.ibc.TradingModeManager;
 
+/**
+ * Executes all the commands from the shell.
+ * 
+ * @author James Leigh
+ *
+ */
 public class Controller {
 	private final Logger logger = Logger.getLogger(Shell.class.getName());
 	private final Map<String, Method> commands = new TreeMap<>();
@@ -107,22 +114,22 @@ public class Controller {
 		return array;
 	}
 
-	public synchronized void open(TradingMode mode, TraderWorkstationSettings settings, Base64LoginManager credentials)
+	public synchronized void login(TradingMode mode, TraderWorkstationSettings settings, Base64LoginManager credentials)
 			throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, NoSuchMethodException,
 			IOException, InterruptedException {
 		if (TWSManager.isOpen()) {
 			throw new IllegalStateException("TWS is already open");
 		}
-		login = credentials;
+		login = credentials == null ? new Base64LoginManager() : credentials;
 		boolean isGateway = TWSManager.class.getClassLoader().getResource("ibgateway/GWClient") != null;
-		Settings.initialise(settings);
-		LoginManager.initialise(credentials);
+		Settings.initialise(settings == null ? new TraderWorkstationSettings() : settings);
+		LoginManager.initialise(login);
 		MainWindowManager.initialise(new DefaultMainWindowManager(isGateway));
 		TradingModeManager.initialise(new TradingModeManager() {
 
 			@Override
 			public String getTradingMode() {
-				return mode.name();
+				return mode == null ? TradingMode.live.name() : mode.name();
 			}
 
 			@Override
@@ -133,15 +140,16 @@ public class Controller {
 		loginThread = new Thread(() -> {
 			LoginState old_state = LoginState.LOGGED_OUT;
 			while (old_state != LoginState.LOGGED_IN) {
-				synchronized (credentials) {
+				synchronized (login) {
 					try {
-						credentials.wait();
-						LoginState new_state = credentials.getLoginState();
+						login.wait();
+						LoginState new_state = login.getLoginState();
 						if (!new_state.equals(old_state)) {
 							out.println("login", new_state);
 							old_state = new_state;
 						}
-					} catch (InterruptedException | IllegalAccessException | InvocationTargetException | IOException e) {
+					} catch (InterruptedException | IllegalAccessException | InvocationTargetException
+							| IOException e) {
 						break;
 					}
 				}
@@ -150,9 +158,9 @@ public class Controller {
 		loginThread.start();
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		if (isGateway) {
-			TWSManager.open(cl.loadClass("ibgateway.GWClient"), ibDir);
+			TWSManager.start(cl.loadClass("ibgateway.GWClient"), ibDir);
 		} else {
-			TWSManager.open(cl.loadClass("jclient.LoginFrame"), ibDir);
+			TWSManager.start(cl.loadClass("jclient.LoginFrame"), ibDir);
 		}
 	}
 
@@ -160,10 +168,9 @@ public class Controller {
 		Thread.sleep(ms);
 	}
 
-	public synchronized void enableAPI(int portNumber, boolean readOnly)
+	public synchronized void enableAPI(Integer portNumber, Boolean readOnly)
 			throws InterruptedException, IbcException, ExecutionException, IOException {
-		TWSManager.enableAPI(portNumber, readOnly);
-		out.println("ApiEnabled", portNumber);
+		out.println("enableAPI", TWSManager.enableAPI(portNumber, readOnly));
 	}
 
 	public synchronized void saveSettings() {
@@ -223,10 +230,10 @@ public class Controller {
 		if (loginThread != null) {
 			loginThread.interrupt();
 		}
-		if (TWSManager.isOpen()) {
-			TWSManager.close();
+		if (login != null && TWSManager.isOpen()) {
+			TWSManager.stop();
 		} else if (login != null) {
-			System.exit(1);
+			System.exit(ErrorCodes.ERROR_CODE_2FA_DIALOG_TIMED_OUT);
 		}
 		throw new EOFException("exit");
 	}
@@ -247,8 +254,12 @@ public class Controller {
 		out.println("isUseV100Plus", getEClient().isUseV100Plus());
 	}
 
-	public void optionalCapabilities() throws IOException {
-		out.println("optionalCapabilities", getEClient().optionalCapabilities());
+	public void optionalCapabilities(String val) throws IOException {
+		if (val == null) {
+			out.println("optionalCapabilities", getEClient().optionalCapabilities());
+		} else {
+			getEClient().optionalCapabilities(val);
+		}
 	}
 
 	public void faMsgTypeName(int type) throws IOException {

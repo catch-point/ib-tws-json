@@ -44,6 +44,12 @@ import com.ib.client.TagValue;
 import com.ib.client.TimeCondition;
 import com.ib.client.VolumeCondition;
 
+/**
+ * Serializes Java Objects into JSON
+ * 
+ * @author James Leigh
+ *
+ */
 public class Serializer {
 	private final Logger logger = Logger.getLogger(Serializer.class.getName());
 	private final JsonWriterFactory factory = Json.createWriterFactory(Collections.emptyMap());

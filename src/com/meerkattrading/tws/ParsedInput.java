@@ -19,6 +19,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Parses the input to ensure it is correctly formatted.
+ * 
+ * @author James Leigh
+ *
+ */
 public class ParsedInput {
 	private static int EOF = -1;
 	private final List<String> values = new ArrayList<>();

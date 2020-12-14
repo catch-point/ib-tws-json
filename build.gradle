@@ -101,7 +101,7 @@ compileJava {
 jar {
     manifest {
         attributes(
-            "Implementation-Title": "TWS Shell",
+            "Implementation-Title": "IB TWS Shell",
             "Implementation-Version": version,
             "Main-Class": "com.meerkattrading.tws.Bootstrap"
         )

@@ -58,6 +58,12 @@ import com.ib.client.TickAttribLast;
 import com.ib.client.TimeCondition;
 import com.ib.client.VolumeCondition;
 
+/**
+ * Takes the JSON values from stdin command and converts them into Java Object.
+ * 
+ * @author James Leigh
+ *
+ */
 public class Deserializer {
 	public Object deserialize(String json, PropertyType type)
 			throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
@@ -164,7 +170,7 @@ public class Deserializer {
 		if (obj == null || obj.getValueType() == ValueType.NULL)
 			return null;
 		List<?> list = jsonToListOf(obj, type);
-		Object[] array = (Object[]) Array.newInstance((Class<?>)type.getJavaType(), list.size());
+		Object[] array = (Object[]) Array.newInstance((Class<?>) type.getJavaType(), list.size());
 		return list.toArray(array);
 	}
 
@@ -461,7 +467,8 @@ public class Deserializer {
 		if (obj == null || obj.getValueType() == ValueType.NULL)
 			return null;
 		JsonObject o = obj.asJsonObject();
-		return new SoftDollarTier(jsonToString(o.get("name")), jsonToString(o.get("value")), jsonToString(o.get("displayName")));
+		return new SoftDollarTier(jsonToString(o.get("name")), jsonToString(o.get("value")),
+				jsonToString(o.get("displayName")));
 	}
 
 	private HistogramEntry jsonToHistogramEntry(JsonValue obj) {

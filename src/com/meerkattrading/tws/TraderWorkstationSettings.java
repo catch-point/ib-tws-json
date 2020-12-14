@@ -19,6 +19,12 @@ import java.lang.reflect.InvocationTargetException;
 
 import ibcalpha.ibc.Settings;
 
+/**
+ * Settings used when running IB TWS software
+ * 
+ * @author James Leigh
+ *
+ */
 public class TraderWorkstationSettings extends Settings {
 
 	private String AcceptIncomingConnectionAction = "manual";
@@ -27,14 +33,10 @@ public class TraderWorkstationSettings extends Settings {
 	private boolean DismissNSEComplianceNotice = true;
 	private boolean DismissPasswordExpiryWarning = false;
 	private String ExistingSessionDetectedAction = "manual";
-	private boolean ExitAfterSecondFactorAuthenticationTimeout = false;
 	private boolean FIX = false;
-	private boolean IbAutoClosedown = true;
 	private String LogComponents = "never";
 	private boolean MinimizeMainWindow = false;
 	private boolean ReadOnlyLogin = false;
-	private int SecondFactorAuthenticationExitInterval = 40;
-	private boolean ShowAllTrades = false;
 	private boolean StoreSettingsOnServer = false;
 	private boolean SuppressInfoMessages = true;
 
@@ -89,28 +91,12 @@ public class TraderWorkstationSettings extends Settings {
 		this.ExistingSessionDetectedAction = ExistingSessionDetectedAction;
 	}
 
-	public boolean ExitAfterSecondFactorAuthenticationTimeout() {
-		return this.ExitAfterSecondFactorAuthenticationTimeout;
-	}
-
-	public void ExitAfterSecondFactorAuthenticationTimeout(boolean ExitAfterSecondFactorAuthenticationTimeout) {
-		this.ExitAfterSecondFactorAuthenticationTimeout = ExitAfterSecondFactorAuthenticationTimeout;
-	}
-
 	public boolean FIX() {
 		return this.FIX;
 	}
 
 	public void FIX(boolean FIX) {
 		this.FIX = FIX;
-	}
-
-	public boolean IbAutoClosedown() {
-		return this.IbAutoClosedown;
-	}
-
-	public void IbAutoClosedown(boolean IbAutoClosedown) {
-		this.IbAutoClosedown = IbAutoClosedown;
 	}
 
 	public String LogComponents() {
@@ -135,22 +121,6 @@ public class TraderWorkstationSettings extends Settings {
 
 	public void ReadOnlyLogin(boolean ReadOnlyLogin) {
 		this.ReadOnlyLogin = ReadOnlyLogin;
-	}
-
-	public int SecondFactorAuthenticationExitInterval() {
-		return this.SecondFactorAuthenticationExitInterval;
-	}
-
-	public void SecondFactorAuthenticationExitInterval(int SecondFactorAuthenticationExitInterval) {
-		this.SecondFactorAuthenticationExitInterval = SecondFactorAuthenticationExitInterval;
-	}
-
-	public boolean ShowAllTrades() {
-		return this.ShowAllTrades;
-	}
-
-	public void ShowAllTrades(boolean ShowAllTrades) {
-		this.ShowAllTrades = ShowAllTrades;
 	}
 
 	public boolean StoreSettingsOnServer() {
@@ -209,15 +179,14 @@ public class TraderWorkstationSettings extends Settings {
 	public Object getObject(String name) {
 		try {
 			return this.getClass().getMethod(name).invoke(this);
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException
-				| RuntimeException e) {
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | RuntimeException e) {
 			return null;
 		}
 	}
 
 	@Override
 	public void logDiagnosticMessage() {
-        // nothing to say
+		// nothing to say
 	}
 
 }

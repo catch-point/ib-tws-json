@@ -1,6 +1,23 @@
+/* 
+ * Copyright (c) 2020 James Leigh
+ * 
+ * This program is free software: you can redistribute it and/or modify  
+ * it under the terms of the GNU General Public License as published by  
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package ibcalpha.ibc;
 
 import java.awt.AWTEvent;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -14,11 +31,19 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JTextField;
 
+/**
+ * Handle various actions to the TWS software
+ * 
+ * @author James Leigh
+ *
+ */
 public class TWSManager {
 
 	public synchronized static boolean isOpen() {
@@ -26,37 +51,56 @@ public class TWSManager {
 		return jf != null && jf.isDisplayable();
 	}
 
-	public synchronized static void open(Class<?> mainClass, String ibDir) throws IOException, ClassNotFoundException,
+	public synchronized static void start(Class<?> mainClass, String ibDir) throws IOException, ClassNotFoundException,
 			IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		createToolkitListener();
 		JtsIniManager.initialise(getJtsIniFilePath(ibDir));
 		startTws(mainClass, ibDir);
 	}
 
-	public synchronized static void close() {
+	public synchronized static void stop() {
 		(new StopTask(null)).run(); // run on the current thread
 	}
 
-	public synchronized static void enableAPI(int portNumber, boolean readOnly)
+	public synchronized static int enableAPI(Integer portNumber, Boolean readOnly)
 			throws InterruptedException, IbcException, ExecutionException {
-		if (portNumber != 0)
-			(new ConfigurationTask(new ConfigureTwsApiPortTask(portNumber))).executeAsync();
-		(new ConfigurationTask(new ConfigureReadOnlyApiTask(readOnly))).executeAsync();
+		if (readOnly != null) {
+			(new ConfigurationTask(new ConfigureReadOnlyApiTask(readOnly))).executeAsync();
+		}
 
+		final AtomicInteger currentPort = new AtomicInteger();
 		final JDialog configDialog = ConfigDialogManager.configDialogManager().getConfigDialog();
 		FutureTask<?> t = new FutureTask<>((Runnable) () -> {
 			try {
-				if (!Utils.selectConfigSection(configDialog, new String[] { "API", "Settings" }))
-					// older versions of TWS don't have the Settings node below the API node
-					Utils.selectConfigSection(configDialog, new String[] { "API" });
+				Utils.selectApiSettings(configDialog);
 
-				JCheckBox cb = SwingUtils.findCheckBox(configDialog, "Enable ActiveX and Socket Clients");
-				if (cb == null)
-					throw new IbcException("could not find Enable ActiveX checkbox");
+				Component comp = SwingUtils.findComponent(configDialog, "Socket port");
+				if (comp == null)
+					throw new IbcException("could not find socket port component");
 
-				if (!cb.isSelected()) {
-					cb.doClick();
-					SwingUtils.clickButton(configDialog, "OK");
+				JTextField tf = SwingUtils.findTextField((Container) comp, 0);
+				if (tf == null)
+					throw new IbcException("could not find socket port field");
+
+				currentPort.set(Integer.parseInt(tf.getText()));
+				if (portNumber == null || currentPort.get() == portNumber) {
+					Utils.logToConsole("TWS API socket port is already set to " + tf.getText());
+				} else {
+					Utils.logToConsole("TWS API socket port was set to " + tf.getText());
+					tf.setText(Integer.toString(portNumber));
+					Utils.logToConsole("TWS API socket port now set to " + tf.getText());
+				}
+				if (!MainWindowManager.mainWindowManager().isGateway()) {
+					JCheckBox cb = SwingUtils.findCheckBox(configDialog, "Enable ActiveX and Socket Clients");
+					if (cb == null)
+						throw new IbcException("could not find Enable ActiveX checkbox");
+					if (cb.isSelected())
+						ConfigDialogManager.configDialogManager().setApiConfigChangeConfirmationExpected();
+
+					if (!cb.isSelected()) {
+						cb.doClick();
+						SwingUtils.clickButton(configDialog, "OK");
+					}
 				}
 			} catch (IbcException e) {
 				throw new UndeclaredThrowableException(e);
@@ -80,10 +124,12 @@ public class TWSManager {
 		} finally {
 			ConfigDialogManager.configDialogManager().releaseConfigDialog();
 		}
+		return currentPort.get();
 	}
 
 	public static synchronized void saveSettings() {
-        Utils.invokeMenuItem(MainWindowManager.mainWindowManager().getMainWindow(), new String[] {"File", "Save Settings"});
+		Utils.invokeMenuItem(MainWindowManager.mainWindowManager().getMainWindow(),
+				new String[] { "File", "Save Settings" });
 	}
 
 	public synchronized static void reconnectData() {
@@ -126,7 +172,7 @@ public class TWSManager {
 
 		windowHandlers.add(new AcceptIncomingConnectionDialogHandler());
 		windowHandlers.add(new BlindTradingWarningDialogHandler());
-		windowHandlers.add(new ExitSessionFrameHandler());
+		// windowHandlers.add(new ExitSessionFrameHandler());
 		windowHandlers.add(new LoginFrameHandler());
 		windowHandlers.add(new GatewayLoginFrameHandler());
 		windowHandlers.add(new MainWindowFrameHandler());
@@ -161,8 +207,8 @@ public class TWSManager {
 		return ibDir;
 	}
 
-	private static void startTws(Class<?> mainClass, String ibDir) throws ClassNotFoundException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException, IOException {
+	private static void startTws(Class<?> mainClass, String ibDir) throws ClassNotFoundException,
+			IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException {
 		if (Settings.settings().getBoolean("ShowAllTrades", false)) {
 			Utils.showTradesLogWindow();
 		}

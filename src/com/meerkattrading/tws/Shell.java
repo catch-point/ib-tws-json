@@ -34,6 +34,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+/**
+ * The main entry point for the Read-eval-print loop
+ * 
+ * @author James Leigh
+ *
+ */
 public class Shell {
 	private final Logger logger = Logger.getLogger(Shell.class.getName());
 	private final Deserializer deserializer = new Deserializer();
@@ -44,6 +50,7 @@ public class Shell {
 	public static void main(String[] args) throws InterruptedException, IOException {
 		Options options = new Options();
 		options.addOption(null, "tws-settings-path", true, "Where TWS will read/store settings");
+		options.addOption(null, "no-prompt", false, "Don't prompt for input");
 		options.addOption("h", "help", false, "This message");
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd;
@@ -56,7 +63,7 @@ public class Shell {
 		}
 		if (cmd.hasOption("help")) {
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("tws-shell", options);
+			formatter.printHelp("ib-tws-shell", options);
 			System.exit(0);
 			return;
 		}
@@ -64,6 +71,9 @@ public class Shell {
 				: System.getProperty("user.dir");
 		Shell shell = new Shell(ibDir);
 		System.setOut(System.err);
+		if (!cmd.hasOption("no-prompt")) {
+			System.err.println("Welcome to ib-tws-shell! Type 'help' to see a list of commands or 'login' to open TWS.");
+		}
 		shell.repl();
 		shell.exit();
 	}
@@ -158,7 +168,11 @@ public class Shell {
 	}
 
 	public void exit() throws IOException {
-		getController().exit();
+		try {
+			getController().exit();
+		} catch (EOFException e) {
+			// expected
+		}
 	}
 
 	protected Controller getController() throws IOException {

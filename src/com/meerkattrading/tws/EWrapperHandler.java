@@ -21,6 +21,12 @@ import java.lang.reflect.Proxy;
 
 import com.ib.client.EWrapper;
 
+/**
+ * Serializes all the EWrapper events
+ * 
+ * @author James Leigh
+ *
+ */
 public class EWrapperHandler implements InvocationHandler {
 	private Printer out;
 

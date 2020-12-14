@@ -23,6 +23,12 @@ import javax.swing.JFrame;
 
 import ibcalpha.ibc.LoginManager;
 
+/**
+ * Decodes the Base64 username and password to login to IB TWS
+ * 
+ * @author James Leigh
+ *
+ */
 public class Base64LoginManager extends LoginManager {
 
 	private String FIXBase64UserName;
