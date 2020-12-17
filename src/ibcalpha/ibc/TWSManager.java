@@ -83,9 +83,9 @@ public class TWSManager {
 					throw new IbcException("could not find socket port field");
 
 				currentPort.set(Integer.parseInt(tf.getText()));
-				if (portNumber == null || currentPort.get() == portNumber) {
+				if (portNumber != null && currentPort.get() == portNumber) {
 					Utils.logToConsole("TWS API socket port is already set to " + tf.getText());
-				} else {
+				} else if (portNumber != null && portNumber > 0) {
 					Utils.logToConsole("TWS API socket port was set to " + tf.getText());
 					tf.setText(Integer.toString(portNumber));
 					Utils.logToConsole("TWS API socket port now set to " + tf.getText());

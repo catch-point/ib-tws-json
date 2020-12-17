@@ -1,14 +1,14 @@
 # ib-tws-shell
-Read–eval–print loop for Interactive Broker's TWS API
+Read–eval–print loop for Interactive Broker's Trader Workstation and Gateway
 
 Introduction
 ------------
 
 The TWS API is a simple yet powerful interface through which Interactive Broker clients can automate their trading strategies, request market data and monitor your account balance and portfolio in real time.
 
-This project serializes Interactive Broker's Java Client to stdin/stdout so that it can be used by other programs. This is particularly useful for programing languages that do not have an official TWS API Client.
+This project serializes Interactive Broker's Java Client to stdin/stdout so that it can be used by other programs. This is particularly useful for programming languages that do not have an official TWS API Client.
 
-This project differentiates from other client libraries by intergrating the TWS Desktop or Gateway into the same JVM running the TWS Client. Whereby providing a single interface to control Interactive Broker's Trader Workstation / Gateway.
+This project differentiates from other client libraries by integrating the TWS Desktop or Gateway into the same JVM running the TWS Client. Whereby providing a single interface to control Interactive Broker's Trader Workstation / Gateway.
 
 Requirements
 ------------
@@ -20,10 +20,9 @@ Users must agree to the terms of the Interactive Broker license, download their 
 * A working knowledge of the API programming language.
 * This project makes use of gradle build tool. See https://gradle.org/
 
-TWS needs to operate in English so that the various dialogues can be recognised. You can set TWS's language by starting it manually (ie without passing a password) and selecting the language on the initial login dialog. TWS will remember this language setting when you subsequently use with the command.
+TWS needs to operate in English so that the various dialogues can be recognised. You can set TWS's language by starting it manually (ie without passing a password) and selecting the language on the initial login dialog. TWS will remember this language setting when you subsequently use it.
 
 Note that you do not need an IBKR account to try this out, as you can use IBKR's Free Trial offer, for which there is a link at the top of the homepage on their website.
-
 
 Launching
 ---------
@@ -32,29 +31,58 @@ The ib-tws-shell takes the following command line parameters.
 
 ### Command Line Parameters
 
-#### java-home
+| Parameter Name | Parameter Value |
+|----------------|-----------------|
+|java-home|The JRE that is used to launch TWS and ib-tws-shell. If none is provided, an install4j JRE is searched for in the tws-path that would have been installed by TWS. Note that TWS cannot be run with just any JRE and depends on features provided with the JRE that came with the install.|
+|tws-api-jar|Points to the TwsApi.jar file that should be used when connecting to TWS. If none is provide it is searched for using tws-api-path.|
+|tws-api-path|Where to look for the TwsApi.jar file (if tws-api-jar is not provided). If not provided, it will look in C:\\TWS API, ~/IBJts, and a few other places.|
+|tws-path|The install location of TWS Desktop or Gateway. If using an offline version (or Gateway) this can point to the folder with the version number. When not provided, the system will look in the default location for Gateway and (if not found) TWS Desktop.|
+|tws-settings-path||Every running instance must have a unique tws-settings-path, which defaults to the current working directory.|
+|tws-version|If the tws-path is not provided this can help choose which TWS instance to launch. It is recommended to use an offline TWS install to give project contributors time to test new TWS releases.|
+|silence|Don't log anything, just report API responses.|
+|no-prompt|Don't print a friendly welcome message.|
 
-The JRE that is used to launch TWS and ib-tws-shell. If none is provided, a install4j JRE is search for in the tws-path that would have been installed by TWS. Note that TWS cannot be run with any JRE and depends on features provided with the install JRE.
+Usage
+-----
 
-#### tws-api-jar
+Pass EClient calls to stdin. Prefix with the method name, followed by each parameter prefixed by white spaces. Every parameter must be encoded in JSON. JSON values can span multiple lines.
 
-Points to the TwsApi.jar file that should be used when connecting to TWS. If none is provide it is search for using tws-api-path.
+Calls to EWrapper are serialized to stdout, one per line. Prefixed by the method name, followed by each parameter prefixed by a tab character. Every parameter is serialized as JSON.
 
-#### tws-api-path
+The command "help" is available to show a list of EClient+ calls and if passed the name of a method or type, it will show more.
 
-Where to look for the TwsApi.jar file (if tws-api-jar is not provided). If not provided, it will look in C:\\TWS API, ~/IBJts, and a few other places.
+Type "exit" to quit.
 
-#### tws-path
+For example consider the auto script below that records the NetLiquidation of the account into a file.
 
-The install location of TWS Desktop or Gateway. If using an offline version (or Gateway) this can point to the folder with the version number. When not provided, the system will look in the default location for Gateway and (if not found) TWS Desktop.
-
-#### tws-settings-path
-
-Every running instance must have a unique tws-settings-path, which defaults to ~/Jts
-
-#### tws-version
-
-If the tws-path is not provided this can help choose which TWS instance to choose. It is recommended to use an offline TWS install to give project contributors time to test new TWS releases.
+```
+java -jar build/libs/tws-shell*.jar >> NetLiquidation.tsv << EOF
+login    "live"  {
+    "AcceptIncomingConnectionAction":"reject",
+    "AcceptNonBrokerageAccountWarning":true,
+    "AllowBlindTrading":true,
+    "DismissNSEComplianceNotice": true,
+    "DismissPasswordExpiryWarning": true,
+    "ExistingSessionDetectedAction": "secondary",
+    "LogComponents": "never",
+    "MinimizeMainWindow": false,
+    "ReadOnlyLogin": true,
+    "StoreSettingsOnServer":false,
+    "SuppressInfoMessages": true
+}   {
+    "IBAPIBase64UserName": "dXNlcm5hbWU=",
+    "IBAPIBase64Password": "cGFzc3dvcmQ="
+}
+enableAPI   7496  true
+sleep   2000
+eConnect    "localhost" 7496    0  false
+sleep   2000
+reqCurrentTime
+reqAccountSummary   1000    "All"   "NetLiquidation"
+sleep   2000
+exit
+EOF
+```
 
 Commands
 --------
@@ -71,34 +99,23 @@ Lists the available commands in a "help" response, or if a parameter string is g
 
 #### login
 
-This opens the TWS (or Gateway) software and logins into the appilcation. The first parameter must be "live" or "paper" the second is a JSON object with the properties below. The third parameter to login provides the credentials in Base64 UTF-8 encoding. It has the following base64 UTF-8 string properties.
+This opens the TWS (or Gateway) software and logins into the application.
 
-* FIXBase64UserName
-* FIXBase64Password
-* IBAPIBase64UserName
-* IBAPIBase64Password
+The first parameter must be "live" or "paper" the second is a JSON object with the properties from the table below.
 
-During a normal login process a "login" response is ussed with "TWO_FA_IN_PROGRESS" and "LOGGED_IN".
-
-##### AcceptIncomingConnectionAction
-
-Only needed if TWS is on a different server. The default value of "manual" means that the user must explicitly configure IBC to automatically accept API connections from unknown computers, but it is safest to set this to "reject" and to explicitly configure TWS to specify which IP addresses are allowed to connnect to the API.
-
-##### AcceptNonBrokerageAccountWarning
-
-If set to false, the user must manually accept this warning.
-
-##### AllowBlindTrading
-
-Unless this is set to true, attempts to place an order for a contract for which the account has no market data subscription, the user must manually accept a dialog warning against such blind trading.
-
-##### DismissNSEComplianceNotice
-
-If set to false, the user must manually dismiss this warning.
-
-##### DismissPasswordExpiryWarning
-
-If set to true, a dialogue about passwords expirying will be dismissed.
+| Property | Description |
+| -------- | ------------|
+|AcceptIncomingConnectionAction|Only needed if TWS is on a different server. The default value of "manual" means that the user must explicitly configure IBC to automatically accept API connections from unknown computers, but it is safest to set this to "reject" and to explicitly configure TWS to specify which IP addresses are allowed to connnect to the API.|
+|AcceptNonBrokerageAccountWarning|If set to false, the user must manually accept this warning.|
+|AllowBlindTrading|Unless this is set to true, attempts to place an order for a contract for which the account has no market data subscription, the user must manually accept a dialog warning against such blind trading.|
+|DismissNSEComplianceNotice|If set to false, the user must manually dismiss this warning.|
+|ExistingSessionDetectedAction| When a user logs on to an IBKR account for trading purposes by any means, the IBKR account server checks to see whether the account is already logged in elsewhere. If so, a dialog is displayed to both the users that enables them to determine what happens next. Read on below to see how this setting instructs TWS how to proceed.|
+|FIX|Set to true if TWS should authenticate with Financial Information Exchange (FIX) protocol.|
+|LogComponents|Use to identify window names that are opened by TWS. Can be "activate", "open", "openclose", or "never".|
+|MinimizeMainWindow|Set to true to minimize TWS when it starts.|
+|ReadOnlyLogin|If ReadOnlyLogin is set to true, and the user is enrolled in IB's account security programme, the user will not be asked to supply the security code, and login to TWS will occur automatically in read-only mode: in this mode, placing or managing orders is not allowed. Otherwise, if the user is enrolled in IB's account security programme, the user must supply the relevant security code to complete the login. If the user is not enrolled in IB's account security programme, this setting is ignored.|
+|StoreSettingsOnServer|Set this to true to store a copy of the TWS settings on IB's servers as well as locally on your computer.  This enables you to run TWS on different computers with the same configuration, market data lines, etc.  Otherwise, running TWS on different computers will not share the same settings.|
+|SuppressInfoMessages|Set to false to log more intermediate information about window states.|
 
 ##### ExistingSessionDetectedAction
 
@@ -131,42 +148,14 @@ end the `primary` session, the `primary` session is automatically reconnected.
 
 The default is 'manual'.
 
-##### FIX
+The third parameter to login provides the credentials in Base64 UTF-8 encoding. It has the following base64 UTF-8 string properties.
 
-Set to true if TWS should authenticate with Financial Information Exchange (FIX) protocol.
+* FIXBase64UserName
+* FIXBase64Password
+* IBAPIBase64UserName
+* IBAPIBase64Password
 
-##### LogComponents
-
-Use to identify window names that are opened by TWS. Can be "activate", "open", "openclose", or "never".
-
-##### MinimizeMainWindow
-
-Set to true to minimize TWS when it starts.
-
-##### ReadOnlyLogin
-
-If ReadOnlyLogin is set to true, and the user is enrolled in IB's
-account security programme, the user will not be asked to supply
-the security code, and login to TWS will occur automatically in
-read-only mode: in this mode, placing or managing orders is not
-allowed. Otherwise, if the user is enrolled in IB's account
-security programme, the user must supply the relevant security
-code to complete the login. If the user is not enrolled in IB's
-account security programme, this setting is ignored.
-
-##### StoreSettingsOnServer
-
-Set this to true to store a copy of the TWS settings on IB's
-servers as well as locally on your computer.
-This enables you to run TWS on different computers
-with the same configuration, market data lines, etc.
-Otherwise, running TWS on different computers will not share the
-same settings.
-
-##### SuppressInfoMessages
-
-Set to false to log more intermediate information about
-window states.
+During a normal login process a "login" response is ussed with "TWO_FA_IN_PROGRESS" and later with "LOGGED_IN".
 
 #### enableAPI
 
@@ -206,7 +195,7 @@ Close everything down and exit the shell
 
 #### serverVersion
 
-Issue a "serverVersion" response with the Host's version. Some of the API functionality might not be available in older Hosts and therefore it is essential to keep the TWS/Gateway as up to date as possible.
+Issue a "serverVersion" response with the Host's version. Some of the API functionality might not be available in older Hosts and therefore it is essential to keep the TWS/Gateway and TWS API up to date.
 
 #### isConnected
 
@@ -231,45 +220,3 @@ Issue a "faMsgTypeName" response converting 1, 2, or 3 into "GROUPS", "PROFILES"
 #### getTwsConnectionTime
 
 Issue a "getTwsConnectionTime" response with the time the connection was established.
-
-Usage
------
-
-Pass EClient calls to stdin. Prefix with the method name, followed by each parameter prefixed by white spaces. Every parameter must be encoded in JSON. JSON values span multiple lines.
-
-Calls to EWrapper are serialized to stdout, one per line. Prefixed by the method name, followed by each parameter prefixed by a tab character. Every parameter is serialized as JSON.
-
-The command "help" is available to show a list of EClient+ calls and if passed the name of a method or type, it will show more.
-
-Type "exit" to quit.
-
-For example consider the auto script below that records the NetLiquidation of the account into a file.
-
-```
-java -jar build/libs/tws-shell*.jar >> NetLiquidation.tsv << EOF
-login    "live"  {
-    "AcceptIncomingConnectionAction":"reject",
-    "AcceptNonBrokerageAccountWarning":true,
-    "AllowBlindTrading":true,
-    "DismissNSEComplianceNotice": true,
-    "DismissPasswordExpiryWarning": true,
-    "ExistingSessionDetectedAction": "secondary",
-    "LogComponents": "never",
-    "MinimizeMainWindow": false,
-    "ReadOnlyLogin": true,
-    "StoreSettingsOnServer":false,
-    "SuppressInfoMessages": true
-}   {
-    "IBAPIBase64UserName": "dXNlcm5hbWU=",
-    "IBAPIBase64Password": "cGFzc3dvcmQ="
-}
-enableAPI   7496  true
-sleep   2000
-eConnect    "localhost" 7496    0  false
-sleep   2000
-reqCurrentTime
-reqAccountSummary   1000    "All"   "NetLiquidation"
-sleep   2000
-exit
-EOF
-```

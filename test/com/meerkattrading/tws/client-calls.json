@@ -89,8 +89,10 @@
                 "symbol": "NOKIA"
             },
             {
+                "action": "BUY",
                 "lmtPrice": "30.0",
                 "orderId": 104,
+                "orderType": "LMT",
                 "totalQuantity": "100.0",
                 "transmit": false
             }
@@ -109,6 +111,7 @@
                 "action": "SELL",
                 "lmtPrice": "40.0",
                 "orderId": 105,
+                "orderType": "LMT",
                 "parentId": 104,
                 "totalQuantity": "100.0",
                 "transmit": false
@@ -161,7 +164,7 @@
                 "secType": "CONTFUT",
                 "symbol": "ES"
             },
-            "20201209 22:57:03",
+            "20201216 20:57:16",
             "1 Y",
             "1 month",
             "TRADES",
@@ -325,8 +328,10 @@
                 "symbol": "NOKIA"
             },
             {
+                "action": "BUY",
                 "lmtPrice": "10.0",
                 "orderId": 102,
+                "orderType": "LMT",
                 "totalQuantity": "100.0",
                 "transmit": false
             }
@@ -341,6 +346,7 @@
                 "symbol": "EUR"
             },
             {
+                "action": "BUY",
                 "hedgeType": "Fx",
                 "orderType": "MKT",
                 "parentId": 102
@@ -392,7 +398,7 @@
                 "secType": "CASH",
                 "symbol": "EUR"
             },
-            "20200609 22:57:03",
+            "20200616 20:57:16",
             "1 M",
             "1 day",
             "MIDPOINT",
@@ -411,7 +417,7 @@
                 "secType": "STK",
                 "symbol": "NOKIA"
             },
-            "20200609 22:57:03",
+            "20200616 20:57:16",
             "10 D",
             "1 min",
             "TRADES",
@@ -693,6 +699,7 @@
             {
                 "action": "SELL",
                 "lmtPrice": "50.0",
+                "orderType": "LMT",
                 "totalQuantity": "1.0"
             }
         ],
@@ -706,8 +713,9 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "lmtPrice": "150.0",
-                "orderType": "None",
+                "orderType": "MIDPRICE",
                 "totalQuantity": "1.0"
             }
         ],
@@ -722,6 +730,7 @@
             },
             {
                 "account": "DU119915",
+                "action": "BUY",
                 "orderType": "MKT",
                 "totalQuantity": "100.0"
             }
@@ -740,6 +749,7 @@
                 "faGroup": "Group_Equal_Quantity",
                 "faMethod": "EqualQuantity",
                 "lmtPrice": "2000.0",
+                "orderType": "LMT",
                 "totalQuantity": "200.0"
             }
         ],
@@ -753,6 +763,7 @@
                 "symbol": "EUR"
             },
             {
+                "action": "BUY",
                 "faGroup": "Pct_Change",
                 "faMethod": "PctChange",
                 "faPercentage": "100",
@@ -770,8 +781,10 @@
                 "symbol": "NOKIA"
             },
             {
+                "action": "BUY",
                 "faProfile": "Percent_60_40",
                 "lmtPrice": "100.0",
+                "orderType": "LMT",
                 "totalQuantity": "200.0"
             }
         ],
@@ -786,8 +799,10 @@
             },
             {
                 "account": "DF12345",
+                "action": "BUY",
                 "lmtPrice": "100.0",
                 "modelCode": "Technology",
+                "orderType": "LMT",
                 "totalQuantity": "200.0"
             }
         ],
@@ -927,6 +942,7 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "auxPrice": "0.01",
                 "lmtPrice": "189.0",
                 "orderType": "REL",
@@ -953,6 +969,7 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "maxPctVol",
@@ -985,6 +1002,7 @@
                 ],
                 "algoStrategy": "ArrivalPx",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -998,6 +1016,7 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "displaySize",
@@ -1022,6 +1041,7 @@
                 ],
                 "algoStrategy": "DarkIce",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1035,6 +1055,7 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "componentSize",
@@ -1075,6 +1096,7 @@
                 ],
                 "algoStrategy": "AD",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1088,6 +1110,7 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "strategyType",
@@ -1112,6 +1135,7 @@
                 ],
                 "algoStrategy": "Twap",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1125,6 +1149,7 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "maxPctVol",
@@ -1157,6 +1182,7 @@
                 ],
                 "algoStrategy": "Vwap",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1174,6 +1200,7 @@
                 "symbol": "GOOG"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "maxPctVol",
@@ -1188,7 +1215,9 @@
                         "value": "1"
                     }
                 ],
+                "algoStrategy": "BalanceImpactRisk",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1206,13 +1235,16 @@
                 "symbol": "GOOG"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "maxPctVol",
                         "value": "0.3"
                     }
                 ],
+                "algoStrategy": "BalanceImpactRisk",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1226,13 +1258,16 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "adaptivePriority",
                         "value": "Normal"
                     }
                 ],
+                "algoStrategy": "Adaptive",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1246,6 +1281,7 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "maxPctVol",
@@ -1268,7 +1304,9 @@
                         "value": "100000.0"
                     }
                 ],
+                "algoStrategy": "ClosePx",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1282,6 +1320,7 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "pctVol",
@@ -1306,6 +1345,7 @@
                 ],
                 "algoStrategy": "PctVol",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1319,6 +1359,7 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "pctVol",
@@ -1353,7 +1394,9 @@
                         "value": "100000.0"
                     }
                 ],
+                "algoStrategy": "PctVolPx",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1367,6 +1410,7 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "startPctVol",
@@ -1393,7 +1437,9 @@
                         "value": "100000.0"
                     }
                 ],
+                "algoStrategy": "PctVolSz",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1407,6 +1453,7 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "startPctVol",
@@ -1433,7 +1480,9 @@
                         "value": "100000.0"
                     }
                 ],
+                "algoStrategy": "PctVolTm",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1447,6 +1496,7 @@
                 "symbol": "AAPL"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "StartTime",
@@ -1497,7 +1547,9 @@
                         "value": "Midpoint"
                     }
                 ],
+                "algoStrategy": "VWAP",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1511,6 +1563,7 @@
                 "symbol": "IBKR"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "StartTime",
@@ -1561,7 +1614,9 @@
                         "value": "35.0"
                     }
                 ],
+                "algoStrategy": "INLINE",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ],
@@ -1576,6 +1631,7 @@
                 "symbol": "ES"
             },
             {
+                "action": "BUY",
                 "algoParams": [
                     {
                         "tag": "StartTime",
@@ -1598,7 +1654,9 @@
                         "value": "1"
                     }
                 ],
+                "algoStrategy": "STROBE",
                 "lmtPrice": "1.0",
+                "orderType": "LMT",
                 "totalQuantity": "1000.0"
             }
         ]
@@ -2311,7 +2369,9 @@
                 "symbol": "IBM"
             },
             {
+                "action": "BUY",
                 "lmtPrice": "120.0",
+                "orderType": "LMT",
                 "totalQuantity": "200.0",
                 "whatIf": true
             }

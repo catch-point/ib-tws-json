@@ -65,6 +65,7 @@
                 "symbol": "ES"
             },
             {
+                "action": "BUY",
                 "orderType": "MKT",
                 "totalQuantity": "1.0"
             },
@@ -81,49 +82,50 @@
                 "symbol": "NOKIA"
             },
             {
+                "action": "BUY",
                 "conditions": [
                     {
-                        "type": "Price",
-                        "conjunctionConnection": false,
-                        "isMore": false,
                         "conId": 208813720,
+                        "conjunctionConnection": false,
                         "exchange": "SMART",
+                        "isMore": false,
                         "price": "600.0",
-                        "triggerMethod": 0
+                        "triggerMethod": 0,
+                        "type": "Price"
                     },
                     {
-                        "type": "Execution",
                         "conjunctionConnection": true,
                         "exchange": "IDEALPRO",
                         "secType": "CASH",
-                        "symbol": "EUR.USD"
+                        "symbol": "EUR.USD",
+                        "type": "Execution"
                     },
                     {
-                        "type": "Margin",
                         "conjunctionConnection": false,
                         "isMore": true,
-                        "percent": 30
+                        "percent": 30,
+                        "type": "Margin"
                     },
                     {
-                        "type": "PercentChange",
-                        "conjunctionConnection": true,
-                        "isMore": true,
+                        "changePercent": "15.0",
                         "conId": 208813720,
+                        "conjunctionConnection": true,
                         "exchange": "SMART",
-                        "changePercent": "15.0"
+                        "isMore": true,
+                        "type": "PercentChange"
                     },
                     {
-                        "type": "Time",
                         "conjunctionConnection": false,
                         "isMore": true,
-                        "time": "20160118 23:59:59"
+                        "time": "20160118 23:59:59",
+                        "type": "Time"
                     },
                     {
-                        "type": "Volume",
+                        "conId": 208813720,
                         "conjunctionConnection": true,
+                        "exchange": "SMART",
                         "isMore": false,
-                        "conId": 208813720,
-                        "exchange": "SMART",
+                        "type": "Volume",
                         "volume": 100
                     }
                 ],

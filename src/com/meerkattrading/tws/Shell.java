@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -51,6 +52,7 @@ public class Shell {
 		Options options = new Options();
 		options.addOption(null, "tws-settings-path", true, "Where TWS will read/store settings");
 		options.addOption(null, "no-prompt", false, "Don't prompt for input");
+		options.addOption(null, "silence", false, "Don't log to stderr");
 		options.addOption("h", "help", false, "This message");
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd;
@@ -70,9 +72,22 @@ public class Shell {
 		String ibDir = cmd.hasOption("tws-settings-path") ? cmd.getOptionValue("tws-settings-path")
 				: System.getProperty("user.dir");
 		Shell shell = new Shell(ibDir);
-		System.setOut(System.err);
+		if (cmd.hasOption("silence")) {
+			PrintStream sink = new PrintStream(new OutputStream() {
+
+				@Override
+				public void write(int point) throws IOException {
+					// n/a
+				}
+			});
+			System.setOut(sink);
+			System.setErr(sink);
+		} else {
+			System.setOut(System.err);
+		}
 		if (!cmd.hasOption("no-prompt")) {
-			System.err.println("Welcome to ib-tws-shell! Type 'help' to see a list of commands or 'login' to open TWS.");
+			System.err
+					.println("Welcome to ib-tws-shell! Type 'help' to see a list of commands or 'login' to open TWS.");
 		}
 		shell.repl();
 		shell.exit();
@@ -116,54 +131,52 @@ public class Shell {
 		try {
 			ParsedInput input = reader.readLine(prefix);
 			try {
-				eval(input);
+				if (input != null && input.getInput().length() > 0) {
+					eval(input);
+				}
 			} catch (MoreInputExpected e) {
 				rep(input.getInput() + "\n");
 			}
 		} catch (SyntaxError | IllegalAccessException | InvocationTargetException | RuntimeException e) {
-			logger.log(Level.SEVERE, e.getMessage(), e);
+			logger.log(Level.WARNING, e.getMessage(), e);
 			getPrinter().println("error", e.getMessage() == null ? e.toString() : e.getMessage());
 		}
 	}
 
 	public void eval(ParsedInput line)
 			throws IllegalAccessException, InvocationTargetException, IOException, MoreInputExpected {
-		if (line != null) {
-			List<String> values = line.getParsedValues();
-			String command = values.get(0);
-			try {
-				Controller controller = getController();
-				PropertyType[] types = controller.getParameterTypes(command);
-				if (values.size() < types.length + 1) {
-					for (int i = values.size() - 1; i < types.length; i++) {
-						if (types[i].isPrimitive()) {
-							throw new MoreInputExpected(
-									"Expecting " + (types.length - values.size()) + " more value(s)");
-						}
+		List<String> values = line.getParsedValues();
+		String command = values.get(0);
+		try {
+			Controller controller = getController();
+			PropertyType[] types = controller.getParameterTypes(command);
+			if (values.size() < types.length + 1) {
+				for (int i = values.size() - 1; i < types.length; i++) {
+					if (types[i].isPrimitive()) {
+						throw new MoreInputExpected(
+								"Expecting " + (types.length - values.size()) + " more value(s)");
 					}
-				} else if (values.size() > types.length + 1) {
-					throw new IllegalArgumentException("Expected " + (values.size() - types.length) + " less value(s)");
 				}
-				Object[] args = new Object[types.length];
-				for (int i = 0; i < args.length; i++) {
-					String json = i + 1 < values.size() ? values.get(i + 1) : "null";
-					args[i] = deserializer.deserialize(json, types[i]);
-				}
-				controller.invoke(command, args);
-			} catch (NoSuchMethodException e) {
-				getPrinter().println("error", command + "?");
-			} catch (InvocationTargetException e) {
-				try {
-					throw e.getCause();
-				} catch (RuntimeException | IllegalAccessException | InvocationTargetException | IOException
-						| MoreInputExpected cause) {
-					throw cause;
-				} catch (Throwable cause) {
-					throw e;
-				}
+			} else if (values.size() > types.length + 1) {
+				throw new IllegalArgumentException("Expected " + (values.size() - types.length) + " less value(s)");
 			}
-		} else {
-			getPrinter().println("error", "Each parameter must be in JSON format");
+			Object[] args = new Object[types.length];
+			for (int i = 0; i < args.length; i++) {
+				String json = i + 1 < values.size() ? values.get(i + 1) : "null";
+				args[i] = deserializer.deserialize(json, types[i]);
+			}
+			controller.invoke(command, args);
+		} catch (NoSuchMethodException e) {
+			getPrinter().println("error", command + "?");
+		} catch (InvocationTargetException e) {
+			try {
+				throw e.getCause();
+			} catch (RuntimeException | IllegalAccessException | InvocationTargetException | IOException
+					| MoreInputExpected cause) {
+				throw cause;
+			} catch (Throwable cause) {
+				throw e;
+			}
 		}
 	}
 

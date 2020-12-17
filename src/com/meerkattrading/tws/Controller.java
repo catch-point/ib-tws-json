@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
@@ -164,8 +165,8 @@ public class Controller {
 		}
 	}
 
-	public void sleep(long ms) throws InterruptedException {
-		Thread.sleep(ms);
+	public void sleep(Long ms) throws InterruptedException {
+		Thread.sleep(ms == null ? 0 : ms);
 	}
 
 	public synchronized void enableAPI(Integer portNumber, Boolean readOnly)
@@ -273,30 +274,34 @@ public class Controller {
 	public void help(String name) throws IllegalAccessException, InvocationTargetException, IOException {
 		if (name == null || name.length() == 0) {
 			for (String command : commands.keySet()) {
-				out.println("help", command);
+				out.println("help", name, command);
 			}
-			out.println("helpEnd");
+			out.println("helpEnd", name);
 		} else if (commands.containsKey(name)) {
 			Method method = commands.get(name);
-			Class<?>[] types = method.getParameterTypes();
+			Type[] types = method.getGenericParameterTypes();
+			Parameter[] params = method.getParameters();
 			for (int i = 0; i < types.length; i++) {
-				out.println("help", types[i].getSimpleName());
+				out.println("help", name, params[i].getName(), properties.get(types[i]).getSimpleName());
 			}
-			out.println("helpEnd");
+			out.println("helpEnd", name);
 		} else {
 			for (PropertyType ptype : properties.values()) {
 				if (ptype.getSimpleName().equals(name)) {
 					Object[] values = ptype.getValues();
 					if (values == null) {
 						for (Entry<String, PropertyType> e : ptype.getProperties().entrySet()) {
-							out.println("help", e.getKey(), e.getValue().getSimpleName());
+							Type[] types = new Type[] { String.class, String.class, String.class,
+									e.getValue().getJavaType() };
+							Object default_value = ptype.getDefaultValue(e.getKey());
+							out.println("help", types, name, e.getKey(), e.getValue().getSimpleName(), default_value);
 						}
 					} else {
 						for (Object value : values) {
-							out.println("help", value);
+							out.println("help", name, value);
 						}
 					}
-					out.println("helpEnd");
+					out.println("helpEnd", name);
 					return;
 				}
 			}
