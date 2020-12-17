@@ -37,6 +37,7 @@ import com.ib.client.HistogramEntry;
 import com.ib.client.MarginCondition;
 import com.ib.client.OperatorCondition;
 import com.ib.client.OrderCondition;
+import com.ib.client.OrderState;
 import com.ib.client.PercentChangeCondition;
 import com.ib.client.PriceCondition;
 import com.ib.client.SoftDollarTier;
@@ -94,6 +95,8 @@ public class Serializer {
 			return softDollarTierToJson((SoftDollarTier) object);
 		} else if (object instanceof HistogramEntry) {
 			return histogramEntryToJson((HistogramEntry) object);
+		} else if (object instanceof OrderState) {
+			return orderStateToJson((OrderState) object, type);
 		} else if (object instanceof Exception) {
 			return exceptionToJson((Exception) object);
 		} else {
@@ -148,10 +151,30 @@ public class Serializer {
 		return stringToJson(((Enum<?>) object).name());
 	}
 
+	private JsonValue numberToJson(Integer number) {
+		if (number == null)
+			return JsonValue.NULL;
+		return Json.createValue(number);
+	}
+
+	private JsonValue numberToJson(Number number) {
+		if (number == null)
+			return JsonValue.NULL;
+		return Json.createValue(number.toString());
+	}
+
 	private JsonValue orderConditionToJson(OrderCondition oc) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("type", enumToJson(oc.type()));
+		if (oc instanceof PercentChangeCondition) {
+			builder.add("changePercent", numberToJson(((PercentChangeCondition) oc).changePercent()));
+		}
+		if (oc instanceof ContractCondition) {
+			builder.add("conId", numberToJson(((ContractCondition) oc).conId()));
+		}
 		builder.add("conjunctionConnection", oc.conjunctionConnection());
+		if (oc instanceof ContractCondition) {
+			builder.add("exchange", ((ContractCondition) oc).exchange());
+		}
 		if (oc instanceof ExecutionCondition) {
 			builder.add("exchange", ((ExecutionCondition) oc).exchange());
 			builder.add("secType", ((ExecutionCondition) oc).secType());
@@ -163,13 +186,6 @@ public class Serializer {
 		if (oc instanceof MarginCondition) {
 			builder.add("percent", numberToJson(((MarginCondition) oc).percent()));
 		}
-		if (oc instanceof ContractCondition) {
-			builder.add("conId", numberToJson(((ContractCondition) oc).conId()));
-			builder.add("exchange", ((ContractCondition) oc).exchange());
-		}
-		if (oc instanceof PercentChangeCondition) {
-			builder.add("changePercent", numberToJson(((PercentChangeCondition) oc).changePercent()));
-		}
 		if (oc instanceof PriceCondition) {
 			builder.add("price", numberToJson(((PriceCondition) oc).price()));
 			builder.add("triggerMethod", numberToJson(((PriceCondition) oc).triggerMethod()));
@@ -177,22 +193,11 @@ public class Serializer {
 		if (oc instanceof TimeCondition) {
 			builder.add("time", ((TimeCondition) oc).time());
 		}
+		builder.add("type", enumToJson(oc.type()));
 		if (oc instanceof VolumeCondition) {
 			builder.add("volume", numberToJson(((VolumeCondition) oc).volume()));
 		}
 		return builder.build();
-	}
-
-	private JsonValue numberToJson(Integer number) {
-		if (number == null)
-			return JsonValue.NULL;
-		return Json.createValue(number);
-	}
-
-	private JsonValue numberToJson(Number number) {
-		if (number == null)
-			return JsonValue.NULL;
-		return Json.createValue(number.toString());
 	}
 
 	private JsonValue tagValueToJson(TagValue object) {
@@ -220,6 +225,27 @@ public class Serializer {
 		return builder.build();
 	}
 
+	private JsonValue orderStateToJson(OrderState object, PropertyType type)
+			throws IllegalAccessException, InvocationTargetException {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		Map<String, PropertyType> properties = type.getProperties();
+		for (String key : properties.keySet()) {
+			Method getter = type.getGetterMethod(key);
+			if (getter.getDeclaringClass().isAssignableFrom(object.getClass())) {
+				Object value = getter.invoke(object);
+				if (value != null && !Double.valueOf(Double.MAX_VALUE).equals(value)
+						&& !"1.7976931348623157E308".equals(value)) {
+					PropertyType p = properties.get(key);
+					JsonValue jsonValue = objectToJsonValue(value, p);
+					if (value != null && isAssigned(value, type.getDefaultValue(key))) {
+						builder.add(key, jsonValue);
+					}
+				}
+			}
+		}
+		return builder.build();
+	}
+
 	private JsonValue exceptionToJson(Exception ex) {
 		logger.log(Level.SEVERE, ex.getMessage(), ex);
 		if (ex.getMessage() == null) {
@@ -235,25 +261,21 @@ public class Serializer {
 		Map<String, PropertyType> properties = type.getProperties();
 		for (String key : properties.keySet()) {
 			Method getter = type.getGetterMethod(key);
-			Object value = getter.invoke(object);
-			PropertyType p = properties.get(key);
-			JsonValue jsonValue = objectToJsonValue(value, p);
-			if (value != null && isSet(value, type.getDefaultValue(key))) {
-				builder.add(key, jsonValue);
+			if (getter.getDeclaringClass().isAssignableFrom(object.getClass())) {
+				Object value = getter.invoke(object);
+				PropertyType p = properties.get(key);
+				JsonValue jsonValue = objectToJsonValue(value, p);
+				if (value != null && isAssigned(value, type.getDefaultValue(key))) {
+					builder.add(key, jsonValue);
+				}
 			}
 		}
 		return builder.build();
 	}
 
-	private boolean isSet(Object obj, Object defaultValue) {
+	private boolean isAssigned(Object obj, Object defaultValue) {
 		if (obj == null)
 			return defaultValue != null;
-		else if (obj instanceof Boolean)
-			return ((Boolean) obj).booleanValue() != ((Boolean) defaultValue).booleanValue();
-		else if (obj instanceof Number)
-			return !((Number) obj).equals((Number) defaultValue);
-		else if (obj instanceof String)
-			return defaultValue == null || !((String) obj).equals(defaultValue);
 		else
 			return defaultValue == null || !obj.equals(defaultValue);
 	}

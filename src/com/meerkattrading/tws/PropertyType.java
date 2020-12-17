@@ -21,6 +21,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,6 +31,19 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.ib.client.ContractCondition;
+import com.ib.client.ExecutionCondition;
+import com.ib.client.HistogramEntry;
+import com.ib.client.MarginCondition;
+import com.ib.client.OperatorCondition;
+import com.ib.client.OrderCondition;
+import com.ib.client.PercentChangeCondition;
+import com.ib.client.PriceCondition;
+import com.ib.client.SoftDollarTier;
+import com.ib.client.TagValue;
+import com.ib.client.TimeCondition;
+import com.ib.client.VolumeCondition;
 
 /**
  * Determines the object properties for a Java type
@@ -64,6 +79,9 @@ public class PropertyType {
 			add("public java.lang.String com.ib.client.HistoricalTickLast.specialConditions()");
 			add("public com.ib.client.TickAttribLast com.ib.client.HistoricalTickLast.tickAttribLast()");
 			add("public long com.ib.client.HistoricalTickLast.time()");
+			add("public com.ib.client.OrderConditionType com.ib.client.OrderCondition.type()");
+			add("public java.lang.String com.ib.client.Order.getAlgoStrategy()");
+			add("public java.lang.String com.ib.client.Order.getOrderType()");
 		}
 	};
 	private final Logger logger = Logger.getLogger(PropertyType.class.getName());
@@ -95,18 +113,21 @@ public class PropertyType {
 			keyType = new PropertyType(Object.class);
 			componentType = new PropertyType(Object.class);
 		} else if (type instanceof Class<?>) {
-			Method[] methods = ((Class<?>) type).getDeclaredMethods();
+			List<Method> methods = getPublicMethodsOf((Class<?>) type);
 			for (Method method : methods) {
-				if (method.getParameterTypes().length == 0 && method.getReturnType() != Void.TYPE
-						&& Modifier.isPublic(method.getModifiers())) {
-					getters.put(method.getName(), method);
+				if (method.getName().startsWith("get") && GETTERS.contains(method.toString())) {
+					String name = Character.toLowerCase(method.getName().charAt(3)) + method.getName().substring(4);
+					getters.put(name, method);
+				} else if (method.getParameterTypes().length == 0 && method.getReturnType() != Void.TYPE) {
+					if (!getters.containsKey(method.getName())) {
+						getters.put(method.getName(), method);
+					}
 				}
 			}
-			for (Method method : ((Class<?>) type).getDeclaredMethods()) {
+			for (Method method : methods) {
 				String name = method.getName();
 				Method getter = getters.get(name);
-				if (method.getParameterTypes().length == 1 && getter != null && method.getReturnType() == Void.TYPE
-						&& Modifier.isPublic(method.getModifiers())) {
+				if (method.getParameterTypes().length == 1 && getter != null && method.getReturnType() == Void.TYPE) {
 					if (getter.getReturnType() == method.getParameterTypes()[0]) {
 						setters.put(name, method);
 					} else if (!setters.containsKey(name) && getter.getReturnType().isEnum()
@@ -122,9 +143,7 @@ public class PropertyType {
 					giter.remove();
 				}
 			}
-			for (String name : getters.keySet()) {
-				properties.put(name, new PropertyType(getters.get(name).getGenericReturnType()));
-			}
+			properties.putAll(getPropertiesFromGetters((Class<?>) type));
 			if (!Modifier.isAbstract(((Class<?>) type).getModifiers())) {
 				for (Constructor<?> c : ((Class<?>) type).getConstructors()) {
 					if (c.getParameterTypes().length == 0 && Modifier.isPublic(c.getModifiers())) {
@@ -158,7 +177,7 @@ public class PropertyType {
 		} else if (isList() || isArray() || isSet()) {
 			return "[" + getComponentType().getSimpleName() + "]";
 		} else if (isMap()) {
-			return "{String:" + getComponentType().getSimpleName() + "}";
+			return "{" + getComponentType().getSimpleName() + "}";
 		} else if (isEntry()) {
 			return "{key:String,value:" + getComponentType().getSimpleName() + "}";
 		} else {
@@ -214,7 +233,8 @@ public class PropertyType {
 	}
 
 	public Object getDefaultValue(String property) throws IllegalAccessException, InvocationTargetException {
-		if (defaultObject == null || !getters.containsKey(property))
+		if (defaultObject == null || "action".equals(property) || "orderType".equals(property)
+				|| !getters.containsKey(property))
 			return null;
 		return getGetterMethod(property).invoke(defaultObject);
 	}
@@ -231,5 +251,51 @@ public class PropertyType {
 		if (!(type instanceof Class) || !((Class<?>) type).isEnum())
 			return null;
 		return ((Class<?>) type).getEnumConstants();
+	}
+
+	private List<Method> getPublicMethodsOf(Class<?> type) {
+		Method[] methods = type.getMethods();
+		List<Method> list = new ArrayList<>(Arrays.asList(methods));
+		Iterator<Method> iter = list.iterator();
+		while (iter.hasNext()) {
+			Method method = iter.next();
+			if (!Modifier.isPublic(method.getModifiers()) || method.getDeclaringClass().equals(Object.class)) {
+				iter.remove();
+			}
+		}
+		if (OrderCondition.class.equals(type)) {
+			list.addAll(getPublicMethodsOf(ExecutionCondition.class));
+			list.addAll(getPublicMethodsOf(OperatorCondition.class));
+		}
+		if (OperatorCondition.class.equals(type)) {
+			list.addAll(getPublicMethodsOf(ContractCondition.class));
+			list.addAll(getPublicMethodsOf(MarginCondition.class));
+			list.addAll(getPublicMethodsOf(TimeCondition.class));
+		}
+		if (ContractCondition.class.equals(type)) {
+			list.addAll(getPublicMethodsOf(PercentChangeCondition.class));
+			list.addAll(getPublicMethodsOf(PriceCondition.class));
+			list.addAll(getPublicMethodsOf(VolumeCondition.class));
+		}
+		return list;
+	}
+
+	private Map<String, PropertyType> getPropertiesFromGetters(Class<?> type) {
+		Map<String, PropertyType> properties = new TreeMap<>();
+		for (String name : getters.keySet()) {
+			properties.put(name, new PropertyType(getters.get(name).getGenericReturnType()));
+		}
+		if (TagValue.class.isAssignableFrom(type)) {
+			properties.put("tag", new PropertyType(String.class));
+			properties.put("value", new PropertyType(String.class));
+		}
+		if (HistogramEntry.class.isAssignableFrom(type)) {
+			properties.put("price", new PropertyType(Double.TYPE));
+			properties.put("size", new PropertyType(Long.TYPE));
+		}
+		if (SoftDollarTier.class.isAssignableFrom(type)) {
+			properties.put("dispalyName", new PropertyType(String.class));
+		}
+		return properties;
 	}
 }

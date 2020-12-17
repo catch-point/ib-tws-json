@@ -70,6 +70,7 @@ public class Bootstrap {
 		options.addOption(null, "tws-api-jar", true, "The TwsApi.jar filename");
 		options.addOption(null, "java-home", true, "The location of the jre to launch");
 		options.addOption(null, "no-prompt", false, "Don't prompt for input");
+		options.addOption(null, "silence", false, "Don't log to stderr");
 		options.addOption("h", "help", false, "This message");
 		CommandLine cmd;
 		CommandLineParser parser = new DefaultParser();
@@ -86,9 +87,17 @@ public class Bootstrap {
 			System.exit(0);
 			return;
 		}
-		String[] shell_args = cmd.hasOption("tws-settings-path")
-				? new String[] { "--tws-settings-path", cmd.getOptionValue("tws-settings-path") }
-				: new String[0];
+		List<String> shell_args = new ArrayList<>();
+		if (cmd.hasOption("tws-settings-path")) {
+			shell_args.add("--tws-settings-path");
+			shell_args.add(cmd.getOptionValue("tws-settings-path"));
+		}
+		if (cmd.hasOption("no-prompt")) {
+			shell_args.add("--no-prompt");
+		}
+		if (cmd.hasOption("silence")) {
+			shell_args.add("--silence");
+		}
 		String java = getJavaExe(cmd);
 		Collection<String> vm_args = getJVMOptions(cmd);
 		String cp = getClassPath(cmd);
@@ -98,7 +107,7 @@ public class Bootstrap {
 		command.add("-cp");
 		command.add(cp);
 		command.add(Bootstrap.class.getPackage().getName() + ".Shell");
-		command.addAll(Arrays.asList(shell_args));
+		command.addAll(shell_args);
 		Process shell = new ProcessBuilder(command).redirectInput(Redirect.INHERIT).redirectOutput(Redirect.INHERIT)
 				.redirectError(Redirect.INHERIT).start();
 		try {
@@ -132,17 +141,6 @@ public class Bootstrap {
 		return null;
 	}
 
-	private static String readFile(File file) throws IOException {
-		if (file == null || !file.canRead())
-			return null;
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		try {
-			return reader.readLine();
-		} finally {
-			reader.close();
-		}
-	}
-
 	private static File getInstall4j(CommandLine cmd) {
 		for (String jts_path : getJtsPathSearch(cmd)) {
 			String version = getJtsVersion(jts_path, cmd);
@@ -171,7 +169,17 @@ public class Bootstrap {
 			System.err.println("Could not find .install4j");
 		}
 		return null;
+	}
 
+	private static String readFile(File file) throws IOException {
+		if (file == null || !file.canRead())
+			return null;
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		try {
+			return reader.readLine();
+		} finally {
+			reader.close();
+		}
 	}
 
 	private static Collection<String> getJVMOptions(CommandLine cmd) throws IOException {

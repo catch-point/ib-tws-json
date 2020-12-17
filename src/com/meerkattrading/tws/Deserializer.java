@@ -418,7 +418,7 @@ public class Deserializer {
 		JsonObject o = obj.asJsonObject();
 		OrderConditionType type = OrderConditionType.valueOf(o.getString("type"));
 		OrderCondition oc = OrderCondition.create(type);
-		oc.conjunctionConnection(o.getBoolean("conjunctionConnection"));
+		oc.conjunctionConnection(jsonToBoolean(o.get("conjunctionConnection")));
 		switch (type) {
 		case Execution:
 			((ExecutionCondition) oc).exchange(o.getString("exchange"));
@@ -468,7 +468,7 @@ public class Deserializer {
 			return null;
 		JsonObject o = obj.asJsonObject();
 		return new SoftDollarTier(jsonToString(o.get("name")), jsonToString(o.get("value")),
-				jsonToString(o.get("displayName")));
+				jsonToString(o.containsKey("displayName") ? o.get("displayName") : o.get("name")));
 	}
 
 	private HistogramEntry jsonToHistogramEntry(JsonValue obj) {
@@ -552,6 +552,8 @@ public class Deserializer {
 			throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
 		if (obj == null || obj.getValueType() == ValueType.NULL)
 			return null;
+		if (obj.getValueType() != ValueType.OBJECT)
+			throw new IllegalArgumentException("Expected " + obj + " to be an object");
 		try {
 			Class<?> ctype = (Class<?>) ptype.getJavaType();
 			Constructor<?> method = ctype.getConstructor();

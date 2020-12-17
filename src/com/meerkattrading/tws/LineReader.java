@@ -16,7 +16,6 @@
 package com.meerkattrading.tws;
 
 import java.io.BufferedReader;
-import java.io.Console;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -29,16 +28,9 @@ import java.io.InterruptedIOException;
  */
 public class LineReader {
 	private final BufferedReader reader;
-	private final Console console;
 
 	public LineReader(BufferedReader reader) {
 		this.reader = reader;
-		this.console = null;
-	}
-
-	public LineReader(Console console) {
-		this.reader = null;
-		this.console = console;
 	}
 
 	public ParsedInput readLine(CharSequence prefix) throws IOException, SyntaxError {
@@ -59,11 +51,7 @@ public class LineReader {
 	}
 
 	private String readLine() throws IOException {
-		if (console != null) {
-			return console.readLine();
-		} else {
-			return reader.readLine();
-		}
+		return reader.readLine();
 	}
 
 }
