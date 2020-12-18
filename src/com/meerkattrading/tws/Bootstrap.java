@@ -52,13 +52,15 @@ import org.apache.commons.cli.ParseException;
  */
 public class Bootstrap {
 	private static final String TWS_API_JAR = "TwsApi.jar";
-	private static final String[] tws_path_search = new String[] { "C:\\Jts\\ibgateway", "C:\\Jts",
-			System.getProperty("user.home") + "/Jts/ibgateway", System.getProperty("user.home") + "/Jts",
-			System.getProperty("user.home") + "/Applications" };
-	private static final String[] tws_api_path_search = new String[] { "C:\\TWS API",
-			System.getProperty("user.home") + "/IBJts", System.getProperty("user.home") + "/Jts",
-			System.getProperty("user.home") + "/Downloads", System.getProperty("user.home") + "/Download",
-			new File(System.getProperty("java.class.path").split("path.separator")[0]).getParent() };
+	private static final File[] tws_path_search = new File[] { new File("C:\\Jts\\ibgateway"), new File("C:\\Jts"),
+			new File(new File(System.getProperty("user.home"), "Jts"), "ibgateway"),
+			new File(System.getProperty("user.home"), "Jts"),
+			new File(System.getProperty("user.home"), "Applications") };
+	private static final File[] tws_api_path_search = new File[] { new File("C:\\TWS API"),
+			new File(System.getProperty("user.home"), "IBJts"), new File(System.getProperty("user.home"), "Jts"),
+			new File(System.getProperty("user.home"), "Downloads"),
+			new File(System.getProperty("user.home"), "Download"),
+			new File(System.getProperty("java.class.path").split("path.separator")[0]).getParentFile() };
 
 	public static void main(String[] args) throws Throwable {
 		Options options = new Options();
@@ -142,7 +144,7 @@ public class Bootstrap {
 	}
 
 	private static File getInstall4j(CommandLine cmd) {
-		for (String jts_path : getJtsPathSearch(cmd)) {
+		for (File jts_path : getJtsPathSearch(cmd)) {
 			String version = getJtsVersion(jts_path, cmd);
 			File[] search = version != null
 					? new File[] { new File(new File(jts_path, version), ".install4j"),
@@ -212,9 +214,9 @@ public class Bootstrap {
 
 	private static File getVMOptionsFile(CommandLine cmd) {
 		Pattern regex = Pattern.compile("gateway", Pattern.CASE_INSENSITIVE);
-		for (String jts_path : getJtsPathSearch(cmd)) {
+		for (File jts_path : getJtsPathSearch(cmd)) {
 			String version = getJtsVersion(jts_path, cmd);
-			boolean isGateway = regex.matcher(jts_path).find();
+			boolean isGateway = regex.matcher(jts_path.getPath()).find();
 			File[] search = version != null
 					? new File[] {
 							new File(new File(jts_path, version), isGateway ? "ibgateway.vmoptions" : "tws.vmoptions"),
@@ -293,7 +295,7 @@ public class Bootstrap {
 	}
 
 	private static File getJtsJarsDir(CommandLine cmd) {
-		for (String jts_path : getJtsPathSearch(cmd)) {
+		for (File jts_path : getJtsPathSearch(cmd)) {
 			String version = getJtsVersion(jts_path, cmd);
 			File[] search = version != null
 					? new File[] { new File(new File(jts_path, version), "jars"),
@@ -321,17 +323,17 @@ public class Bootstrap {
 		return null;
 	}
 
-	private static String[] getJtsPathSearch(CommandLine cmd) {
-		String[] jts_search_path = cmd.hasOption("tws-path") ? new String[] { cmd.getOptionValue("tws-path") }
+	private static File[] getJtsPathSearch(CommandLine cmd) {
+		File[] jts_search_path = cmd.hasOption("tws-path") ? new File[] { new File(cmd.getOptionValue("tws-path")) }
 				: tws_path_search;
 		return jts_search_path;
 	}
 
-	private static String getJtsVersion(String jts_path, CommandLine cmd) {
+	private static String getJtsVersion(File jts_path, CommandLine cmd) {
 		if (cmd.hasOption("tws-version"))
 			return cmd.getOptionValue("tws-version");
 		Pattern regex = Pattern.compile("^(IB Gateway |Trader Workstation |ibgateway-|tws-)?([0-9]+)(\\.vmoptions)?$");
-		for (String ls : listNumerically(new File(jts_path))) {
+		for (String ls : listNumerically(jts_path)) {
 			File dir = new File(jts_path, ls);
 			Matcher m = regex.matcher(ls);
 			if (dir.exists() && m.find()) {
@@ -353,8 +355,7 @@ public class Bootstrap {
 			return new File(cmd.getOptionValue("tws-api-jar"));
 		if (cmd.hasOption("tws-api-path"))
 			return searchFor(new File(cmd.getOptionValue("tws-api-path")), TWS_API_JAR);
-		for (String search : tws_api_path_search) {
-			File dir = new File(search);
+		for (File dir : tws_api_path_search) {
 			if (dir.isDirectory()) {
 				File found = searchFor(dir, TWS_API_JAR);
 				if (found != null) {

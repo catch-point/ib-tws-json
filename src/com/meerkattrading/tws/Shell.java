@@ -17,6 +17,7 @@ package com.meerkattrading.tws;
 
 import java.io.BufferedReader;
 import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -70,7 +71,7 @@ public class Shell {
 			return;
 		}
 		String ibDir = cmd.hasOption("tws-settings-path") ? cmd.getOptionValue("tws-settings-path")
-				: System.getProperty("user.dir");
+				: new File(System.getProperty("user.home"), "Jts").getPath();
 		Shell shell = new Shell(ibDir);
 		if (cmd.hasOption("silence")) {
 			PrintStream sink = new PrintStream(new OutputStream() {

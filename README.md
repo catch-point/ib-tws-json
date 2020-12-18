@@ -37,7 +37,7 @@ The ib-tws-shell takes the following command line parameters.
 |tws-api-jar|Points to the TwsApi.jar file that should be used when connecting to TWS. If none is provide it is searched for using tws-api-path.|
 |tws-api-path|Where to look for the TwsApi.jar file (if tws-api-jar is not provided). If not provided, it will look in C:\\TWS API, ~/IBJts, and a few other places.|
 |tws-path|The install location of TWS Desktop or Gateway. If using an offline version (or Gateway) this can point to the folder with the version number. When not provided, the system will look in the default location for Gateway and (if not found) TWS Desktop.|
-|tws-settings-path||Every running instance must have a unique tws-settings-path, which defaults to the current working directory.|
+|tws-settings-path||Every running instance must have a unique tws-settings-path, which defaults to `~/Jts`.|
 |tws-version|If the tws-path is not provided this can help choose which TWS instance to launch. It is recommended to use an offline TWS install to give project contributors time to test new TWS releases.|
 |silence|Don't log anything, just report API responses.|
 |no-prompt|Don't print a friendly welcome message.|
