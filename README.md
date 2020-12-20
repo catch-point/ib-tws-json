@@ -57,7 +57,10 @@ For example consider the auto script below that records the NetLiquidation of th
 
 ```
 java -jar build/libs/tws-shell*.jar >> NetLiquidation.tsv << EOF
-login    "live"  {
+login    "live"   {
+    "IBAPIBase64UserName": "dXNlcm5hbWU=",
+    "IBAPIBase64Password": "cGFzc3dvcmQ="
+}  {
     "AcceptIncomingConnectionAction":"reject",
     "AcceptNonBrokerageAccountWarning":true,
     "AllowBlindTrading":true,
@@ -69,9 +72,6 @@ login    "live"  {
     "ReadOnlyLogin": true,
     "StoreSettingsOnServer":false,
     "SuppressInfoMessages": true
-}   {
-    "IBAPIBase64UserName": "dXNlcm5hbWU=",
-    "IBAPIBase64Password": "cGFzc3dvcmQ="
 }
 enableAPI   7496  true
 sleep   2000
@@ -95,13 +95,22 @@ Additional commands are listed below.
 
 #### help
 
-Lists the available commands in a "help" response, or if a parameter string is given the parameters, or properties or values of the given method or type. "helpEnd" is sent it indicate the response is complete.
+The command `help "Shell"` and `help "EClient"` ilst available commands in a `help` response. Other parameters string can be given to provide the schema available for those methods or types. `helpEnd` is sent it indicate the response is complete.
+
+`help "EWrapper"` list the events sent from the shell based an activity in TWS.
 
 #### login
 
 This opens the TWS (or Gateway) software and logins into the application.
 
-The first parameter must be "live" or "paper" the second is a JSON object with the properties from the table below.
+The first parameter must be "live" or "paper", the second provides the credentials in Base64 UTF-8 encoding. It has the following base64 UTF-8 string properties.
+
+* FIXBase64UserName
+* FIXBase64Password
+* IBAPIBase64UserName
+* IBAPIBase64Password
+
+The third parameter to login is a JSON object with the properties from the table below.
 
 | Property | Description |
 | -------- | ------------|
@@ -147,13 +156,6 @@ When set to 'primary', if another TWS session is started and manually told to
 end the `primary` session, the `primary` session is automatically reconnected.
 
 The default is 'manual'.
-
-The third parameter to login provides the credentials in Base64 UTF-8 encoding. It has the following base64 UTF-8 string properties.
-
-* FIXBase64UserName
-* FIXBase64Password
-* IBAPIBase64UserName
-* IBAPIBase64Password
 
 During a normal login process a "login" response is ussed with "TWO_FA_IN_PROGRESS" and later with "LOGGED_IN".
 

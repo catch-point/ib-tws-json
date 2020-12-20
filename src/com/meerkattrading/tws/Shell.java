@@ -15,15 +15,12 @@
  */
 package com.meerkattrading.tws;
 
-import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.logging.Level;
@@ -72,7 +69,7 @@ public class Shell {
 		}
 		String ibDir = cmd.hasOption("tws-settings-path") ? cmd.getOptionValue("tws-settings-path")
 				: new File(System.getProperty("user.home"), "Jts").getPath();
-		Shell shell = new Shell(ibDir);
+		Shell shell = new Shell(ibDir, !cmd.hasOption("no-prompt"));
 		if (cmd.hasOption("silence")) {
 			PrintStream sink = new PrintStream(new OutputStream() {
 
@@ -94,15 +91,10 @@ public class Shell {
 		shell.exit();
 	}
 
-	public Shell() throws IOException {
-		this(System.getProperty("user.dir"));
-	}
-
-	public Shell(String ibDir) throws IOException {
-		PrintWriter writer = new PrintWriter(System.out);
-		this.out = new Printer(writer);
+	public Shell(String ibDir, boolean prompt) throws IOException {
+		reader = new LineReader(System.in, prompt ? System.err : null);
+		this.out = new Printer(reader, System.out);
 		controller = new Controller(ibDir, this.getPrinter());
-		reader = new LineReader(new BufferedReader(new InputStreamReader(System.in)));
 	}
 
 	public Shell(InputStream in, OutputStream out) throws IOException {
@@ -110,10 +102,9 @@ public class Shell {
 	}
 
 	public Shell(String ibDir, InputStream in, OutputStream out) throws IOException {
-		PrintWriter writer = new PrintWriter(out);
-		this.out = new Printer(writer);
+		reader = new LineReader(in);
+		this.out = new Printer(reader, out);
 		controller = new Controller(ibDir, this.getPrinter());
-		reader = new LineReader(new BufferedReader(new InputStreamReader(in)));
 	}
 
 	public void repl() throws InterruptedException, IOException {
@@ -154,8 +145,7 @@ public class Shell {
 			if (values.size() < types.length + 1) {
 				for (int i = values.size() - 1; i < types.length; i++) {
 					if (types[i].isPrimitive()) {
-						throw new MoreInputExpected(
-								"Expecting " + (types.length - values.size()) + " more value(s)");
+						throw new MoreInputExpected("Expecting " + (types.length - values.size()) + " more value(s)");
 					}
 				}
 			} else if (values.size() > types.length + 1) {

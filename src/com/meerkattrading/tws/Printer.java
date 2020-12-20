@@ -16,6 +16,7 @@
 package com.meerkattrading.tws;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
@@ -29,12 +30,14 @@ import java.util.Map;
  *
  */
 public class Printer {
+	private final LineReader reader;
 	private final PrintWriter out;
 	private final Serializer serializer = new Serializer();
 	private final Map<Type, PropertyType> types = new HashMap<>();
 
-	public Printer(PrintWriter out) {
-		this.out = out;
+	public Printer(LineReader reader, OutputStream out) {
+		this.reader = reader;
+		this.out = new PrintWriter(out);
 	}
 
 	public void flush() throws IOException {
@@ -83,41 +86,49 @@ public class Printer {
 
 	public void println(String command, Object... args)
 			throws IllegalAccessException, InvocationTargetException, IOException {
-		if (args == null || args.length < 1) {
-			out.println(command);
-		} else {
-			String[] json = new String[args.length];
-			for (int i = 0; i < args.length; i++) {
-				json[i] = serializer.serialize(args[i],
-						getPropertyType(args[i] == null ? Object.class : args[i].getClass()));
+		synchronized (reader) {
+			reader.returnLine();
+			if (args == null || args.length < 1) {
+				out.println(command);
+			} else {
+				String[] json = new String[args.length];
+				for (int i = 0; i < args.length; i++) {
+					json[i] = serializer.serialize(args[i],
+							getPropertyType(args[i] == null ? Object.class : args[i].getClass()));
+				}
+				StringBuilder sb = new StringBuilder();
+				sb.append(command);
+				for (String str : json) {
+					sb.append('\t').append(str);
+				}
+				out.println(sb.toString());
 			}
-			StringBuilder sb = new StringBuilder();
-			sb.append(command);
-			for (String str : json) {
-				sb.append('\t').append(str);
-			}
-			out.println(sb.toString());
+			flush();
+			reader.prompt();
 		}
-		flush();
 	}
 
 	public void println(String command, Type[] types, Object... args)
 			throws IllegalAccessException, InvocationTargetException, IOException {
-		if (args == null || args.length < 1) {
-			out.println(command);
-		} else {
-			String[] json = new String[args.length];
-			for (int i = 0; i < args.length; i++) {
-				json[i] = serializer.serialize(args[i], getPropertyType(types[i]));
+		synchronized (reader) {
+			reader.returnLine();
+			if (args == null || args.length < 1) {
+				out.println(command);
+			} else {
+				String[] json = new String[args.length];
+				for (int i = 0; i < args.length; i++) {
+					json[i] = serializer.serialize(args[i], getPropertyType(types[i]));
+				}
+				StringBuilder sb = new StringBuilder();
+				sb.append(command);
+				for (String str : json) {
+					sb.append('\t').append(str);
+				}
+				out.println(sb.toString());
 			}
-			StringBuilder sb = new StringBuilder();
-			sb.append(command);
-			for (String str : json) {
-				sb.append('\t').append(str);
-			}
-			out.println(sb.toString());
+			flush();
+			reader.prompt();
 		}
-		flush();
 	}
 
 	public synchronized PropertyType getPropertyType(Type type) {

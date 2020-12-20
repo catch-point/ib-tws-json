@@ -35,7 +35,7 @@ plugins {
     id 'java'
 }
 
-version = '0.0.1'
+version = '0.0.2'
 
 sourceSets {
     main {
@@ -93,9 +93,9 @@ dependencies {
 }
 
 compileJava {
-    // options.release = 8
-    sourceCompatibility = 8
-    targetCompatibility = 8
+    // options.release = 1.8
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
 
 jar {

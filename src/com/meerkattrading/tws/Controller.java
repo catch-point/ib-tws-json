@@ -101,6 +101,11 @@ public class Controller {
 				addPropertyType(new PropertyType(type));
 			}
 		}
+		for (Method method : EWrapper.class.getDeclaredMethods()) {
+			for (Type type : method.getGenericParameterTypes()) {
+				addPropertyType(new PropertyType(type));
+			}
+		}
 	}
 
 	private static Collection<Class<?>> getAllInterfaces(Class<?> type) {
@@ -115,7 +120,7 @@ public class Controller {
 		return array;
 	}
 
-	public synchronized void login(TradingMode mode, TraderWorkstationSettings settings, Base64LoginManager credentials)
+	public synchronized void login(TradingMode mode, Base64LoginManager credentials, TraderWorkstationSettings settings)
 			throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, NoSuchMethodException,
 			IOException, InterruptedException {
 		if (TWSManager.isOpen()) {
@@ -273,8 +278,38 @@ public class Controller {
 
 	public void help(String name) throws IllegalAccessException, InvocationTargetException, IOException {
 		if (name == null || name.length() == 0) {
+			out.println("help", "send", Shell.class.getSimpleName());
+			out.println("help", "send", EClient.class.getSimpleName());
+			out.println("help", "receive", EWrapper.class.getSimpleName());
+			out.println("helpEnd", name);
+		} else if ("send".equals(name)) {
+			out.println("help", "send", Shell.class.getSimpleName());
+			out.println("help", "send", EClient.class.getSimpleName());
+			out.println("helpEnd", name);
+		} else if ("receive".equals(name)) {
+			out.println("help", "receive", EWrapper.class.getSimpleName());
+			out.println("helpEnd", name);
+		} else if (Shell.class.getSimpleName().equals(name)) {
 			for (String command : commands.keySet()) {
-				out.println("help", name, command);
+				Method method = commands.get(command);
+				if (Controller.class.equals(method.getDeclaringClass())) {
+					out.println("help", name, command);
+				}
+			}
+			out.println("helpEnd", name);
+		} else if (EClient.class.getSimpleName().equals(name)) {
+			for (String command : commands.keySet()) {
+				Method method = commands.get(command);
+				if (EClient.class.equals(method.getDeclaringClass())) {
+					out.println("help", name, command);
+				}
+			}
+			out.println("helpEnd", name);
+		} else if (EWrapper.class.getSimpleName().equals(name)) {
+			for (Method method : EWrapper.class.getDeclaredMethods()) {
+				if (method.getReturnType() == Void.TYPE && Modifier.isPublic(method.getModifiers())) {
+					out.println("help", name, method.getName());
+				}
 			}
 			out.println("helpEnd", name);
 		} else if (commands.containsKey(name)) {
@@ -300,6 +335,17 @@ public class Controller {
 						for (Object value : values) {
 							out.println("help", name, value);
 						}
+					}
+					out.println("helpEnd", name);
+					return;
+				}
+			}
+			for (Method method : EWrapper.class.getDeclaredMethods()) {
+				if (method.getName().equals(name)) {
+					Type[] types = method.getGenericParameterTypes();
+					Parameter[] params = method.getParameters();
+					for (int i = 0; i < types.length; i++) {
+						out.println("help", name, params[i].getName(), properties.get(types[i]).getSimpleName());
 					}
 					out.println("helpEnd", name);
 					return;
