@@ -22,21 +22,21 @@ import java.lang.reflect.Proxy;
 import com.ib.client.EWrapper;
 
 /**
- * Serializes all the EWrapper events
+ * Serializes all the TwsEvents events
  *
  * @author James Leigh
  *
  */
-public class EWrapperHandler implements InvocationHandler {
+public class TwsEventsHandler implements InvocationHandler {
 	private Printer out;
 
-	public static EWrapper newInstance(Printer out) {
-		EWrapperHandler handler = new EWrapperHandler(out);
+	public static TwsEvents newInstance(Printer out) {
+		TwsEventsHandler handler = new TwsEventsHandler(out);
 		ClassLoader cl = EWrapper.class.getClassLoader();
-		return (EWrapper) Proxy.newProxyInstance(cl, new Class<?>[] { EWrapper.class }, handler);
+		return (TwsEvents) Proxy.newProxyInstance(cl, new Class<?>[] { TwsEvents.class }, handler);
 	}
 
-	public EWrapperHandler(Printer out) {
+	public TwsEventsHandler(Printer out) {
 		this.out = out;
 	}
 

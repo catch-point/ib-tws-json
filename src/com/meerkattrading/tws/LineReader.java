@@ -1,16 +1,16 @@
-/* 
+/*
  * Copyright (c) 2020 James Leigh
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.meerkattrading.tws;
@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Reads and verifies the input from the shell
- * 
+ *
  * @author James Leigh
  *
  */
@@ -127,18 +127,15 @@ public class LineReader {
 		for (int i = 0; i < buffer.position(); i++) {
 			byte chr = buffer.get(i);
 			if (chr == '\n' || chr == '\r') {
-				ByteBuffer line = ByteBuffer.allocate(i);
-				buffer.flip();
-				buffer.get(line.array(), line.arrayOffset(), line.limit());
-				buffer.position(i);
-				line.position(i);
-				while (buffer.hasRemaining()
-						&& (buffer.get(buffer.position()) == '\n' || buffer.get(buffer.position()) == '\r')) {
-					buffer.get();
+				while (i < buffer.position()
+						&& (buffer.get(i) == '\n' || buffer.get(i) == '\r')) {
+					i++;
 				}
+				byte[] line = new byte[i];
+				buffer.flip();
+				buffer.get(line);
 				buffer.compact();
-				line.flip();
-				return new String(line.array(), UTF8);
+				return new String(line, UTF8);
 			}
 		}
 		return null;

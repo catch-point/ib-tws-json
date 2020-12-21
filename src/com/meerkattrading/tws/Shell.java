@@ -1,16 +1,16 @@
-/* 
+/*
  * Copyright (c) 2020 James Leigh
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.meerkattrading.tws;
@@ -35,14 +35,14 @@ import org.apache.commons.cli.ParseException;
 
 /**
  * The main entry point for the Read-eval-print loop
- * 
+ *
  * @author James Leigh
  *
  */
 public class Shell {
 	private final Logger logger = Logger.getLogger(Shell.class.getName());
 	private final Deserializer deserializer = new Deserializer();
-	private Controller controller;
+	private Invoker controller;
 	private Printer out;
 	private LineReader reader;
 
@@ -94,7 +94,7 @@ public class Shell {
 	public Shell(String ibDir, boolean prompt) throws IOException {
 		reader = new LineReader(System.in, prompt ? System.err : null);
 		this.out = new Printer(reader, System.out);
-		controller = new Controller(ibDir, this.getPrinter());
+		controller = new Invoker(ibDir, this.getPrinter());
 	}
 
 	public Shell(InputStream in, OutputStream out) throws IOException {
@@ -104,7 +104,7 @@ public class Shell {
 	public Shell(String ibDir, InputStream in, OutputStream out) throws IOException {
 		reader = new LineReader(in);
 		this.out = new Printer(reader, out);
-		controller = new Controller(ibDir, this.getPrinter());
+		controller = new Invoker(ibDir, this.getPrinter());
 	}
 
 	public void repl() throws InterruptedException, IOException {
@@ -127,7 +127,12 @@ public class Shell {
 					eval(input);
 				}
 			} catch (MoreInputExpected e) {
-				rep(input.getInput() + "\n");
+				String string = input.getInput().toString();
+				if (string.trim().length() > 0) {
+					rep(input.getInput() + "\n");
+				} else {
+					rep("");
+				}
 			}
 		} catch (SyntaxError | IllegalAccessException | InvocationTargetException | RuntimeException e) {
 			logger.log(Level.WARNING, e.getMessage(), e);
@@ -140,7 +145,7 @@ public class Shell {
 		List<String> values = line.getParsedValues();
 		String command = values.get(0);
 		try {
-			Controller controller = getController();
+			Invoker controller = getInvoker();
 			PropertyType[] types = controller.getParameterTypes(command);
 			if (values.size() < types.length + 1) {
 				for (int i = values.size() - 1; i < types.length; i++) {
@@ -158,7 +163,9 @@ public class Shell {
 			}
 			controller.invoke(command, args);
 		} catch (NoSuchMethodException e) {
-			getPrinter().println("error", command + "?");
+			if (command.length() > 0) {
+				getPrinter().println("error", command + "?");
+			}
 		} catch (InvocationTargetException e) {
 			try {
 				throw e.getCause();
@@ -173,13 +180,13 @@ public class Shell {
 
 	public void exit() throws IOException {
 		try {
-			getController().exit();
+			getInvoker().exit();
 		} catch (EOFException e) {
 			// expected
 		}
 	}
 
-	protected Controller getController() throws IOException {
+	protected Invoker getInvoker() throws IOException {
 		return controller;
 	}
 

@@ -95,9 +95,9 @@ Additional commands are listed below.
 
 #### help
 
-The command `help "Shell"` and `help "EClient"` ilst available commands in a `help` response. Other parameters string can be given to provide the schema available for those methods or types. `helpEnd` is sent it indicate the response is complete.
+The command `help` lists available commands in a `help` response. Other parameters string can be given to provide the schema available for those methods or types. `helpEnd` is sent it indicate the response is complete.
 
-`help "EWrapper"` list the events sent from the shell based an activity in TWS.
+`help "EWrapper"` and `help "TwsEvents"` list the events sent from the shell based an activity in TWS.
 
 #### login
 

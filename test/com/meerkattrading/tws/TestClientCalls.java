@@ -76,8 +76,8 @@ public class TestClientCalls extends TestCase {
 		Shell shell = new Shell(in, out) {
 
 			@Override
-			protected Controller getController() throws IOException {
-				return new Controller(this.getPrinter()) {
+			protected Invoker getInvoker() throws IOException {
+				return new Invoker(this.getPrinter()) {
 
 					@Override
 					protected IClient getClient() {

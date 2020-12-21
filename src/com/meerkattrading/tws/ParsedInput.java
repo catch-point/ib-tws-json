@@ -1,16 +1,16 @@
-/* 
+/*
  * Copyright (c) 2020 James Leigh
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.meerkattrading.tws;
@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.json.Json;
+
 /**
  * Parses the input to ensure it is correctly formatted.
- * 
+ *
  * @author James Leigh
  *
  */
@@ -102,8 +104,9 @@ public class ParsedInput {
 	private CharSequence readQuotedString() throws SyntaxError {
 		int start = pos;
 		read('"');
-		final int pos1 = pos;
-		while (charAt(buffer, pos) != buffer.charAt(start) && !(EOF == charAt(buffer, pos1))) {
+		char quote = buffer.charAt(start);
+		while (charAt(buffer, pos) != quote && charAt(buffer, pos) != '\n' && charAt(buffer, pos) != '\r'
+				&& !(EOF == charAt(buffer, pos))) {
 			if ('\\' == charAt(buffer, pos)) {
 				read('\\');
 				if ('u' == charAt(buffer, pos)) {
@@ -119,7 +122,7 @@ public class ParsedInput {
 				pos++;
 			}
 		}
-		read(buffer.charAt(start));
+		read(quote);
 		return buffer.subSequence(start, pos);
 	}
 
@@ -212,7 +215,8 @@ public class ParsedInput {
 		if (c == charAt(buffer, pos)) {
 			return buffer.subSequence(pos, pos++);
 		} else {
-			throw new SyntaxError(lineNumber(), column(), "Expected " + c + " but got " + ((char) charAt(buffer, pos)));
+			String encoded = Json.createValue(Character.toString((char) charAt(buffer, pos))).toString();
+			throw new SyntaxError(lineNumber(), column(), "Expected " + c + " but got " + encoded);
 		}
 	}
 

@@ -1,16 +1,16 @@
-/* 
+/*
  * Copyright (c) 2020 James Leigh
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.meerkattrading.tws;
@@ -46,11 +46,11 @@ import org.apache.commons.cli.ParseException;
 
 /**
  * Finds the JRE, VM args, TWS jars, and IB TWS API jar and launches a JVM
- * 
+ *
  * @author James Leigh
  *
  */
-public class Bootstrap {
+public class Launcher {
 	private static final String TWS_API_JAR = "TwsApi.jar";
 	private static final File[] tws_path_search = new File[] { new File("C:\\Jts\\ibgateway"), new File("C:\\Jts"),
 			new File(new File(System.getProperty("user.home"), "Jts"), "ibgateway"),
@@ -108,7 +108,7 @@ public class Bootstrap {
 		command.addAll(vm_args);
 		command.add("-cp");
 		command.add(cp);
-		command.add(Bootstrap.class.getPackage().getName() + ".Shell");
+		command.add(Launcher.class.getPackage().getName() + ".Shell");
 		command.addAll(shell_args);
 		Process shell = new ProcessBuilder(command).redirectInput(Redirect.INHERIT).redirectOutput(Redirect.INHERIT)
 				.redirectError(Redirect.INHERIT).start();
