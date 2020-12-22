@@ -150,11 +150,11 @@ public class Shell {
 			if (values.size() < types.length + 1) {
 				for (int i = values.size() - 1; i < types.length; i++) {
 					if (types[i].isPrimitive()) {
-						throw new MoreInputExpected("Expecting " + (types.length - values.size()) + " more value(s)");
+						throw new MoreInputExpected("Expecting " + (1 + types.length - values.size()) + " more value(s)");
 					}
 				}
 			} else if (values.size() > types.length + 1) {
-				throw new IllegalArgumentException("Expected " + (values.size() - types.length) + " less value(s)");
+				throw new IllegalArgumentException("Expected " + (values.size() - types.length -1) + " less value(s)");
 			}
 			Object[] args = new Object[types.length];
 			for (int i = 0; i < args.length; i++) {

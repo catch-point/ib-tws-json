@@ -82,6 +82,7 @@ public class PropertyType {
 			add("public com.ib.client.OrderConditionType com.ib.client.OrderCondition.type()");
 			add("public java.lang.String com.ib.client.Order.getAlgoStrategy()");
 			add("public java.lang.String com.ib.client.Order.getOrderType()");
+			add("public int com.ib.client.Order.getOcaType()");
 		}
 	};
 	private final Logger logger = Logger.getLogger(PropertyType.class.getName());
