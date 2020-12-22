@@ -59,7 +59,8 @@ public class Launcher {
 	private static final File[] tws_api_path_search = new File[] { new File("C:\\TWS API"),
 			new File(System.getProperty("user.home"), "IBJts"), new File(System.getProperty("user.home"), "Jts"),
 			new File(System.getProperty("user.home"), "Downloads"),
-			new File(System.getProperty("user.home"), "Download"),
+			new File(System.getProperty("user.home"), "Download"), new File(System.getProperty("user.home"), "lib"),
+			new File(System.getProperty("user.home"), "libs"),
 			new File(System.getProperty("java.class.path").split("path.separator")[0]).getParentFile() };
 
 	public static void main(String[] args) throws Throwable {
