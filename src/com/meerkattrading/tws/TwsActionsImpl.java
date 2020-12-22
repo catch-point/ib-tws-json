@@ -288,7 +288,7 @@ public class TwsActionsImpl implements TwsActions {
 						}
 					} else {
 						for (Object value : values) {
-							out.println("help", new Type[] {ptype.getJavaType()}, value);
+							out.println("help", new Type[] {String.class, ptype.getJavaType()}, name, value);
 						}
 					}
 					events.helpEnd(name);
