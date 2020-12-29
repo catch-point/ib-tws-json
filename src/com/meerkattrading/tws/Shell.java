@@ -17,6 +17,7 @@ package com.meerkattrading.tws;
 
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -50,7 +51,8 @@ public class Shell {
 		Options options = new Options();
 		options.addOption(null, "tws-settings-path", true, "Where TWS will read/store settings");
 		options.addOption(null, "no-prompt", false, "Don't prompt for input");
-		options.addOption(null, "silence", false, "Don't log to stderr");
+		options.addOption("s", "silence", false, "Don't log to stderr");
+		options.addOption("i", "interactive", false, "Enter interactive mode after executing a script file");
 		options.addOption("h", "help", false, "This message");
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd;
@@ -63,7 +65,7 @@ public class Shell {
 		}
 		if (cmd.hasOption("help")) {
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("ib-tws-shell", options);
+			formatter.printHelp("ib-tws-shell [options] [scirpt files..]", options);
 			System.exit(0);
 			return;
 		}
@@ -87,13 +89,24 @@ public class Shell {
 			System.err
 					.println("Welcome to ib-tws-shell! Type 'help' to see a list of commands or 'login' to open TWS.");
 		}
-		shell.repl();
+		for (String script : cmd.getArgList()) {
+			FileInputStream file = new FileInputStream(script);
+			try {
+				shell.repl(file);
+			} finally {
+				file.close();
+			}
+		}
+		if (cmd.getArgList().isEmpty() || cmd.hasOption("interactive")) {
+			shell.repl();
+		}
 		shell.exit();
 	}
 
 	public Shell(String ibDir, boolean prompt) throws IOException {
-		reader = new LineReader(System.in, prompt ? System.err : null);
-		this.out = new Printer(reader, System.out);
+		Prompter prompter = prompt ? new Prompter(System.err) : new Prompter();
+		reader = new LineReader(System.in, prompter);
+		this.out = new Printer(prompter, System.out);
 		controller = new Invoker(ibDir, this.getPrinter());
 	}
 
@@ -103,14 +116,30 @@ public class Shell {
 
 	public Shell(String ibDir, InputStream in, OutputStream out) throws IOException {
 		reader = new LineReader(in);
-		this.out = new Printer(reader, out);
+		this.out = new Printer(out);
 		controller = new Invoker(ibDir, this.getPrinter());
 	}
 
+	public void exit() throws IOException {
+		try {
+			getInvoker().exit();
+		} catch (EOFException e) {
+			// expected
+		}
+	}
+
+	public void repl(InputStream in) throws InterruptedException, IOException {
+		repl(new LineReader(in));
+	}
+
 	public void repl() throws InterruptedException, IOException {
+		repl(reader);
+	}
+
+	private void repl(LineReader reader) throws InterruptedException, IOException {
 		while (true) {
 			try {
-				rep("");
+				rep(reader, "");
 			} catch (EOFException e) {
 				break;
 			} finally {
@@ -119,19 +148,19 @@ public class Shell {
 		}
 	}
 
-	private void rep(CharSequence prefix) throws IOException {
+	private void rep(LineReader reader, CharSequence prefix) throws IOException {
 		try {
 			ParsedInput input = reader.readLine(prefix);
 			try {
-				if (input != null && input.getInput().length() > 0) {
+				if (input != null && !input.isEmpty()) {
 					eval(input);
 				}
 			} catch (MoreInputExpected e) {
 				String string = input.getInput().toString();
 				if (string.trim().length() > 0) {
-					rep(input.getInput() + "\n");
+					rep(reader, input.getInput() + "\n");
 				} else {
-					rep("");
+					rep(reader, "");
 				}
 			}
 		} catch (SyntaxError | IllegalAccessException | InvocationTargetException | RuntimeException e) {
@@ -140,7 +169,7 @@ public class Shell {
 		}
 	}
 
-	public void eval(ParsedInput line)
+	private void eval(ParsedInput line)
 			throws IllegalAccessException, InvocationTargetException, IOException, MoreInputExpected {
 		List<String> values = line.getParsedValues();
 		String command = values.get(0);
@@ -150,11 +179,12 @@ public class Shell {
 			if (values.size() < types.length + 1) {
 				for (int i = values.size() - 1; i < types.length; i++) {
 					if (types[i].isPrimitive()) {
-						throw new MoreInputExpected("Expecting " + (1 + types.length - values.size()) + " more value(s)");
+						throw new MoreInputExpected(
+								"Expecting " + (1 + types.length - values.size()) + " more value(s)");
 					}
 				}
 			} else if (values.size() > types.length + 1) {
-				throw new IllegalArgumentException("Expected " + (values.size() - types.length -1) + " less value(s)");
+				throw new IllegalArgumentException("Expected " + (values.size() - types.length - 1) + " less value(s)");
 			}
 			Object[] args = new Object[types.length];
 			for (int i = 0; i < args.length; i++) {
@@ -175,14 +205,6 @@ public class Shell {
 			} catch (Throwable cause) {
 				throw e;
 			}
-		}
-	}
-
-	public void exit() throws IOException {
-		try {
-			getInvoker().exit();
-		} catch (EOFException e) {
-			// expected
 		}
 	}
 

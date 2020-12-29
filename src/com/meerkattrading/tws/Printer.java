@@ -30,13 +30,17 @@ import java.util.Map;
  *
  */
 public class Printer {
-	private final LineReader reader;
+	private final Prompter prompter;
 	private final PrintWriter out;
 	private final Serializer serializer = new Serializer();
 	private final Map<Type, PropertyType> types = new HashMap<>();
 
-	public Printer(LineReader reader, OutputStream out) {
-		this.reader = reader;
+	public Printer(OutputStream out) {
+		this(new Prompter(), out);
+	}
+
+	public Printer(Prompter prompter, OutputStream out) {
+		this.prompter = prompter;
 		this.out = new PrintWriter(out);
 	}
 
@@ -86,8 +90,8 @@ public class Printer {
 
 	public void println(String command, Type[] types, Object... args)
 			throws IllegalAccessException, InvocationTargetException, IOException {
-		synchronized (reader) {
-			reader.returnLine();
+		synchronized (prompter) {
+			prompter.returnLine();
 			if (args == null || args.length < 1) {
 				out.println(command);
 			} else {
@@ -103,7 +107,7 @@ public class Printer {
 				out.println(sb.toString());
 			}
 			flush();
-			reader.prompt();
+			prompter.prompt();
 		}
 	}
 

@@ -19,7 +19,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -33,31 +32,27 @@ import java.nio.charset.StandardCharsets;
 public class LineReader {
 	private static final Charset UTF8 = StandardCharsets.UTF_8;
 	private static final byte CR = "\r".getBytes(UTF8)[0];
-	private static final byte NL = "\n".getBytes(UTF8)[0];;
-	private static final String PROMPT = "\r> ";
-	private static final String MORE = "\r... ";
+	private static final byte NL = "\n".getBytes(UTF8)[0];
 	private final InputStream input;
-	private final OutputStream output;
+	private final Prompter prompter;
 	private ByteBuffer buffer = ByteBuffer.allocate(256);
 	private boolean eof = false;
-	private volatile boolean more = false;
 
 	public LineReader(InputStream reader) {
-		this(reader, null);
+		this(reader, new Prompter());
 	}
 
-	public LineReader(InputStream in, OutputStream out) {
+	public LineReader(InputStream in, Prompter prompter) {
 		this.input = in;
-		this.output = out;
+		this.prompter = prompter;
 	}
 
 	public ParsedInput readLine(CharSequence prefix) throws IOException, SyntaxError {
 		try {
-			more = prefix.length() > 0;
-			prompt();
+			prompter.prompt(prefix.length() > 0);
 			CharSequence line = readLine();
 			if (line == null) {
-				newLine();
+				prompter.newLine();
 				throw new EOFException();
 			}
 			StringBuilder sb = new StringBuilder();
@@ -72,30 +67,21 @@ public class LineReader {
 		}
 	}
 
-	public synchronized void prompt() throws IOException {
-		if (output != null) {
-			String str = more ? MORE : PROMPT;
-			output.write(str.getBytes(UTF8));
-			String lastLine = lastLine();
-			if (lastLine != null) {
-				output.write(lastLine.getBytes(UTF8));
+	public synchronized String currentLine() throws IOException {
+		ByteBuffer copy = buffer.duplicate();
+		copy.flip();
+		for (int i = copy.limit(); i > 0; i--) {
+			byte chr = copy.get(i - 1);
+			if (chr == NL || chr == CR) {
+				byte[] line = new byte[copy.limit() - i];
+				copy.position(i);
+				copy.get(line);
+				return new String(line, UTF8);
 			}
-			output.flush();
 		}
-	}
-
-	public synchronized void returnLine() throws IOException {
-		if (output != null) {
-			output.write('\r');
-			output.flush();
-		}
-	}
-
-	public synchronized void newLine() throws IOException {
-		if (output != null) {
-			output.write('\n');
-			output.flush();
-		}
+		byte[] line = new byte[copy.remaining()];
+		copy.get(line);
+		return new String(line, UTF8);
 	}
 
 	private CharSequence readLine() throws IOException, SyntaxError {
@@ -148,23 +134,6 @@ public class LineReader {
 		byte[] line = new byte[buffer.remaining()];
 		buffer.get(line);
 		buffer.clear();
-		return new String(line, UTF8);
-	}
-
-	private String lastLine() throws IOException {
-		ByteBuffer copy = buffer.duplicate();
-		copy.flip();
-		for (int i = copy.limit(); i > 0; i--) {
-			byte chr = copy.get(i - 1);
-			if (chr == NL || chr == CR) {
-				byte[] line = new byte[copy.limit() - i];
-				copy.position(i);
-				copy.get(line);
-				return new String(line, UTF8);
-			}
-		}
-		byte[] line = new byte[copy.remaining()];
-		copy.get(line);
 		return new String(line, UTF8);
 	}
 

@@ -36,6 +36,7 @@ public class ParsedInput {
 	public ParsedInput(CharSequence input) throws SyntaxError, MoreInputExpected {
 		this.buffer = input;
 		try {
+			readCommentAndWhiteSpace();
 			values.add(readJavaIdentifier().toString());
 			readWhiteSpace();
 			while (EOF != charAt(buffer, pos)) {
@@ -58,8 +59,21 @@ public class ParsedInput {
 		return buffer;
 	}
 
+	public boolean isEmpty() {
+		return values.isEmpty();
+	}
+
 	public List<String> getParsedValues() {
 		return values;
+	}
+
+	private void readCommentAndWhiteSpace() {
+		if (charAt(buffer, pos) == '#') {
+			while (charAt(buffer, pos) != '\n') {
+				pos++;
+			}
+		}
+		readWhiteSpace();
 	}
 
 	private CharSequence readJavaIdentifier() {

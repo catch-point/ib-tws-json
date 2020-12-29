@@ -51,6 +51,8 @@ import org.apache.commons.cli.ParseException;
  *
  */
 public class Launcher {
+	private static final String HEADER = "where [options] include:";
+	private static final String FOOTER = "Please report issues at https://github.com/jamesrdf/ib-tws-shell/issues";
 	private static final String TWS_API_JAR = "TwsApi.jar";
 	private static final File[] tws_path_search = new File[] { new File("C:\\Jts\\ibgateway"), new File("C:\\Jts"),
 			new File(new File(System.getProperty("user.home"), "Jts"), "ibgateway"),
@@ -73,7 +75,8 @@ public class Launcher {
 		options.addOption(null, "tws-api-jar", true, "The TwsApi.jar filename");
 		options.addOption(null, "java-home", true, "The location of the jre to launch");
 		options.addOption(null, "no-prompt", false, "Don't prompt for input");
-		options.addOption(null, "silence", false, "Don't log to stderr");
+		options.addOption("s", "silence", false, "Don't log to stderr");
+		options.addOption("i", "interactive", false, "Enter interactive mode after executing a script file");
 		options.addOption("h", "help", false, "This message");
 		CommandLine cmd;
 		CommandLineParser parser = new DefaultParser();
@@ -86,7 +89,7 @@ public class Launcher {
 		}
 		if (cmd.hasOption("help")) {
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("ib-tws-shell", options);
+			formatter.printHelp("ib-tws-shell [options] [scirpt files..]", HEADER, options, FOOTER);
 			System.exit(0);
 			return;
 		}
@@ -101,9 +104,20 @@ public class Launcher {
 		if (cmd.hasOption("silence")) {
 			shell_args.add("--silence");
 		}
+		if (cmd.hasOption("interactive")) {
+			shell_args.add("interactive");
+		}
 		String java = getJavaExe(cmd);
 		Collection<String> vm_args = getJVMOptions(cmd);
-		String cp = getClassPath(cmd);
+		String cp;
+		try {
+			cp = getClassPath(cmd);
+		} catch (Exception err) {
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("ib-tws-shell [options] [scirpt files..]", HEADER, options, err.getMessage());
+			System.exit(1);
+			return;
+		}
 		List<String> command = new ArrayList<>();
 		command.add(java);
 		command.addAll(vm_args);
@@ -121,14 +135,20 @@ public class Launcher {
 		}
 	}
 
+	/**
+	 * Locates the java executable
+	 */
 	private static String getJavaExe(CommandLine cmd) throws IOException {
-		String javaHome = getJavaHome(cmd);
+		String javaHome = getJavaRuntimeEnvironment(cmd);
 		if (javaHome == null || !new File(javaHome).isDirectory())
 			System.err.println("Cannot found JRE trying changing --java-home=...");
 		return new File(new File(javaHome, "bin"), "java").getPath();
 	}
 
-	private static String getJavaHome(CommandLine cmd) throws IOException {
+	/**
+	 * Locals the JRE on the system by looking in the usual TWS locations.
+	 */
+	private static String getJavaRuntimeEnvironment(CommandLine cmd) throws IOException {
 		if (cmd.hasOption("java-home"))
 			return cmd.getOptionValue("java-home");
 		File install4j = getInstall4j(cmd);
@@ -144,6 +164,9 @@ public class Launcher {
 		return null;
 	}
 
+	/**
+	 * Locates the .install4j folders of a TWS install
+	 */
 	private static File getInstall4j(CommandLine cmd) {
 		for (File jts_path : getJtsPathSearch(cmd)) {
 			String version = getJtsVersion(jts_path, cmd);
@@ -194,6 +217,9 @@ public class Launcher {
 		return set;
 	}
 
+	/**
+	 * Reads the JVM arguments in the TWS install directory
+	 */
 	private static List<String> getVMOptions(CommandLine cmd) throws IOException {
 		File vmoptions = getVMOptionsFile(cmd);
 		if (vmoptions == null || !vmoptions.isFile())
@@ -213,6 +239,9 @@ public class Launcher {
 		return opts;
 	}
 
+	/**
+	 * Finds the vmoptions file in the TWS install directory
+	 */
 	private static File getVMOptionsFile(CommandLine cmd) {
 		Pattern regex = Pattern.compile("gateway", Pattern.CASE_INSENSITIVE);
 		for (File jts_path : getJtsPathSearch(cmd)) {
@@ -255,6 +284,9 @@ public class Launcher {
 		return null;
 	}
 
+	/**
+	 * Creates the Java Class Path
+	 */
 	private static String getClassPath(CommandLine cmd) throws MalformedURLException {
 		String[] classpath = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
 		List<File> jars = new ArrayList<>();
@@ -266,7 +298,7 @@ public class Launcher {
 		if (tws_api_jar != null) {
 			jars.add(tws_api_jar);
 		} else {
-			System.err.println("Could not find TwsApi.jar try --tws-api-jar=...");
+			throw new IllegalArgumentException("Could not find TwsApi.jar try --tws-api-jar=...");
 		}
 		for (int i = 0; i < classpath.length; i++) {
 			jars.add(new File(classpath[i]));
@@ -281,6 +313,9 @@ public class Launcher {
 		return sb.toString();
 	}
 
+	/**
+	 * Identify all the jars needed to launch TWS
+	 */
 	private static Collection<File> getJtsJars(CommandLine cmd) throws MalformedURLException {
 		File jars_dir = getJtsJarsDir(cmd);
 		if (jars_dir == null)
@@ -295,6 +330,9 @@ public class Launcher {
 		return jars.values();
 	}
 
+	/**
+	 * Finds the jars directory in the TWS install
+	 */
 	private static File getJtsJarsDir(CommandLine cmd) {
 		for (File jts_path : getJtsPathSearch(cmd)) {
 			String version = getJtsVersion(jts_path, cmd);
@@ -324,12 +362,18 @@ public class Launcher {
 		return null;
 	}
 
+	/**
+	 * List of common TWS install locations
+	 */
 	private static File[] getJtsPathSearch(CommandLine cmd) {
 		File[] jts_search_path = cmd.hasOption("tws-path") ? new File[] { new File(cmd.getOptionValue("tws-path")) }
 				: tws_path_search;
 		return jts_search_path;
 	}
 
+	/**
+	 * Looks for installed TWS versions on the system
+	 */
 	private static String getJtsVersion(File jts_path, CommandLine cmd) {
 		if (cmd.hasOption("tws-version"))
 			return cmd.getOptionValue("tws-version");
@@ -344,14 +388,10 @@ public class Launcher {
 		return null;
 	}
 
-	private static File getTwsApiJar(CommandLine cmd) throws MalformedURLException {
-		File jar = findTwsApiJar(cmd);
-		if (jar != null && jar.isFile())
-			return jar;
-		return null;
-	}
-
-	private static File findTwsApiJar(CommandLine cmd) {
+	/**
+	 * Finds the TwsApi.jar file
+	 */
+	private static File getTwsApiJar(CommandLine cmd) {
 		if (cmd.hasOption("tws-api-jar"))
 			return new File(cmd.getOptionValue("tws-api-jar"));
 		if (cmd.hasOption("tws-api-path"))
@@ -367,6 +407,9 @@ public class Launcher {
 		return null;
 	}
 
+	/**
+	 * Searches the folder for filename
+	 */
 	private static File searchFor(File folder, String filename) {
 		for (String ls : listNumerically(folder)) {
 			if (ls.equalsIgnoreCase(filename)) {
@@ -381,6 +424,9 @@ public class Launcher {
 		return null;
 	}
 
+	/**
+	 * Lists the contents of the directory with the highest version numbers first
+	 */
 	private static String[] listNumerically(File dir) {
 		Pattern digits = Pattern.compile("^[0-9]+$");
 		Set<String> list = new TreeSet<String>(new Comparator<String>() {
