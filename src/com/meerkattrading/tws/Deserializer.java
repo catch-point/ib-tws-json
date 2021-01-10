@@ -199,7 +199,7 @@ public class Deserializer {
 			throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
 		if (obj == null || obj.getValueType() == ValueType.NULL)
 			return null;
-		String key = obj.asJsonObject().getString("key");
+		String key = jsonToString(obj.asJsonObject().get("key"));
 		JsonValue value = obj.asJsonObject().get("value");
 		return new AbstractMap.SimpleEntry<String, Object>(key, jsonToJava(value, type));
 	}
@@ -416,14 +416,14 @@ public class Deserializer {
 		if (obj == null || obj.getValueType() == ValueType.NULL)
 			return null;
 		JsonObject o = obj.asJsonObject();
-		OrderConditionType type = OrderConditionType.valueOf(o.getString("type"));
+		OrderConditionType type = OrderConditionType.valueOf(jsonToString(o.get("type")));
 		OrderCondition oc = OrderCondition.create(type);
 		oc.conjunctionConnection(jsonToBoolean(o.get("conjunctionConnection")));
 		switch (type) {
 		case Execution:
-			((ExecutionCondition) oc).exchange(o.getString("exchange"));
-			((ExecutionCondition) oc).secType(o.getString("secType"));
-			((ExecutionCondition) oc).symbol(o.getString("symbol"));
+			((ExecutionCondition) oc).exchange(jsonToString(o.get("exchange")));
+			((ExecutionCondition) oc).secType(jsonToString(o.get("secType")));
+			((ExecutionCondition) oc).symbol(jsonToString(o.get("symbol")));
 			return oc;
 		case Margin:
 			((OperatorCondition) oc).isMore(jsonToBoolean(o.get("isMore")));
@@ -432,24 +432,24 @@ public class Deserializer {
 		case PercentChange:
 			((OperatorCondition) oc).isMore(jsonToBoolean(o.get("isMore")));
 			((ContractCondition) oc).conId(jsonToInteger(o.get("conId")));
-			((ContractCondition) oc).exchange(o.getString("exchange"));
+			((ContractCondition) oc).exchange(jsonToString(o.get("exchange")));
 			((PercentChangeCondition) oc).changePercent(jsonToDouble(o.get("changePercent")));
 			return oc;
 		case Price:
 			((OperatorCondition) oc).isMore(jsonToBoolean(o.get("isMore")));
 			((ContractCondition) oc).conId(jsonToInteger(o.get("conId")));
-			((ContractCondition) oc).exchange(o.getString("exchange"));
+			((ContractCondition) oc).exchange(jsonToString(o.get("exchange")));
 			((PriceCondition) oc).price(jsonToDouble(o.get("price")));
 			((PriceCondition) oc).triggerMethod(jsonToInteger(o.get("triggerMethod")));
 			return oc;
 		case Time:
 			((OperatorCondition) oc).isMore(jsonToBoolean(o.get("isMore")));
-			((TimeCondition) oc).time(o.getString("time"));
+			((TimeCondition) oc).time(jsonToString(o.get("time")));
 			return oc;
 		case Volume:
 			((OperatorCondition) oc).isMore(jsonToBoolean(o.get("isMore")));
 			((ContractCondition) oc).conId(jsonToInteger(o.get("conId")));
-			((ContractCondition) oc).exchange(o.getString("exchange"));
+			((ContractCondition) oc).exchange(jsonToString(o.get("exchange")));
 			((VolumeCondition) oc).volume(jsonToInteger(o.get("volume")));
 			return oc;
 		}
@@ -460,7 +460,7 @@ public class Deserializer {
 		if (obj == null || obj.getValueType() == ValueType.NULL)
 			return null;
 		JsonObject o = obj.asJsonObject();
-		return new TagValue(o.getString("tag"), o.getString("value"));
+		return new TagValue(jsonToString(o.get("tag")), jsonToString(o.get("value")));
 	}
 
 	private SoftDollarTier jsonToSoftDollarTier(JsonValue obj) {
@@ -482,7 +482,7 @@ public class Deserializer {
 		if (obj == null || obj.getValueType() == ValueType.NULL)
 			return null;
 		JsonObject o = obj.asJsonObject();
-		String time = o.getString("time");
+		String time = jsonToString(o.get("time"));
 		double open = jsonToDouble(o.get("open"));
 		double high = jsonToDouble(o.get("high"));
 		double low = jsonToDouble(o.get("low"));
@@ -534,8 +534,8 @@ public class Deserializer {
 		TickAttribLast attrib = jsonToTickAttribLast(o.get("tickAttribLast"));
 		double price = jsonToDouble(o.get("price"));
 		long size = jsonToLong(o.get("size"));
-		return new HistoricalTickLast(time, attrib, price, size, o.getString("exchange"),
-				o.getString("specialConditions"));
+		return new HistoricalTickLast(time, attrib, price, size, jsonToString(o.get("exchange")),
+				jsonToString(o.get("specialConditions")));
 	}
 
 	private TickAttribLast jsonToTickAttribLast(JsonValue value) {

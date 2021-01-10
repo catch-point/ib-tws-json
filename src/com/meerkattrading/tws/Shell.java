@@ -152,18 +152,24 @@ public class Shell {
 		try {
 			ParsedInput input = reader.readLine(prefix);
 			try {
-				if (input != null && !input.isEmpty()) {
-					eval(input);
+				try {
+					if (input != null && !input.isEmpty()) {
+						eval(input);
+					}
+				} catch (MoreInputExpected e) {
+					String string = input.getInput().toString();
+					if (string.trim().length() > 0) {
+						rep(reader, input.getInput() + "\n");
+					} else {
+						rep(reader, "");
+					}
 				}
-			} catch (MoreInputExpected e) {
-				String string = input.getInput().toString();
-				if (string.trim().length() > 0) {
-					rep(reader, input.getInput() + "\n");
-				} else {
-					rep(reader, "");
-				}
+			} catch (IllegalAccessException | InvocationTargetException | RuntimeException e) {
+				logger.log(Level.WARNING, "" + input.getInput(), e);
+				String msg = e.getMessage() == null ? e.toString() : e.getMessage();
+				getPrinter().println("error", msg + " while evaluating " + input.getInput());
 			}
-		} catch (SyntaxError | IllegalAccessException | InvocationTargetException | RuntimeException e) {
+		} catch (SyntaxError e) {
 			logger.log(Level.WARNING, e.getMessage(), e);
 			getPrinter().println("error", e.getMessage() == null ? e.toString() : e.getMessage());
 		}

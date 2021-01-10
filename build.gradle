@@ -35,7 +35,7 @@ plugins {
     id 'java'
 }
 
-version = '0.0.7'
+version = '0.0.8'
 
 sourceSets {
     main {
