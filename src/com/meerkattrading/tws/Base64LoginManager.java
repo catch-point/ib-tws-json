@@ -21,6 +21,7 @@ import java.util.Base64.Decoder;
 
 import javax.swing.JFrame;
 
+import ibcalpha.ibc.AbstractLoginHandler;
 import ibcalpha.ibc.LoginManager;
 
 /**
@@ -37,6 +38,8 @@ public class Base64LoginManager extends LoginManager {
 	private String IBAPIBase64Password;
 
 	private volatile JFrame loginFrame = null;
+
+    private volatile AbstractLoginHandler loginHandler = null;
 
 	private String decode(String encoded) {
 		if (encoded != null && encoded.length() > 0) {
@@ -119,6 +122,16 @@ public class Base64LoginManager extends LoginManager {
 	@Override
 	public void logDiagnosticMessage() {
 		// nothing to say
+	}
+
+	@Override
+	public AbstractLoginHandler getLoginHandler() {
+		return loginHandler;
+	}
+
+	@Override
+	public void setLoginHandler(AbstractLoginHandler loginHandler) {
+		this.loginHandler = loginHandler;
 	}
 
 }

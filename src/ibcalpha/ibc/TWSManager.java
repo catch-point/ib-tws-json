@@ -58,8 +58,8 @@ public class TWSManager {
 		startTws(mainClass, ibDir);
 	}
 
-	public synchronized static void stop() {
-		(new StopTask(null)).run(); // run on the current thread
+	public synchronized static void stop(boolean isGateway) {
+		(new StopTask(null, isGateway)).run(); // run on the current thread
 	}
 
 	public synchronized static int enableAPI(Integer portNumber, Boolean readOnly)
@@ -194,6 +194,7 @@ public class TWSManager {
 		windowHandlers.add(new ExitConfirmationDialogHandler());
 		windowHandlers.add(new TradingLoginHandoffDialogHandler());
 		windowHandlers.add(new LoginFailedDialogHandler());
+		windowHandlers.add(new CryptoOrderConfirmationDialogHandler());
 
 		return windowHandlers;
 	}

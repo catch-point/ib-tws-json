@@ -35,7 +35,7 @@ plugins {
     id 'java'
 }
 
-version = '0.0.8'
+version = '0.0.9'
 
 sourceSets {
     main {
@@ -56,7 +56,7 @@ sourceSets {
 
 // @seeAlso https://github.com/michel-kraemer/gradle-download-task
 task downloadTWSAPIZipFile(type: Download) {
-    src 'http://interactivebrokers.github.io/downloads/twsapi_macunix.976.01.zip'
+    src 'https://interactivebrokers.github.io/downloads/twsapi_macunix.981.01.zip'
     dest file("$buildDir/dependencies/twsapi.zip")
 }
 
@@ -68,7 +68,7 @@ task downloadAndUnzipTWSAPI(dependsOn: downloadTWSAPIZipFile, type: Copy) {
 assemble.dependsOn downloadAndUnzipTWSAPI
 
 task downloadIBCZipFile(type: Download) {
-    src 'https://github.com/IbcAlpha/IBC/releases/download/3.8.4-beta.2/IBCLinux-3.8.4-beta.2.zip'
+    src 'https://github.com/IbcAlpha/IBC/releases/download/3.14.0/IBCLinux-3.14.0.zip'
     dest file("$buildDir/dependencies/IBCLinux.zip")
 }
 

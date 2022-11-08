@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.ib.client.EWrapper;
@@ -141,6 +142,10 @@ public class Invoker {
 	}
 
 	private void addCommand(String command, Method method) {
+		if ("eConnect".equals(command) && Integer.TYPE.equals(method.getParameterTypes()[0])) {
+			logger.log(Level.SEVERE, "Unexpected method parameters " + method.getDeclaringClass().toGenericString()
+					+ " " + method.toGenericString());
+		}
 		if (!commands.containsKey(command)) {
 			commands.put(command, method);
 		} else if (method.getParameterCount() > commands.get(command).getParameterCount()
