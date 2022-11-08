@@ -158,7 +158,7 @@ public class Launcher {
 				new File(new File(new File(new File(install4j, "jre.bundle"), "Contents"), "Home"), "jre").getPath(),
 				readFile(new File(install4j, "pref_jre.cfg")), readFile(new File(install4j, "inst_jre.cfg")) };
 		for (String jre : jre_search) {
-			if (new File(jre).isDirectory())
+			if (jre != null && new File(jre).isDirectory())
 				return jre;
 		}
 		return null;

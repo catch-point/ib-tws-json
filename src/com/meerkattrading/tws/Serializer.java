@@ -217,8 +217,8 @@ public class Serializer {
 
 	private JsonValue histogramEntryToJson(HistogramEntry object) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("price", numberToJson(object.price));
-		builder.add("size", numberToJson(object.size));
+		builder.add("price", numberToJson(object.price()));
+		builder.add("size", numberToJson(object.size()));
 		return builder.build();
 	}
 
