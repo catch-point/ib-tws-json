@@ -183,9 +183,10 @@ public class TwsActionsImpl implements TwsActions {
 			loginThread.interrupt();
 		}
 		if (login != null && TWSManager.isOpen()) {
-			TWSManager.stop();
+			boolean isGateway = TWSManager.class.getClassLoader().getResource("ibgateway/GWClient") != null;
+			TWSManager.stop(isGateway);
 		} else if (login != null) {
-			System.exit(ErrorCodes.ERROR_CODE_2FA_DIALOG_TIMED_OUT);
+			System.exit(ErrorCodes.ERROR_CODE_2FA_LOGIN_TIMED_OUT);
 		}
 		throw new EOFException("exit");
 	}
