@@ -18,9 +18,6 @@ package com.meerkattrading.tws;
 import java.io.EOFException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.ExecutionException;
-
-import ibcalpha.ibc.IbcException;
 
 /**
  * Actions to control TWS
@@ -30,22 +27,9 @@ import ibcalpha.ibc.IbcException;
  */
 public interface TwsActions {
 
-	public void login(TradingMode mode, Base64LoginManager credentials, TraderWorkstationSettings settings)
-			throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, NoSuchMethodException,
-			IOException, InterruptedException;
-
 	public void sleep(Long ms) throws InterruptedException;
 
-	public void enableAPI(Integer portNumber, Boolean readOnly)
-			throws InterruptedException, IbcException, ExecutionException, IOException;
-
-	public void saveSettings();
-
-	public void reconnectData();
-
-	public void reconnectAccount();
-
-	public void eConnect(String host, int port, int clientId, boolean extraAuth) throws InterruptedException;
+	public void eConnect(int clientId, boolean extraAuth) throws InterruptedException;
 
 	public void eDisconnect();
 

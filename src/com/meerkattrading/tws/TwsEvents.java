@@ -15,8 +15,6 @@
  */
 package com.meerkattrading.tws;
 
-import ibcalpha.ibc.LoginManager.LoginState;
-
 /**
  * Events fired from TWS
  *
@@ -24,8 +22,6 @@ import ibcalpha.ibc.LoginManager.LoginState;
  *
  */
 public interface TwsEvents {
-
-	void login(LoginState new_state);
 
 	void enableAPI(int enableAPI);
 

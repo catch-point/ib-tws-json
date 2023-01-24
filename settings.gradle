@@ -15,4 +15,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'ib-tws-shell'
+rootProject.name = 'ib-tws-json'

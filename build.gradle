@@ -35,13 +35,16 @@ plugins {
     id 'java'
 }
 
-version = '0.0.9'
+version = '0.1.0'
 
 sourceSets {
     main {
-         java {
+        java {
             srcDirs = ['src']
-         }
+        }
+        resources {
+            srcDirs = ['src']
+        }
     }
 
     test {
@@ -67,28 +70,17 @@ task downloadAndUnzipTWSAPI(dependsOn: downloadTWSAPIZipFile, type: Copy) {
 
 assemble.dependsOn downloadAndUnzipTWSAPI
 
-task downloadIBCZipFile(type: Download) {
-    src 'https://github.com/IbcAlpha/IBC/releases/download/3.14.0/IBCLinux-3.14.0.zip'
-    dest file("$buildDir/dependencies/IBCLinux.zip")
-}
-
-task downloadAndUnzipIBC(dependsOn: downloadIBCZipFile, type: Copy) {
-    from zipTree(downloadIBCZipFile.dest)
-    into file("$buildDir/dependencies/ibclinux/")
-}
-
-assemble.dependsOn downloadAndUnzipIBC
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
     compile files("$buildDir/dependencies/twsapi/IBJts/source/JavaClient/TwsApi.jar")
-    compile files("$buildDir/dependencies/ibclinux/IBC.jar")
     compile 'javax.json:javax.json-api:1.1'
     compile 'org.glassfish:javax.json:1.1'
     compile 'commons-cli:commons-cli:1.4'
+    compile 'org.aspectj:aspectjrt:1.8.9'
+    compile 'org.aspectj:aspectjweaver:1.8.9'
     testImplementation 'junit:junit:4.13'
 }
 
@@ -101,9 +93,12 @@ compileJava {
 jar {
     manifest {
         attributes(
-            "Implementation-Title": "IB TWS Shell",
+            "Implementation-Title": "IB TWS JSON",
             "Implementation-Version": version,
-            "Main-Class": "com.meerkattrading.tws.Launcher"
+            "Main-Class": "com.meerkattrading.tws.Launcher",
+            "Premain-Class": "com.meerkattrading.tws.Agent",
+            "Agent-Class": "com.meerkattrading.tws.Agent",
+            "Can-Redefine-Classes": "true"
         )
     }
     exclude('com/ib/**')

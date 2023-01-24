@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.ib.client.EWrapper;
@@ -41,14 +40,14 @@ public class Invoker {
 	private final Logger logger = Logger.getLogger(Invoker.class.getName());
 	private final Map<String, Method> commands = new TreeMap<>();
 	private final Map<Type, PropertyType> properties = new HashMap<>();
-	private final TwsActionsImpl actions;
+	private final TwsSocketActions actions;
 
 	public Invoker(Printer out) throws IOException {
-		this(System.getProperty("user.dir"), out);
+		this(new TwsSocketActions(out), out);
 	}
 
-	public Invoker(String ibDir, Printer out) throws IOException {
-		this.actions = new TwsActionsImpl(ibDir, out);
+	public Invoker(TwsSocketActions client, Printer out) throws IOException {
+		this.actions = client;
 		for (Class<?> face : getAllInterfaces(getActions().getClass(), true)) {
 			for (Method method : face.getMethods()) {
 				if (method.getReturnType() == Void.TYPE && Modifier.isPublic(method.getModifiers())
@@ -142,10 +141,6 @@ public class Invoker {
 	}
 
 	private void addCommand(String command, Method method) {
-		if ("eConnect".equals(command) && Integer.TYPE.equals(method.getParameterTypes()[0])) {
-			logger.log(Level.SEVERE, "Unexpected method parameters " + method.getDeclaringClass().toGenericString()
-					+ " " + method.toGenericString());
-		}
 		if (!commands.containsKey(command)) {
 			commands.put(command, method);
 		} else if (method.getParameterCount() > commands.get(command).getParameterCount()
