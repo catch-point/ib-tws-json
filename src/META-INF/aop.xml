@@ -1,0 +1,6 @@
+<aspectj>
+    <aspects>
+        <aspect name="com.meerkattrading.tws.ServerSocketHandler"/>
+    </aspects>
+    <weaver options="-Xlintfile:META-INF/Xlint.properties" />
+</aspectj>

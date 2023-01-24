@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.ib.client.ContractCondition;
@@ -151,7 +150,7 @@ public class PropertyType {
 						try {
 							defaultObject = c.newInstance();
 						} catch (Exception e) {
-							logger.log(Level.WARNING, e.getMessage(), e);
+							logger.warning(e.getMessage());
 						}
 					}
 				}

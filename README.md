@@ -1,14 +1,14 @@
-# ib-tws-shell
-Read–eval–print loop for Interactive Broker's Trader Workstation and Gateway
+# ib-tws-json
+JSON API Extension for Interactive Broker's Trader Workstation and Gateway
 
 Introduction
 ------------
 
 The TWS API is a simple yet powerful interface through which Interactive Broker clients can automate their trading strategies, request market data and monitor your account balance and portfolio in real time.
 
-This project serializes Interactive Broker's Java Client to stdin/stdout so that it can be used by other programs. This is particularly useful for programming languages that do not have an official TWS API Client, such as https://github.com/jamesrdf/ib-tws-node
+This project extends Interactive Broker's Trader Workstation and Gateway by providing a JSON serialized API so that it can be used without an official client library. This is particularly useful for programming languages that do not have an official TWS API Client, such as https://github.com/jamesrdf/ib-tws-node
 
-This project differentiates from other client libraries by integrating the TWS Desktop or Gateway into the same JVM running the TWS Client. Whereby providing a single interface to control Interactive Broker's Trader Workstation / Gateway.
+This project differentiates from other client libraries by extending the TWS Desktop or Gateway (in the same JVM running the TWS Client) to create a non-binary API that can be used without an official client library.
 
 Requirements
 ------------
@@ -16,78 +16,93 @@ Requirements
 Users must agree to the terms of the Interactive Broker license, download their software and Java Client API.
 
 * The TWS API is an interface to TWS or IB Gateway, and as such requires network connectivity to a running instance of one of these programs. They can be downloaded here: https://www.interactivebrokers.com/en/index.php?f=14099#tws-software
-* To obtain the TWS API source and sample code to C:\TWS API or ~/IBJts, download the API Components from here: http://interactivebrokers.github.io
+* To obtain the TWS API Java source and sample code download the API Components from here: http://interactivebrokers.github.io and save it to  to C:\TWS API or ~/IBJts
 * A working knowledge of the API programming language.
-* This project makes use of gradle build tool. See https://gradle.org/
-
-TWS needs to operate in English so that the various dialogues can be recognised. You can set TWS's language by starting it manually (ie without passing a password) and selecting the language on the initial login dialog. TWS will remember this language setting when you subsequently use it.
+* This project makes use of gradle build tool, which is needed to alter the source code. See https://gradle.org/
 
 Note that you do not need an IBKR account to try this out, as you can use IBKR's Free Trial offer, for which there is a link at the top of the homepage on their website.
 
-Launching
----------
+Installation
+------------
 
-The ib-tws-shell takes the following command line parameters.
-
-### Command Line Parameters
-
-| Parameter Name | Parameter Value |
-|----------------|-----------------|
-|java-home|The JRE that is used to launch TWS and ib-tws-shell. If none is provided, an install4j JRE is searched for in the tws-path that would have been installed by TWS. Note that TWS cannot be run with just any JRE and depends on features provided with the JRE that came with the install.|
-|tws-api-jar|Points to the TwsApi.jar file that should be used when connecting to TWS. If none is provide it is searched for using tws-api-path.|
-|tws-api-path|Where to look for the TwsApi.jar file (if tws-api-jar is not provided). If not provided, it will look in C:\\TWS API, ~/IBJts, and a few other places.|
-|tws-path|The install location of TWS Desktop or Gateway. If using an offline version (or Gateway) this can point to the folder with the version number. When not provided, the system will look in the default location for Gateway and (if not found) TWS Desktop.|
-|tws-settings-path|Every running instance must have a unique tws-settings-path, which defaults to `~/Jts`.|
-|tws-version|If the tws-path is not provided this can help choose which TWS instance to launch. It is recommended to use an offline TWS install to give project contributors time to test new TWS releases.|
-|silence|Don't log anything, just report API responses.|
-|no-prompt|Don't print a friendly welcome message.|
-
-Usage
------
-
-Pass EClient calls to stdin. Prefix with the method name, followed by each parameter prefixed by white spaces. Every parameter must be encoded in JSON. JSON values can span multiple lines.
-
-Calls to EWrapper are serialized to stdout, one per line. Prefixed by the method name, followed by each parameter prefixed by a tab character. Every parameter is serialized as JSON.
-
-The command "help" is available to show a list of EClient+ calls and if passed the name of a method or type, it will show more.
-
-Type "exit" to quit.
-
-For example consider the auto script below that records the NetLiquidation of the account into a file.
-
+Run the release JAR by double clicking it or from a terminal run:
 ```
-java -jar build/libs/tws-shell*.jar >> NetLiquidation.tsv << EOF
-login    "live"   {
-    "IBAPIBase64UserName": "dXNlcm5hbWU=",
-    "IBAPIBase64Password": "cGFzc3dvcmQ="
-}  {
-    "AcceptIncomingConnectionAction":"reject",
-    "AcceptNonBrokerageAccountWarning":true,
-    "AllowBlindTrading":true,
-    "DismissNSEComplianceNotice": true,
-    "DismissPasswordExpiryWarning": true,
-    "ExistingSessionDetectedAction": "secondary",
-    "LogComponents": "never",
-    "MinimizeMainWindow": false,
-    "ReadOnlyLogin": true,
-    "StoreSettingsOnServer":false,
-    "SuppressInfoMessages": true
-}
-enableAPI   7496  true
-sleep   2000
-eConnect    "localhost" 7496    0  false
-sleep   2000
-reqCurrentTime
-reqAccountSummary   1000    "All"   "NetLiquidation"
-sleep   2000
-exit
-EOF
+java -jar ib-tws-json.jar
 ```
 
-Commands
+This will search for, install the extension, and run IBKR TWS/Gateway. If multiple versions of TWS existing, or it is installed in an alternative location, use the help message `--help` from a terminal to learn how to specify a install location.
+
+Configuration
+-------------
+
+The default options will install the extension in the default location and launch TWS. By default this extension will listen a port offset by 100, for example if TWS API is configured to run on port 7497 then the JSON API will be on port 7547. To specify an alternative (and fixed) port use the `--json-port` option from a terminal when installing.
+
+Stand Alone
+-----------
+
+The JSON API can be run stand alone (without installing) using the `--interactive` argument. This is useful to explore and debug the API when developing a client.
+
+Unistall
 --------
 
-Most of the commands available are in EClient. See https://interactivebrokers.github.io/tws-api/classIBApi_1_1EClient.html
+From a terminal run `java -jar ib-tws-json.jar --uninstall`
 
-Additional commands are documented in [commands.md](./commands.md)
+JSON API
+--------
 
+The JSON API mimics the TWS API (actions and events), but in a non-binary form. Most of the action commands of EClient are available in JSON API. See https://interactivebrokers.github.io/tws-api/classIBApi_1_1EClient.html
+
+Each action is the EClient method name followed by whitespace separated JSON encodings of the parameters. Events are the EWrapper method name followed by tab separated JSON encodings of the parameters.
+
+A few additional actions are provided below.
+
+#### help
+
+Displays a list of available action commands. If an action or event name is given (in double quotes), it will display the parameters to that command.
+
+#### sleep
+
+Causes the server to pause the given number of milliseconds before processing the next command.
+
+#### eConnect
+
+This should be run before any EClient commands. This differs from EClient and only takes the clientId and extraAuth parameters.
+
+* clientId
+* true for extra authentication, false for normal authentication
+
+#### eDisconnect
+
+Disconnect the TWS API. This can be used to change clientId by calling eConnect afterwards.
+
+#### exit
+
+Disconnects the JSON client
+
+#### serverVersion
+
+Issue a "serverVersion" event response with the Host's version. Some of the API functionality might not be available in older Hosts and therefore it is essential to keep the TWS/Gateway and TWS API up to date.
+
+#### isConnected
+
+Issue a "isConnected" event response.
+
+#### connectedHost
+
+Issue a "connectedHost" event response.
+
+#### isUseV100Plus
+
+Issue a "isUseV100Plus" event response, which is enabled by default.
+
+#### optionalCapabilities
+
+Provide a string value recognized by the API or issues a "optionalCapabilities" event response of those values.
+
+#### faMsgTypeName
+
+Issue a "faMsgTypeName" event response converting 1, 2, or 3 into "GROUPS", "PROFILES", and "ALIASES" respectively.
+
+#### getTwsConnectionTime
+
+Issue a "getTwsConnectionTime" event response with the time the connection was established.

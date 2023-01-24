@@ -73,7 +73,7 @@ public class TestClientCalls extends TestCase {
 		ByteArrayInputStream in = new ByteArrayInputStream(in_bytes);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
-		Shell shell = new Shell(in, out) {
+		Interpreter shell = new Interpreter(in, out) {
 
 			@Override
 			protected Invoker getInvoker() throws IOException {

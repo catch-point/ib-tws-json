@@ -1,0 +1,240 @@
+
+{
+    "orders": [
+        [
+            "placeOrder",
+            1000,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            {
+                "conditions": [
+                    {
+                        "type": "Price",
+                        "conjunctionConnection": false,
+                        "isMore": false,
+                        "conId": 208813720,
+                        "exchange": "SMART",
+                        "price": "600.0",
+                        "triggerMethod": 0
+                    },
+                    {
+                        "type": "Execution",
+                        "conjunctionConnection": true,
+                        "exchange": "IDEALPRO",
+                        "secType": "CASH",
+                        "symbol": "EUR.USD"
+                    },
+                    {
+                        "type": "Margin",
+                        "conjunctionConnection": false,
+                        "isMore": true,
+                        "percent": 30
+                    },
+                    {
+                        "type": "PercentChange",
+                        "conjunctionConnection": true,
+                        "isMore": true,
+                        "conId": 208813720,
+                        "exchange": "SMART",
+                        "changePercent": "15.0"
+                    },
+                    {
+                        "type": "Time",
+                        "conjunctionConnection": false,
+                        "isMore": true,
+                        "time": "20160118 23:59:59"
+                    },
+                    {
+                        "type": "Volume",
+                        "conjunctionConnection": true,
+                        "isMore": false,
+                        "conId": 208813720,
+                        "exchange": "SMART",
+                        "volume": 100
+                    }
+                ],
+                "conditionsCancelOrder": true,
+                "orderType": "MKT",
+                "totalQuantity": "100.0"
+            }
+        ],
+        [
+            "placeOrder",
+            1001,
+            {
+                "currency": "EUR",
+                "exchange": "SMART",
+                "primaryExch": "HEX",
+                "secType": "STK",
+                "symbol": "NOKIA"
+            },
+            {
+                "conditions": [
+                    {
+                        "type": "Price",
+                        "conjunctionConnection": false,
+                        "isMore": false,
+                        "conId": 208813720,
+                        "exchange": "SMART",
+                        "price": "600.0",
+                        "triggerMethod": 0
+                    }
+                ],
+                "conditionsCancelOrder": true,
+                "lmtPrice": "20.0",
+                "totalQuantity": "100.0"
+            }
+        ],
+        [
+            "placeOrder",
+            1002,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            {
+                "conditions": [
+                    {
+                        "type": "Price",
+                        "conjunctionConnection": true,
+                        "isMore": true,
+                        "conId": 285191782,
+                        "exchange": "NYSE",
+                        "price": "100.0",
+                        "triggerMethod": 0
+                    }
+                ],
+                "conditionsCancelOrder": true,
+                "lmtPrice": "20.0",
+                "totalQuantity": "100.0"
+            }
+        ],
+        [
+            "placeOrder",
+            1003,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            {
+                "conditions": [
+                    {
+                        "type": "Execution",
+                        "conjunctionConnection": true,
+                        "exchange": "NYSE",
+                        "secType": "STK",
+                        "symbol": "GOOG"
+                    }
+                ],
+                "conditionsCancelOrder": true,
+                "lmtPrice": "20.0",
+                "totalQuantity": "100.0"
+            }
+        ],
+        [
+            "placeOrder",
+            1004,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            {
+                "conditions": [
+                    {
+                        "type": "Margin",
+                        "conjunctionConnection": true,
+                        "isMore": true,
+                        "percent": 50
+                    }
+                ],
+                "conditionsCancelOrder": true,
+                "lmtPrice": "20.0",
+                "totalQuantity": "100.0"
+            }
+        ],
+        [
+            "placeOrder",
+            1005,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            {
+                "conditions": [
+                    {
+                        "type": "PercentChange",
+                        "conjunctionConnection": true,
+                        "isMore": true,
+                        "conId": 285191782,
+                        "exchange": "NYSE",
+                        "changePercent": "50.0"
+                    }
+                ],
+                "conditionsCancelOrder": true,
+                "lmtPrice": "20.0",
+                "totalQuantity": "100.0"
+            }
+        ],
+        [
+            "placeOrder",
+            1006,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            {
+                "conditions": [
+                    {
+                        "type": "Time",
+                        "conjunctionConnection": true,
+                        "isMore": true,
+                        "time": "20201212 12:00:00"
+                    }
+                ],
+                "conditionsCancelOrder": true,
+                "lmtPrice": "20.0",
+                "totalQuantity": "100.0"
+            }
+        ],
+        [
+            "placeOrder",
+            1007,
+            {
+                "currency": "USD",
+                "exchange": "ISLAND",
+                "secType": "STK",
+                "symbol": "IBKR"
+            },
+            {
+                "conditions": [
+                    {
+                        "type": "Volume",
+                        "conjunctionConnection": true,
+                        "isMore": true,
+                        "conId": 285191782,
+                        "exchange": "NYSE",
+                        "volume": 1
+                    }
+                ],
+                "conditionsCancelOrder": true,
+                "lmtPrice": "20.0",
+                "totalQuantity": "100.0"
+            }
+        ]
+    ]
+}
