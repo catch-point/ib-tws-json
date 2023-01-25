@@ -17,7 +17,7 @@ Users must agree to the terms of the Interactive Broker license, download their 
 
 * The TWS API is an interface to TWS or IB Gateway, and as such requires network connectivity to a running instance of one of these programs. They can be downloaded here: https://www.interactivebrokers.com/en/index.php?f=14099#tws-software
 * To obtain the TWS API Java source and sample code download the API Components from here: http://interactivebrokers.github.io and save it to  to C:\TWS API or ~/IBJts
-* A working knowledge of the API programming language.
+* A working knowledge of the TWS API programming language.
 * This project makes use of gradle build tool, which is needed to alter the source code. See https://gradle.org/
 
 Note that you do not need an IBKR account to try this out, as you can use IBKR's Free Trial offer, for which there is a link at the top of the homepage on their website.

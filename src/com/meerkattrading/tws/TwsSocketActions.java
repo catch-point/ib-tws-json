@@ -57,7 +57,7 @@ public class TwsSocketActions implements TwsActions {
 		this.events = TwsEventsHandler.newInstance(out);
 	}
 
-	public void setRemoteAddress(String tws_host, int tws_port) {
+	protected void setRemoteAddress(String tws_host, int tws_port) {
 		this.tws_host = tws_host;
 		this.tws_port = tws_port;
 	}

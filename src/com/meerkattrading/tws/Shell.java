@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigInteger;
-import java.net.Socket;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -91,7 +90,9 @@ public class Shell {
 			}
 			modifyJtsVMOptions(vmoptions, jar, cmd);
 		}
-		Process p = launch ? launchJts(cmd) : null;
+		if (launch) {
+			launchJts(cmd);
+		}
 		boolean interactive = cmd.hasOption("interactive") || cmd.hasOption("no-prompt") || !attach;
 		if (interactive || cmd.getArgs().length > 0) {
 			String host = cmd.getOptionValue("tws-host", "localhost");
@@ -99,9 +100,6 @@ public class Shell {
 				System.err.println("Parameter missing --tws-port=...");
 			} else {
 				int port = Integer.parseInt(cmd.getOptionValue("tws-port", "7497"));
-				if (p != null) {
-					waitForServer(p, host, port);
-				}
 				boolean prompt = !cmd.hasOption("no-prompt");
 				Interpreter interpreter = new Interpreter(prompt);
 				interpreter.setRemoteAddress(host, port);
@@ -220,36 +218,6 @@ public class Shell {
 		String[] command = ibDir == null ? new String[] { exec }
 				: new String[] { exec, ibDir, "-J-DjtsConfigDir=" + ibDir };
 		return new ProcessBuilder(Arrays.asList(command)).inheritIO().start();
-	}
-
-	/**
-	 * Waits until a server is listening on the given port
-	 */
-	private static boolean waitForServer(Process p, String host, int port) throws InterruptedException {
-		boolean waiting = false;
-		int ms = 100;
-		while (p.isAlive()) {
-			try {
-				Socket socket = null;
-				try {
-					socket = new Socket(host, port);
-					return true;
-				} finally {
-					socket.close();
-				}
-			} catch (Exception e) {
-				ms += ms;
-				if (ms <= 0 || ms >= 10 * 60 * 60) {
-					return false;
-				}
-				Thread.sleep(ms);
-				if (!waiting) {
-					waiting = true;
-					System.err.println("Waiting for JTS to startup...");
-				}
-			}
-		}
-		return false;
 	}
 
 	/**
