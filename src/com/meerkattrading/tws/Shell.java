@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigInteger;
+import java.net.ServerSocket;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -76,23 +77,24 @@ public class Shell {
 	public static void main(String[] args) throws Throwable {
 		CommandLine cmd = parseCommandLine(args);
 		boolean launch = cmd.hasOption("launch") || args.length == 0;
-		boolean attach = cmd.hasOption("uninstall") || cmd.hasOption("install") || launch;
+		boolean extension = cmd.hasOption("uninstall") || cmd.hasOption("install");
+		boolean attach = extension || launch;
 		if (attach) {
 			File vmoptions = getVMOptionsFile(cmd);
-			if (vmoptions == null) {
+			if (vmoptions == null && extension) {
 				System.err.println("Could not find TWS");
 				System.exit(1);
 			}
 			File jar = findThisJar();
-			if (jar == null) {
+			if (jar == null && extension) {
 				System.err.println("Could not find JAR file");
 				System.exit(1);
 			}
-			modifyJtsVMOptions(vmoptions, jar, cmd);
+			if (vmoptions != null && jar != null) {
+				modifyJtsVMOptions(vmoptions, jar, cmd);
+			}
 		}
-		if (launch) {
-			launchJts(cmd);
-		}
+		Process p = launch ? launchJts(cmd) : null;
 		boolean interactive = cmd.hasOption("interactive") || cmd.hasOption("no-prompt") || !attach;
 		if (interactive || cmd.getArgs().length > 0) {
 			String host = cmd.getOptionValue("tws-host", "localhost");
@@ -100,6 +102,9 @@ public class Shell {
 				System.err.println("Parameter missing --tws-port=...");
 			} else {
 				int port = Integer.parseInt(cmd.getOptionValue("tws-port", "7497"));
+				if (p != null) {
+					waitForLocalServer(p, port);
+				}
 				boolean prompt = !cmd.hasOption("no-prompt");
 				Interpreter interpreter = new Interpreter(prompt);
 				interpreter.setRemoteAddress(host, port);
@@ -218,6 +223,32 @@ public class Shell {
 		String[] command = ibDir == null ? new String[] { exec }
 				: new String[] { exec, ibDir, "-J-DjtsConfigDir=" + ibDir };
 		return new ProcessBuilder(Arrays.asList(command)).inheritIO().start();
+	}
+
+	/**
+	 * Waits until a server is listening on the given port
+	 */
+	private static boolean waitForLocalServer(Process p, int port) throws InterruptedException {
+		boolean waiting = false;
+		int ms = 1000;
+		Thread.sleep(ms);
+		while (p.isAlive()) {
+			try {
+				new ServerSocket(port).close();
+				ms += ms;
+				if (ms <= 0 || ms >= 10 * 60 * 60) {
+					return false;
+				}
+				if (!waiting) {
+					waiting = true;
+					System.err.println("Waiting for JTS to startup...");
+				}
+				Thread.sleep(ms);
+			} catch (IOException e) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
