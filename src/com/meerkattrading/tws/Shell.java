@@ -97,11 +97,11 @@ public class Shell {
 		Process p = launch ? launchJts(cmd) : null;
 		boolean interactive = cmd.hasOption("interactive") || cmd.hasOption("no-prompt") || !attach;
 		if (interactive || cmd.getArgs().length > 0) {
-			String host = cmd.getOptionValue("tws-host", "localhost");
-			if (!cmd.hasOption("tws-port")) {
-				System.err.println("Parameter missing --tws-port=...");
+			String host = cmd.getOptionValue("tws-api-host", "localhost");
+			if (!cmd.hasOption("tws-api-port")) {
+				System.err.println("Parameter missing --tws-api-port=...");
 			} else {
-				int port = Integer.parseInt(cmd.getOptionValue("tws-port", "7497"));
+				int port = Integer.parseInt(cmd.getOptionValue("tws-api-port", "7497"));
 				if (p != null) {
 					waitForLocalServer(p, port);
 				}
@@ -122,7 +122,7 @@ public class Shell {
 				interpreter.exit();
 			}
 		}
-		if ((interactive || cmd.getArgs().length > 0) && !cmd.hasOption("tws-port")) {
+		if ((interactive || cmd.getArgs().length > 0) && !cmd.hasOption("tws-api-port")) {
 			System.exit(1);
 		} else {
 			System.exit(0);
@@ -134,20 +134,20 @@ public class Shell {
 	 */
 	static CommandLine parseCommandLine(String[] args) {
 		Options options = new Options();
-		options.addOption("h", "help", false, "This message");
-		options.addOption("v", "version", false, "Print the current version and exit");
+		options.addOption("h",  "help", false, "This message");
+		options.addOption("v",  "version", false, "Print the current version and exit");
 		options.addOption(null, "install", false, "Installs the TWS JSON extension from TWS");
 		options.addOption(null, "uninstall", false, "Uninstalls the TWS JSON extension from TWS");
 		options.addOption(null, "launch", false, "Installs the TWS JSON extension and starts TWS before exiting");
-		options.addOption("i", "interactive", false, "Enter interactive client mode");
-		options.addOption("I", "no-prompt", false, "Don't prompt for input when in interactive mode");
+		options.addOption("i",  "interactive", false, "Enter interactive client mode");
+		options.addOption(null, "no-prompt", false, "Don't prompt for input when in interactive mode");
 		options.addOption(null, "tws-api-path", true, "The TwsApi directory to be searched for TwsApi.jar");
-		options.addOption("j", "tws-api-jar", true, "The TwsApi.jar filename");
-		options.addOption(null, "tws-host", true, "Hostname or IP running TWS");
-		options.addOption("p", "tws-port", true, "Port TWS API is running on");
-		options.addOption(null, "json-port", true, "Server port for TWS JSON API to listen on");
-		options.addOption(null, "json-port-offset", true, "Server JSON port offset from tws-port");
-		options.addOption(null, "json-inet", true, "Server local network interface to listen on for TWS JSON API");
+		options.addOption("j",  "tws-api-jar", true, "The TwsApi.jar filename");
+		options.addOption(null, "tws-api-host", true, "Hostname or IP running TWS");
+		options.addOption("p",  "tws-api-port", true, "Port TWS API is running on");
+		options.addOption(null, "json-api-port", true, "Server port for TWS JSON API to listen on");
+		options.addOption(null, "json-api-port-offset", true, "Server JSON port offset from tws-api-port");
+		options.addOption(null, "json-api-inet", true, "Server local network interface to listen on for TWS JSON API");
 		options.addOption(null, "jts-exe-name", true, "The primary launch filename installed by TWS software");
 		options.addOption(null, "jts-install-dir", true,
 				"Location of Jts/ibgateway/Trader Workstation/IB Gateway folder to use");
@@ -324,30 +324,30 @@ public class Shell {
 			String jtsConfigDir = cmd.getOptionValue("jts-config-dir");
 			JsonObject obj = decodeObject(existing.getProperty(jtsConfigDir, "{}"));
 			JsonObjectBuilder object = Json.createObjectBuilder(obj);
-			if (cmd.hasOption("tws-port")) {
-				object.remove("tws-port").add("tws-port", Integer.parseInt(cmd.getOptionValue("tws-port")));
+			if (cmd.hasOption("tws-api-port")) {
+				object.remove("tws-api-port").add("tws-api-port", Integer.parseInt(cmd.getOptionValue("tws-api-port")));
 			}
-			if (cmd.hasOption("json-port")) {
-				object.remove("json-port").add("json-port", Integer.parseInt(cmd.getOptionValue("json-port")));
-			} else if (cmd.hasOption("json-port-offset")) {
-				object.remove("json-port-offset").add("json-port-offset",
-						Integer.parseInt(cmd.getOptionValue("json-port-offset")));
+			if (cmd.hasOption("json-api-port")) {
+				object.remove("json-api-port").add("json-api-port", Integer.parseInt(cmd.getOptionValue("json-api-port")));
+			} else if (cmd.hasOption("json-api-port-offset")) {
+				object.remove("json-api-port-offset").add("json-api-port-offset",
+						Integer.parseInt(cmd.getOptionValue("json-api-port-offset")));
 			}
-			if (cmd.hasOption("json-inet")) {
-				object.remove("json-inet").add("json-inet", cmd.getOptionValue("json-inet"));
+			if (cmd.hasOption("json-api-inet")) {
+				object.remove("json-api-inet").add("json-api-inet", cmd.getOptionValue("json-api-inet"));
 			}
 			props.put(jtsConfigDir, encodeObject(object.build()));
 		} else {
-			if (cmd.hasOption("tws-port")) {
-				props.put("tws-port", cmd.getOptionValue("tws-port"));
+			if (cmd.hasOption("tws-api-port")) {
+				props.put("tws-api-port", cmd.getOptionValue("tws-api-port"));
 			}
-			if (cmd.hasOption("json-port")) {
-				props.put("json-port", cmd.getOptionValue("json-port"));
-			} else if (cmd.hasOption("json-port-offset")) {
-				props.put("json-port-offset", cmd.getOptionValue("json-port-offset"));
+			if (cmd.hasOption("json-api-port")) {
+				props.put("json-api-port", cmd.getOptionValue("json-api-port"));
+			} else if (cmd.hasOption("json-api-port-offset")) {
+				props.put("json-api-port-offset", cmd.getOptionValue("json-api-port-offset"));
 			}
-			if (cmd.hasOption("json-inet")) {
-				props.put("json-inet", cmd.getOptionValue("json-inet"));
+			if (cmd.hasOption("json-api-inet")) {
+				props.put("json-api-inet", cmd.getOptionValue("json-api-inet"));
 			}
 		}
 		return props;
@@ -361,9 +361,9 @@ public class Shell {
 		for (Object key : props.keySet()) {
 			sb.append(encodeQuotedString(key.toString()));
 			sb.append(":");
-			if ("tws-api-jar".equals(key) || "json-inet".equals(key)) {
+			if ("tws-api-jar".equals(key) || "json-api-inet".equals(key)) {
 				sb.append(encodeQuotedString(props.get(key).toString()));
-			} else if ("tws-port".equals(key) || "json-port".equals(key) || "json-port-offset".equals(key)) {
+			} else if ("tws-api-port".equals(key) || "json-api-port".equals(key) || "json-api-port-offset".equals(key)) {
 				sb.append(props.get(key));
 			} else {
 				// jts-config-dir JSON

@@ -54,7 +54,7 @@ public class Agent {
 	public static void premain(String arg, Instrumentation inst) throws InterruptedException, IOException {
 		Properties props = getAgentProperties(arg);
 		appendToSystemClassLoader(props, inst);
-		if (props.containsKey("json-port")) {
+		if (props.containsKey("json-api-port")) {
 			startServer(props);
 		} else {
 			org.aspectj.weaver.loadtime.Agent.premain(arg, inst);
@@ -68,7 +68,7 @@ public class Agent {
 	public static void agentmain(String arg, Instrumentation inst) throws InterruptedException, IOException {
 		Properties props = getAgentProperties(arg);
 		appendToSystemClassLoader(props, inst);
-		if (props.containsKey("json-port")) {
+		if (props.containsKey("json-api-port")) {
 			startServer(props);
 		} else {
 			org.aspectj.weaver.loadtime.Agent.agentmain(arg, inst);
@@ -105,10 +105,10 @@ public class Agent {
 	 * Starts a JSON API server without using AspectJ to find the TWS API port
 	 */
 	private static void startServer(Properties props) throws UnknownHostException {
-		int twsPort = Integer.parseInt(props.getProperty("tws-port", "0"));
-		int jsonPort = Integer.parseInt(props.getProperty("json-port", "0"));
-		int jsonPortOffset = Integer.parseInt(props.getProperty("json-port-offset", "100"));
-		InetAddress inet = props.containsKey("json-inet") ? InetAddress.getByName(props.getProperty("json-inet")) : InetAddress.getLoopbackAddress();
+		int twsPort = Integer.parseInt(props.getProperty("tws-api-port", "0"));
+		int jsonPort = Integer.parseInt(props.getProperty("json-api-port", "0"));
+		int jsonPortOffset = Integer.parseInt(props.getProperty("json-api-port-offset", "100"));
+		InetAddress inet = props.containsKey("json-api-inet") ? InetAddress.getByName(props.getProperty("json-api-inet")) : InetAddress.getLoopbackAddress();
 		int local_port = jsonPort > 0 ? jsonPort : jsonPortOffset + twsPort;
 		Server server = new Server(inet, local_port);
 		if (twsPort > 0) {
@@ -121,17 +121,17 @@ public class Agent {
 	 * Initializes {@link ServerSocketHandler} to wait for the TWS API port
 	 */
 	private static void initializeServerSocketHandler(Properties props) {
-		ServerSocketHandler.setPortOffset(Integer.parseInt(props.getProperty("json-port-offset", "100")));
-		int port = Integer.parseInt(props.getProperty("json-port", "0"));
+		ServerSocketHandler.setPortOffset(Integer.parseInt(props.getProperty("json-api-port-offset", "100")));
+		int port = Integer.parseInt(props.getProperty("json-api-port", "0"));
 		if (port > 0) {
 			ServerSocketHandler.setPort(port);
 		}
-		if (props.containsKey("tws-port")) {
-			ServerSocketHandler.setTwsPort(Integer.parseInt(props.getProperty("tws-port")));
+		if (props.containsKey("tws-api-port")) {
+			ServerSocketHandler.setTwsPort(Integer.parseInt(props.getProperty("tws-api-port")));
 		}
 		try {
-			if (props.containsKey("json-inet")) {
-				ServerSocketHandler.setInet(InetAddress.getByName(props.getProperty("json-inet")));
+			if (props.containsKey("json-api-inet")) {
+				ServerSocketHandler.setInet(InetAddress.getByName(props.getProperty("json-api-inet")));
 			} else {
 				ServerSocketHandler.setInet(InetAddress.getLoopbackAddress());
 			}

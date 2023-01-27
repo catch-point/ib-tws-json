@@ -35,7 +35,7 @@ This will search for, install the extension, and run IBKR TWS/Gateway. If multip
 Configuration
 -------------
 
-The default options will install the extension in the default location and launch TWS. By default this extension will listen a port offset by 100, for example if TWS API is configured to run on port 7497 then the JSON API will be on port 7547. To specify an alternative (and fixed) port use the `--json-port` option from a terminal when installing.
+The default options will install the extension in the default location and launch TWS. By default this extension will listen a port offset by 100, for example if TWS API is configured to run on port 7497 then the JSON API will be on port 7547. To specify an alternative (and fixed) port use the `--json-api-port` option from a terminal when installing.
 
 Stand Alone
 -----------
