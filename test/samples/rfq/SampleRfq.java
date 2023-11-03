@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.ib.client.ComboLeg;
 import com.ib.client.Contract;
 import com.ib.client.ContractDetails;
+import com.ib.client.Decimal;
 import com.ib.client.DeltaNeutralContract;
 import com.ib.client.TickType;
 import com.ib.contracts.ComboContract;
@@ -182,7 +183,7 @@ public class SampleRfq extends SimpleWrapper {
 
       m_status = m_contract.deltaNeutralContract() != null ? Status.Rfq : Status.Ticks;
 
-      client().placeOrder(m_rfqId, m_contract, new RfqOrder(m_clientId, m_rfqId, 1));
+      client().placeOrder(m_rfqId, m_contract, new RfqOrder(m_clientId, m_rfqId, Decimal.ONE));
    }
 
    private void checkReceivedAllTicks() {

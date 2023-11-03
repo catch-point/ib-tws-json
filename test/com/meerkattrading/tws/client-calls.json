@@ -93,7 +93,7 @@
                 "lmtPrice": "30.0",
                 "orderId": 104,
                 "orderType": "LMT",
-                "totalQuantity": "100.0",
+                "totalQuantity": "100",
                 "transmit": false
             }
         ],
@@ -113,7 +113,7 @@
                 "orderId": 105,
                 "orderType": "LMT",
                 "parentId": 104,
-                "totalQuantity": "100.0",
+                "totalQuantity": "100",
                 "transmit": false
             }
         ],
@@ -133,7 +133,7 @@
                 "orderId": 106,
                 "orderType": "STP",
                 "parentId": 104,
-                "totalQuantity": "100.0"
+                "totalQuantity": "100"
             }
         ]
     ],
@@ -332,7 +332,7 @@
                 "lmtPrice": "10.0",
                 "orderId": 102,
                 "orderType": "LMT",
-                "totalQuantity": "100.0",
+                "totalQuantity": "100",
                 "transmit": false
             }
         ],
@@ -700,7 +700,7 @@
                 "action": "SELL",
                 "lmtPrice": "50.0",
                 "orderType": "LMT",
-                "totalQuantity": "1.0"
+                "totalQuantity": "1"
             }
         ],
         [
@@ -716,7 +716,7 @@
                 "action": "BUY",
                 "lmtPrice": "150.0",
                 "orderType": "MIDPRICE",
-                "totalQuantity": "1.0"
+                "totalQuantity": "1"
             }
         ],
         [
@@ -732,7 +732,7 @@
                 "account": "DU119915",
                 "action": "BUY",
                 "orderType": "MKT",
-                "totalQuantity": "100.0"
+                "totalQuantity": "100"
             }
         ],
         [
@@ -750,7 +750,7 @@
                 "faMethod": "EqualQuantity",
                 "lmtPrice": "2000.0",
                 "orderType": "LMT",
-                "totalQuantity": "200.0"
+                "totalQuantity": "200"
             }
         ],
         [
@@ -785,7 +785,7 @@
                 "faProfile": "Percent_60_40",
                 "lmtPrice": "100.0",
                 "orderType": "LMT",
-                "totalQuantity": "200.0"
+                "totalQuantity": "200"
             }
         ],
         [
@@ -803,7 +803,7 @@
                 "lmtPrice": "100.0",
                 "modelCode": "Technology",
                 "orderType": "LMT",
-                "totalQuantity": "200.0"
+                "totalQuantity": "200"
             }
         ],
         [
@@ -956,7 +956,7 @@
                 "scaleProfitOffset": "2.0",
                 "scaleRandomPercent": true,
                 "scaleSubsLevelSize": 500,
-                "totalQuantity": "70000.0"
+                "totalQuantity": "70000"
             }
         ],
         [
@@ -1003,7 +1003,7 @@
                 "algoStrategy": "ArrivalPx",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1042,7 +1042,7 @@
                 "algoStrategy": "DarkIce",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1097,7 +1097,7 @@
                 "algoStrategy": "AD",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1136,7 +1136,7 @@
                 "algoStrategy": "Twap",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1183,7 +1183,7 @@
                 "algoStrategy": "Vwap",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1218,7 +1218,7 @@
                 "algoStrategy": "BalanceImpactRisk",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1245,7 +1245,7 @@
                 "algoStrategy": "BalanceImpactRisk",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1268,7 +1268,7 @@
                 "algoStrategy": "Adaptive",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1307,7 +1307,7 @@
                 "algoStrategy": "ClosePx",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1346,7 +1346,7 @@
                 "algoStrategy": "PctVol",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1397,7 +1397,7 @@
                 "algoStrategy": "PctVolPx",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1440,7 +1440,7 @@
                 "algoStrategy": "PctVolSz",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1483,7 +1483,7 @@
                 "algoStrategy": "PctVolTm",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1550,7 +1550,7 @@
                 "algoStrategy": "VWAP",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1617,7 +1617,7 @@
                 "algoStrategy": "INLINE",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ],
         [
@@ -1657,7 +1657,7 @@
                 "algoStrategy": "STROBE",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
-                "totalQuantity": "1000.0"
+                "totalQuantity": "1000"
             }
         ]
     ],
@@ -2372,7 +2372,7 @@
                 "action": "BUY",
                 "lmtPrice": "120.0",
                 "orderType": "LMT",
-                "totalQuantity": "200.0",
+                "totalQuantity": "200",
                 "whatIf": true
             }
         ]

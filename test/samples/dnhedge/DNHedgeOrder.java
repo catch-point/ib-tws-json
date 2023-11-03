@@ -3,13 +3,14 @@
 
 package samples.dnhedge;
 
+import com.ib.client.Decimal;
 import com.ib.client.Order;
 import com.ib.client.OrderType;
 import com.ib.client.Types.Action;
 import com.ib.client.Types.VolatilityType;
 
 public class DNHedgeOrder extends Order {
-   public DNHedgeOrder(int clientId, int id, int size, String account,
+   public DNHedgeOrder(int clientId, int id, Decimal size, String account,
       String settlingFirm, int underConId, String designatedLocation) {
       clientId(clientId);
       orderId(id);

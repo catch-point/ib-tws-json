@@ -60,7 +60,7 @@
                 ],
                 "conditionsCancelOrder": true,
                 "orderType": "MKT",
-                "totalQuantity": "100.0"
+                "totalQuantity": "100"
             }
         ],
         [
@@ -87,7 +87,7 @@
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
-                "totalQuantity": "100.0"
+                "totalQuantity": "100"
             }
         ],
         [
@@ -113,7 +113,7 @@
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
-                "totalQuantity": "100.0"
+                "totalQuantity": "100"
             }
         ],
         [
@@ -137,7 +137,7 @@
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
-                "totalQuantity": "100.0"
+                "totalQuantity": "100"
             }
         ],
         [
@@ -160,7 +160,7 @@
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
-                "totalQuantity": "100.0"
+                "totalQuantity": "100"
             }
         ],
         [
@@ -185,7 +185,7 @@
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
-                "totalQuantity": "100.0"
+                "totalQuantity": "100"
             }
         ],
         [
@@ -208,7 +208,7 @@
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
-                "totalQuantity": "100.0"
+                "totalQuantity": "100"
             }
         ],
         [
@@ -233,7 +233,7 @@
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
-                "totalQuantity": "100.0"
+                "totalQuantity": "100"
             }
         ]
     ]

@@ -22,6 +22,7 @@ import javax.json.JsonValue;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
 
+import com.ib.client.Decimal;
 import com.ib.client.ExecutionCondition;
 import com.ib.client.MarginCondition;
 import com.ib.client.Order;
@@ -89,7 +90,7 @@ public class TestbedOrderConditions {
 		double pctChange = 50.0;
 		String time = "20201212 12:00:00";
 		int volume = 1;
-		Order mkt = OrderSamples.MarketOrder("BUY", 100);
+		Order mkt = OrderSamples.MarketOrder("BUY", Decimal.get(100));
         //Order will become active if conditioning criteria is met
         mkt.conditionsCancelOrder(true);
         mkt.conditions().add(OrderSamples.PriceCondition(208813720, "SMART", 600, false, false));
@@ -100,7 +101,7 @@ public class TestbedOrderConditions {
         mkt.conditions().add(OrderSamples.VolumeCondition(208813720, "SMART", false, 100, true));
         client.placeOrder(nextOrderId++, ContractSamples.EuropeanStock(), mkt);
 
-        Order lmt = OrderSamples.LimitOrder("BUY", 100, 20);
+        Order lmt = OrderSamples.LimitOrder("BUY", Decimal.get(100), 20);
         //The active order will be cancelled if conditioning criteria is met
         lmt.conditionsCancelOrder(true);
         lmt.conditions().add(OrderSamples.PriceCondition(208813720, "SMART", 600, false, false));

@@ -40,6 +40,7 @@ import javax.json.stream.JsonParsingException;
 
 import com.ib.client.Bar;
 import com.ib.client.ContractCondition;
+import com.ib.client.Decimal;
 import com.ib.client.ExecutionCondition;
 import com.ib.client.HistogramEntry;
 import com.ib.client.HistoricalTick;
@@ -107,6 +108,8 @@ public class Deserializer {
 				return jsonToBigDecimal(obj);
 			} else if (type.isAssignableFrom(BigInteger.class)) {
 				return jsonToBigInteger(obj);
+			} else if (type.isAssignableFrom(Decimal.class)) {
+				return jsonToDecimal(obj);
 			} else if (type == Double.TYPE || type.isAssignableFrom(Double.class)) {
 				return jsonToDouble(obj);
 			} else if (type == Integer.TYPE || type.isAssignableFrom(Integer.class)) {
@@ -317,6 +320,25 @@ public class Deserializer {
 		}
 	}
 
+	private Decimal jsonToDecimal(JsonValue obj) {
+		if (obj == null)
+			return null;
+		switch (obj.getValueType()) {
+		case NULL:
+			return Decimal.NaN;
+		case FALSE:
+			return Decimal.ZERO;
+		case TRUE:
+			return Decimal.ONE;
+		case NUMBER:
+			return Decimal.get(((JsonNumber) obj).bigDecimalValue());
+		case STRING:
+			return Decimal.parse(((JsonString) obj).getString());
+		default:
+			return Decimal.parse(obj.toString());
+		}
+	}
+
 	private double jsonToDouble(JsonValue obj) {
 		if (obj == null)
 			return 0;
@@ -475,7 +497,7 @@ public class Deserializer {
 		if (obj == null || obj.getValueType() == ValueType.NULL)
 			return null;
 		JsonObject o = obj.asJsonObject();
-		return new HistogramEntry(jsonToDouble(o.get("price")), jsonToLong(o.get("size")));
+		return new HistogramEntry(jsonToDouble(o.get("price")), jsonToDecimal(o.get("size")));
 	}
 
 	private Bar jsonToBar(JsonValue obj) {
@@ -487,9 +509,9 @@ public class Deserializer {
 		double high = jsonToDouble(o.get("high"));
 		double low = jsonToDouble(o.get("low"));
 		double close = jsonToDouble(o.get("close"));
-		long volume = jsonToLong(o.get("volume"));
+		Decimal volume = jsonToDecimal(o.get("volume"));
 		int count = jsonToInteger(o.get("count"));
-		double wap = jsonToDouble(o.get("wap"));
+		Decimal wap = jsonToDecimal(o.get("wap"));
 		return new Bar(time, open, high, low, close, volume, count, wap);
 	}
 
@@ -499,7 +521,7 @@ public class Deserializer {
 		JsonObject o = obj.asJsonObject();
 		long time = jsonToLong(o.get("time"));
 		double price = jsonToDouble(o.get("price"));
-		long size = jsonToLong(o.get("size"));
+		Decimal size = jsonToDecimal(o.get("size"));
 		return new HistoricalTick(time, price, size);
 	}
 
@@ -511,8 +533,8 @@ public class Deserializer {
 		TickAttribBidAsk attrib = jsonToTickAttribBidAsk(o.get("tickAttribBidAsk"));
 		double priceBid = jsonToDouble(o.get("priceBid"));
 		double priceAsk = jsonToDouble(o.get("priceAsk"));
-		long sizeBid = jsonToLong(o.get("sizeBid"));
-		long sizeAsk = jsonToLong(o.get("sizeAsk"));
+		Decimal sizeBid = jsonToDecimal(o.get("sizeBid"));
+		Decimal sizeAsk = jsonToDecimal(o.get("sizeAsk"));
 		return new HistoricalTickBidAsk(time, attrib, priceBid, priceAsk, sizeBid, sizeAsk);
 	}
 
@@ -533,7 +555,7 @@ public class Deserializer {
 		long time = jsonToLong(o.get("time"));
 		TickAttribLast attrib = jsonToTickAttribLast(o.get("tickAttribLast"));
 		double price = jsonToDouble(o.get("price"));
-		long size = jsonToLong(o.get("size"));
+		Decimal size = jsonToDecimal(o.get("size"));
 		return new HistoricalTickLast(time, attrib, price, size, jsonToString(o.get("exchange")),
 				jsonToString(o.get("specialConditions")));
 	}

@@ -30,6 +30,7 @@ import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 
 import com.ib.client.ContractCondition;
+import com.ib.client.Decimal;
 import com.ib.client.ExecutionCondition;
 import com.ib.client.HistogramEntry;
 import com.ib.client.MarginCondition;
@@ -71,6 +72,8 @@ public class Serializer {
 		} else if (object instanceof Integer) {
 			return Json.createValue((Integer) object);
 		} else if (object instanceof Number) {
+			return Json.createValue(object.toString());
+		} else if (object instanceof Decimal) {
 			return Json.createValue(object.toString());
 		} else if (object instanceof String) {
 			return stringToJson((String) object);
@@ -158,6 +161,12 @@ public class Serializer {
 		if (number == null)
 			return JsonValue.NULL;
 		return Json.createValue(number.toString());
+	}
+
+	private JsonValue numberToJson(Decimal decimal) {
+		if (decimal == null)
+			return JsonValue.NULL;
+		return Json.createValue(decimal.toString());
 	}
 
 	private JsonValue orderConditionToJson(OrderCondition oc) {

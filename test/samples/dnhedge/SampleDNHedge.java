@@ -6,6 +6,7 @@ package samples.dnhedge;
 
 import com.ib.client.Contract;
 import com.ib.client.ContractDetails;
+import com.ib.client.Decimal;
 import com.ib.contracts.OptContract;
 import com.ib.contracts.StkContract;
 
@@ -106,7 +107,7 @@ public class SampleDNHedge extends SimpleWrapper {
       m_status = Status.Order;
 
       client().placeOrder(m_orderId, m_contract,
-            new DNHedgeOrder(m_clientId, m_orderId, 1, m_account,
+            new DNHedgeOrder(m_clientId, m_orderId, Decimal.ONE, m_account,
                m_settlingFirm, m_underConId, m_designatedLocation));
    }
 

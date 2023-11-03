@@ -3,12 +3,13 @@
 
 package samples.rfq;
 
+import com.ib.client.Decimal;
 import com.ib.client.Order;
 import com.ib.client.OrderType;
 
 public class RfqOrder extends Order {
 
-   public RfqOrder(int clientId, int id, int size) {
+   public RfqOrder(int clientId, int id, Decimal size) {
 
       clientId(clientId);
       orderId(id);

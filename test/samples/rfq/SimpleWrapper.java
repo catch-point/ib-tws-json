@@ -499,7 +499,7 @@ public class SimpleWrapper implements EWrapper {
 	}
 
     @Override
-    public void pnlSingle(int reqId, int pos, double dailyPnL, double unrealizedPnL, double realizedPnL, double value) {
+    public void pnlSingle(int reqId, Decimal pos, double dailyPnL, double unrealizedPnL, double realizedPnL, double value) {
         // TODO Auto-generated method stub
         
     }
@@ -524,13 +524,13 @@ public class SimpleWrapper implements EWrapper {
     }
 
     @Override
-    public void tickByTickAllLast(int reqId, int tickType, long time, double price, int size, TickAttribLast tickAttribLast,
+    public void tickByTickAllLast(int reqId, int tickType, long time, double price, Decimal size, TickAttribLast tickAttribLast,
             String exchange, String specialConditions) {
         // TODO Auto-generated method stub
     }
 
     @Override
-    public void tickByTickBidAsk(int reqId, long time, double bidPrice, double askPrice, int bidSize, int askSize,
+    public void tickByTickBidAsk(int reqId, long time, double bidPrice, double askPrice, Decimal bidSize, Decimal askSize,
             TickAttribBidAsk tickAttribBidAsk) {
         // TODO Auto-generated method stub
     }
@@ -554,4 +554,86 @@ public class SimpleWrapper implements EWrapper {
     public void completedOrdersEnd() {
         // TODO Auto-generated method stub
     }
+
+	@Override
+	public void error(int arg0, int arg1, String arg2, String arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void historicalSchedule(int arg0, String arg1, String arg2, String arg3, List<HistoricalSession> arg4) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void orderStatus(int arg0, String arg1, Decimal arg2, Decimal arg3, double arg4, int arg5, int arg6,
+			double arg7, int arg8, String arg9, double arg10) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void position(String arg0, Contract arg1, Decimal arg2, double arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void positionMulti(int arg0, String arg1, String arg2, Contract arg3, Decimal arg4, double arg5) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void realtimeBar(int arg0, long arg1, double arg2, double arg3, double arg4, double arg5, Decimal arg6,
+			Decimal arg7, int arg8) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void tickSize(int arg0, int arg1, Decimal arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateMktDepth(int arg0, int arg1, int arg2, int arg3, double arg4, Decimal arg5) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateMktDepthL2(int arg0, int arg1, String arg2, int arg3, int arg4, double arg5, Decimal arg6,
+			boolean arg7) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updatePortfolio(Contract arg0, Decimal arg1, double arg2, double arg3, double arg4, double arg5,
+			double arg6, String arg7) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void userInfo(int arg0, String arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void wshEventData(int arg0, String arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void wshMetaData(int arg0, String arg1) {
+		// TODO Auto-generated method stub
+		
+	}
 }

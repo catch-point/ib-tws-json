@@ -49,7 +49,7 @@ public class EWrapperImpl implements EWrapper {
 	
 	//! [ticksize]
 	@Override
-	public void tickSize(int tickerId, int field, int size) {
+	public void tickSize(int tickerId, int field, Decimal size) {
 		System.out.println("Tick Size. Ticker Id:" + tickerId + ", Field: " + field + ", Size: " + size);
 	}
 	//! [ticksize]
@@ -89,8 +89,8 @@ public class EWrapperImpl implements EWrapper {
 	}
 	//! [orderstatus]
 	@Override
-	public void orderStatus(int orderId, String status, double filled,
-			double remaining, double avgFillPrice, int permId, int parentId,
+	public void orderStatus(int orderId, String status, Decimal filled,
+			Decimal remaining, double avgFillPrice, int permId, int parentId,
 			double lastFillPrice, int clientId, String whyHeld, double mktCapPrice) {
 		System.out.println("OrderStatus. Id: "+orderId+", Status: "+status+", Filled"+filled+", Remaining: "+remaining
                 +", AvgFillPrice: "+avgFillPrice+", PermId: "+permId+", ParentId: "+parentId+", LastFillPrice: "+lastFillPrice+
@@ -123,7 +123,7 @@ public class EWrapperImpl implements EWrapper {
 	
 	//! [updateportfolio]
 	@Override
-	public void updatePortfolio(Contract contract, double position,
+	public void updatePortfolio(Contract contract, Decimal position,
 			double marketPrice, double marketValue, double averageCost,
 			double unrealizedPNL, double realizedPNL, String accountName) {
 		System.out.println("UpdatePortfolio. "+contract.symbol()+", "+contract.secType()+" @ "+contract.exchange()
@@ -189,7 +189,7 @@ public class EWrapperImpl implements EWrapper {
 	//! [updatemktdepth]
 	@Override
 	public void updateMktDepth(int tickerId, int position, int operation,
-			int side, double price, int size) {
+			int side, double price, Decimal size) {
 		System.out.println("UpdateMarketDepth. "+tickerId+" - Position: "+position+", Operation: "+operation+", Side: "+side+", Price: "+price+", Size: "+size+"");
 	}
 	//! [updatemktdepth]
@@ -197,7 +197,7 @@ public class EWrapperImpl implements EWrapper {
 	//! [updatemktdepthl2]
 	@Override
 	public void updateMktDepthL2(int tickerId, int position,
-			String marketMaker, int operation, int side, double price, int size, boolean isSmartDepth) {
+			String marketMaker, int operation, int side, double price, Decimal size, boolean isSmartDepth) {
 		System.out.println("UpdateMarketDepthL2. "+tickerId+" - Position: "+position+", Operation: "+operation+", Side: "+side+", Price: "+price+", Size: "+size+", isSmartDepth: "+isSmartDepth);
 	}
 	//! [updatemktdepthl2]
@@ -273,7 +273,7 @@ public class EWrapperImpl implements EWrapper {
 	//! [realtimebar]
 	@Override
 	public void realtimeBar(int reqId, long time, double open, double high,
-			double low, double close, long volume, double wap, int count) {
+			double low, double close, Decimal volume, Decimal wap, int count) {
 		System.out.println("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + wap);
 	}
 	//! [realtimebar]
@@ -314,7 +314,7 @@ public class EWrapperImpl implements EWrapper {
 	
 	//! [position]
 	@Override
-	public void position(String account, Contract contract, double pos,
+	public void position(String account, Contract contract, Decimal pos,
 			double avgCost) {
 		System.out.println("Position. "+account+" - Symbol: "+contract.symbol()+", SecType: "+contract.secType()+", Currency: "+contract.currency()+", Position: "+pos+", Avg cost: "+avgCost);
 	}
@@ -384,8 +384,8 @@ public class EWrapperImpl implements EWrapper {
 	}
 	//! [error]
 	@Override
-	public void error(int id, int errorCode, String errorMsg) {
-		System.out.println("Error. Id: " + id + ", Code: " + errorCode + ", Msg: " + errorMsg + "\n");
+	public void error(int id, int errorCode, String errorMsg, String advancedOrderRejectJson) {
+		System.out.println("Error. Id: " + id + ", Code: " + errorCode + ", Msg: " + errorMsg + ", advancedOrderRejectJson: " + advancedOrderRejectJson + "\n");
 	}
 	//! [error]
 	@Override
@@ -406,7 +406,7 @@ public class EWrapperImpl implements EWrapper {
 	//! [positionmulti]
 	@Override
 	public void positionMulti(int reqId, String account, String modelCode,
-			Contract contract, double pos, double avgCost) {
+			Contract contract, Decimal pos, double avgCost) {
 		System.out.println("Position Multi. Request: " + reqId + ", Account: " + account + ", ModelCode: " + modelCode + ", Symbol: " + contract.symbol() + ", SecType: " + contract.secType() + ", Currency: " + contract.currency() + ", Position: " + pos + ", Avg cost: " + avgCost + "\n");
 	}
 	//! [positionmulti]
@@ -620,7 +620,7 @@ public class EWrapperImpl implements EWrapper {
 	
 	//! [pnlsingle]
     @Override
-    public void pnlSingle(int reqId, int pos, double dailyPnL, double unrealizedPnL, double realizedPnL, double value) {
+    public void pnlSingle(int reqId, Decimal pos, double dailyPnL, double unrealizedPnL, double realizedPnL, double value) {
         System.out.println(EWrapperMsgGenerator.pnlSingle(reqId, pos, dailyPnL, unrealizedPnL, realizedPnL, value));                
     }
     //! [pnlsingle]
@@ -656,7 +656,7 @@ public class EWrapperImpl implements EWrapper {
 
     //! [tickbytickalllast]
    @Override
-    public void tickByTickAllLast(int reqId, int tickType, long time, double price, int size, TickAttribLast tickAttribLast,
+    public void tickByTickAllLast(int reqId, int tickType, long time, double price, Decimal size, TickAttribLast tickAttribLast,
             String exchange, String specialConditions) {
         System.out.println(EWrapperMsgGenerator.tickByTickAllLast(reqId, tickType, time, price, size, tickAttribLast, exchange, specialConditions));
     }
@@ -664,7 +664,7 @@ public class EWrapperImpl implements EWrapper {
 
     //! [tickbytickbidask]
     @Override
-    public void tickByTickBidAsk(int reqId, long time, double bidPrice, double askPrice, int bidSize, int askSize,
+    public void tickByTickBidAsk(int reqId, long time, double bidPrice, double askPrice, Decimal bidSize, Decimal askSize,
             TickAttribBidAsk tickAttribBidAsk) {
         System.out.println(EWrapperMsgGenerator.tickByTickBidAsk(reqId, time, bidPrice, askPrice, bidSize, askSize, tickAttribBidAsk));
     }
@@ -697,4 +697,22 @@ public class EWrapperImpl implements EWrapper {
         System.out.println(EWrapperMsgGenerator.completedOrdersEnd());
     }
     //! [completedordersend]
+	@Override
+	public void historicalSchedule(int reqId, String startDateTime, String endDateTime, String timeZone,
+			List<HistoricalSession> sessions) {
+		System.out.println(
+				EWrapperMsgGenerator.historicalSchedule(reqId, startDateTime, endDateTime, timeZone, sessions));
+	}
+	@Override
+	public void userInfo(int reqId, String whiteBrandingId) {
+		System.out.println(EWrapperMsgGenerator.userInfo(reqId, whiteBrandingId));
+	}
+	@Override
+	public void wshEventData(int reqId, String dataJson) {
+		System.out.println(EWrapperMsgGenerator.wshEventData(reqId, dataJson));
+	}
+	@Override
+	public void wshMetaData(int reqId, String dataJson) {
+		System.out.println(EWrapperMsgGenerator.wshMetaData(reqId, dataJson));
+	}
 }

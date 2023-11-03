@@ -67,7 +67,7 @@
             {
                 "action": "BUY",
                 "orderType": "MKT",
-                "totalQuantity": "1.0"
+                "totalQuantity": "1"
             },
             null
         ],
@@ -131,7 +131,7 @@
                 ],
                 "conditionsCancelOrder": true,
                 "orderType": "MKT",
-                "totalQuantity": "100.0"
+                "totalQuantity": "100"
             },
             null
         ]
@@ -198,7 +198,7 @@
                 "open": "9.0",
                 "time": "2020-12-12 12:00:00",
                 "volume": "1",
-                "wap": "10.0"
+                "wap": "10"
             }
         ]
     ],
@@ -363,7 +363,7 @@
             1,
             "1607553315442",
             "10.0",
-            1,
+            "1",
             {
                 "pastLimit": true,
                 "unreported": true
@@ -379,8 +379,8 @@
             "1607553315442",
             "9.0",
             "11.0",
-            1,
-            1,
+            "1",
+            "1",
             {
                 "askPastHigh": true,
                 "bidPastLow": true
