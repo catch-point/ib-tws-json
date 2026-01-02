@@ -204,10 +204,18 @@ public class Shell {
 			String agent = "-javaagent:" + jar.getAbsolutePath() + "=" + agentArgs;
 			if (idx > 0) {
 				lines.set(idx, agent);
+				if (lines.size() > idx + 1 && lines.get(idx + 1).length() > 0) {
+					char first = lines.get(idx + 1).charAt(0);
+					if (first != '-' && first != '#' && !Character.isWhitespace(first)) {
+						// agent line might have been broken into two lines, fix that here
+						lines.set(idx + 1, "");
+					}
+				}
 			} else {
 				lines.add("");
 				lines.add("# " + JSON_API_EXTENSION_REF);
 				lines.add(agent);
+				lines.add("");
 			}
 		}
 		writeLines(lines, vmoptions);
