@@ -63,9 +63,9 @@ import org.apache.commons.cli.ParseException;
  *
  */
 public class Shell {
-	private static final String JSON_API_EXTENSION_REF = "JSON API Extension See https://github.com/jamesrdf/ib-tws-json";
+	private static final String JSON_API_EXTENSION_REF = "JSON API Extension See https://github.com/catch-point/ib-tws-json";
 	private static final String HEADER = "where [options] include:";
-	private static final String FOOTER = "Please report issues at https://github.com/jamesrdf/ib-tws-json/issues";
+	private static final String FOOTER = "Please report issues at https://github.com/catch-point/ib-tws-json/issues";
 	private static final File[] tws_path_search = new File[] { new File("C:\\Jts\\ibgateway"), new File("C:\\Jts"),
 			new File(new File(System.getProperty("user.home"), "Jts"), "ibgateway"),
 			new File(System.getProperty("user.home"), "Jts"),

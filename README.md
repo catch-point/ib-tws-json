@@ -6,7 +6,7 @@ Introduction
 
 The TWS API is a simple yet powerful interface through which Interactive Broker clients can automate their trading strategies, request market data and monitor your account balance and portfolio in real time.
 
-This project extends Interactive Broker's Trader Workstation and Gateway by providing a JSON serialized API so that it can be used without an official client library. This is particularly useful for programming languages that do not have an official TWS API Client, such as https://github.com/jamesrdf/ib-tws-node
+This project extends Interactive Broker's Trader Workstation and Gateway by providing a JSON serialized API so that it can be used without an official client library. This is particularly useful for programming languages that do not have an official TWS API Client, such as https://github.com/catch-point/ib-tws-node
 
 This project differentiates from other client libraries by extending the TWS Desktop or Gateway (in the same JVM running the TWS Client) to create a non-binary API that can be used without an official client library.
 
@@ -98,10 +98,6 @@ Issue a "isUseV100Plus" event response, which is enabled by default.
 #### optionalCapabilities
 
 Provide a string value recognized by the API or issues a "optionalCapabilities" event response of those values.
-
-#### faMsgTypeName
-
-Issue a "faMsgTypeName" event response converting 1, 2, or 3 into "GROUPS", "PROFILES", and "ALIASES" respectively.
 
 #### getTwsConnectionTime
 
