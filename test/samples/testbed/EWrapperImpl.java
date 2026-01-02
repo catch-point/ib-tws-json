@@ -9,7 +9,41 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.ib.client.*;
+import com.ib.client.Bar;
+import com.ib.client.CommissionAndFeesReport;
+import com.ib.client.Contract;
+import com.ib.client.ContractDescription;
+import com.ib.client.ContractDetails;
+import com.ib.client.Decimal;
+import com.ib.client.DeltaNeutralContract;
+import com.ib.client.DepthMktDataDescription;
+import com.ib.client.EClientSocket;
+import com.ib.client.EJavaSignal;
+import com.ib.client.EReaderSignal;
+import com.ib.client.EWrapper;
+import com.ib.client.EWrapperMsgGenerator;
+import com.ib.client.Execution;
+import com.ib.client.FamilyCode;
+import com.ib.client.HistogramEntry;
+import com.ib.client.HistoricalSession;
+import com.ib.client.HistoricalTick;
+import com.ib.client.HistoricalTickBidAsk;
+import com.ib.client.HistoricalTickLast;
+import com.ib.client.NewsProvider;
+import com.ib.client.Order;
+import com.ib.client.OrderState;
+import com.ib.client.PriceIncrement;
+import com.ib.client.SoftDollarTier;
+import com.ib.client.TickAttrib;
+import com.ib.client.TickAttribBidAsk;
+import com.ib.client.TickAttribLast;
+import com.ib.client.TickType;
+import com.ib.client.protobuf.ErrorMessageProto.ErrorMessage;
+import com.ib.client.protobuf.ExecutionDetailsEndProto.ExecutionDetailsEnd;
+import com.ib.client.protobuf.ExecutionDetailsProto.ExecutionDetails;
+import com.ib.client.protobuf.OpenOrderProto.OpenOrder;
+import com.ib.client.protobuf.OpenOrdersEndProto.OpenOrdersEnd;
+import com.ib.client.protobuf.OrderStatusProto.OrderStatus;
 
 //! [ewrapperimpl]
 public class EWrapperImpl implements EWrapper {
@@ -90,7 +124,7 @@ public class EWrapperImpl implements EWrapper {
 	//! [orderstatus]
 	@Override
 	public void orderStatus(int orderId, String status, Decimal filled,
-			Decimal remaining, double avgFillPrice, int permId, int parentId,
+			Decimal remaining, double avgFillPrice, long permId, int parentId,
 			double lastFillPrice, int clientId, String whyHeld, double mktCapPrice) {
 		System.out.println("OrderStatus. Id: "+orderId+", Status: "+status+", Filled"+filled+", Remaining: "+remaining
                 +", AvgFillPrice: "+avgFillPrice+", PermId: "+permId+", ParentId: "+parentId+", LastFillPrice: "+lastFillPrice+
@@ -307,8 +341,8 @@ public class EWrapperImpl implements EWrapper {
 	
 	//! [commissionreport]
 	@Override
-	public void commissionReport(CommissionReport commissionReport) {
-		System.out.println("CommissionReport. ["+commissionReport.execId()+"] - ["+commissionReport.commission()+"] ["+commissionReport.currency()+"] RPNL ["+commissionReport.realizedPNL()+"]");
+	public void commissionAndFeesReport(CommissionAndFeesReport commissionReport) {
+		System.out.println("CommissionReport. ["+commissionReport.execId()+"] - ["+commissionReport.commissionAndFees()+"] ["+commissionReport.currency()+"] RPNL ["+commissionReport.realizedPNL()+"]");
 	}
 	//! [commissionreport]
 	
@@ -384,7 +418,7 @@ public class EWrapperImpl implements EWrapper {
 	}
 	//! [error]
 	@Override
-	public void error(int id, int errorCode, String errorMsg, String advancedOrderRejectJson) {
+	public void error(int id, long arg1, int errorCode, String errorMsg, String advancedOrderRejectJson) {
 		System.out.println("Error. Id: " + id + ", Code: " + errorCode + ", Msg: " + errorMsg + ", advancedOrderRejectJson: " + advancedOrderRejectJson + "\n");
 	}
 	//! [error]
@@ -714,5 +748,33 @@ public class EWrapperImpl implements EWrapper {
 	@Override
 	public void wshMetaData(int reqId, String dataJson) {
 		System.out.println(EWrapperMsgGenerator.wshMetaData(reqId, dataJson));
+	}
+	@Override
+	public void currentTimeInMillis(long arg0) {
+		System.out.println("currentTimeInMillis" + "\t" + arg0);
+	}
+	@Override
+	public void errorProtoBuf(ErrorMessage arg0) {
+		System.out.println("errorProtoBuf" + "\t" + arg0);
+	}
+	@Override
+	public void execDetailsEndProtoBuf(ExecutionDetailsEnd arg0) {
+		System.out.println("execDetailsEndProtoBuf" + "\t" + arg0);
+	}
+	@Override
+	public void execDetailsProtoBuf(ExecutionDetails arg0) {
+		System.out.println("execDetailsProtoBuf" + "\t" + arg0);
+	}
+	@Override
+	public void openOrderProtoBuf(OpenOrder arg0) {
+		System.out.println("openOrderProtoBuf" + "\t" + arg0);
+	}
+	@Override
+	public void openOrdersEndProtoBuf(OpenOrdersEnd arg0) {
+		System.out.println("openOrdersEndProtoBuf" + "\t" + arg0);
+	}
+	@Override
+	public void orderStatusProtoBuf(OrderStatus arg0) {
+		System.out.println("orderStatusProtoBuf" + "\t" + arg0);
 	}
 }

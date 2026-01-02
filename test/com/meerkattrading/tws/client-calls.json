@@ -746,8 +746,8 @@
             },
             {
                 "action": "SELL",
-                "faGroup": "Group_Equal_Quantity",
-                "faMethod": "EqualQuantity",
+                "faGroup": "Group_Equal",
+                "faMethod": "Equal",
                 "lmtPrice": "2000.0",
                 "orderType": "LMT",
                 "totalQuantity": "200"
@@ -764,8 +764,8 @@
             },
             {
                 "action": "BUY",
-                "faGroup": "Pct_Change",
-                "faMethod": "PctChange",
+                "faGroup": "Group_Percent",
+                "faMethod": "Percent",
                 "faPercentage": "100",
                 "orderType": "MKT"
             }
@@ -782,7 +782,6 @@
             },
             {
                 "action": "BUY",
-                "faProfile": "Percent_60_40",
                 "lmtPrice": "100.0",
                 "orderType": "LMT",
                 "totalQuantity": "200"

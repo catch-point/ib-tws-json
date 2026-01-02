@@ -172,12 +172,6 @@ public class Testbed {
         client.placeOrder(nextOrderId++, ContractSamples.EurGbpFx(), faOrderGroupPC);
         //! [faordergrouppctchange]
         
-        //! [faorderprofile]
-        Order faOrderProfile = OrderSamples.LimitOrder("BUY", Decimal.get(200), 100);
-        faOrderProfile.faProfile("Percent_60_40");
-		client.placeOrder(nextOrderId++, ContractSamples.EuropeanStock(), faOrderProfile);
-        //! [faorderprofile]
-        
 		//! [modelorder]
         Order modelOrder = OrderSamples.LimitOrder("BUY", Decimal.get(200), 100);
 		modelOrder.account("DF12345");  // master FA account number
@@ -195,11 +189,11 @@ public class Testbed {
 
 		int cancelID = nextOrderId -1;
 		//! [cancelorder]
-		client.cancelOrder(cancelID, "");
+		client.cancelOrder(cancelID, new OrderCancel(""));
 		//! [cancelorder]
 
 		//! [reqglobalcancel]
-		client.reqGlobalCancel();
+		client.reqGlobalCancel(new OrderCancel());
 		//! [reqglobalcancel]
 		
         /*** Completed orders ***/
@@ -765,10 +759,6 @@ public class Testbed {
 		client.requestFA(FADataType.GROUPS.ordinal());
 		//! [requestfagroups]
 		
-		//! [requestfaprofiles]
-		client.requestFA(FADataType.PROFILES.ordinal());
-		//! [requestfaprofiles]
-		
 		/*** Replacing FA information - Fill in with the appropriate XML string. ***/
 		//! [replacefaonegroup]
 		client.replaceFA(100, FADataType.GROUPS.ordinal(), FAMethodSamples.FA_ONE_GROUP);
@@ -777,14 +767,6 @@ public class Testbed {
 		//! [replacefatwogroups]
 		client.replaceFA(101, FADataType.GROUPS.ordinal(), FAMethodSamples.FA_TWO_GROUPS);
 		//! [replacefatwogroups]
-		
-		//! [replacefaoneprofile]
-		client.replaceFA(102, FADataType.PROFILES.ordinal(), FAMethodSamples.FA_ONE_PROFILE);
-		//! [replacefaoneprofile]
-		
-		//! [replacefatwoprofiles]
-		client.replaceFA(103, FADataType.PROFILES.ordinal(), FAMethodSamples.FA_TWO_PROFILES);
-		//! [replacefatwoprofiles]
 		
                 //! [reqSoftDollarTiers]
                 client.reqSoftDollarTiers(4001);
@@ -848,7 +830,7 @@ public class Testbed {
 		
 		//! [exercise_options]
 		//** Exercising options ***
-		client.exerciseOptions(5003, ContractSamples.OptionWithTradingClass(), 1, 1, "", 1);
+		client.exerciseOptions(5003, ContractSamples.OptionWithTradingClass(), 1, 1, "", 1, "", "", false);
 		//! [exercise_options]
 	}
 

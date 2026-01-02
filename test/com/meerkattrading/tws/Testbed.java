@@ -236,12 +236,6 @@ public class Testbed {
         client.placeOrder(nextOrderId++, ContractSamples.EurGbpFx(), faOrderGroupPC);
         //! [faordergrouppctchange]
         
-        //! [faorderprofile]
-        Order faOrderProfile = OrderSamples.LimitOrder("BUY", Decimal.get(200), 100);
-        faOrderProfile.faProfile("Percent_60_40");
-		client.placeOrder(nextOrderId++, ContractSamples.EuropeanStock(), faOrderProfile);
-        //! [faorderprofile]
-        
 		//! [modelorder]
         Order modelOrder = OrderSamples.LimitOrder("BUY", Decimal.get(200), 100);
 		modelOrder.account("DF12345");  // master FA account number
@@ -829,10 +823,6 @@ public class Testbed {
 		client.requestFA(FADataType.GROUPS.ordinal());
 		//! [requestfagroups]
 		
-		//! [requestfaprofiles]
-		client.requestFA(FADataType.PROFILES.ordinal());
-		//! [requestfaprofiles]
-		
 		/*** Replacing FA information - Fill in with the appropriate XML string. ***/
 		//! [replacefaonegroup]
 		client.replaceFA(FADataType.GROUPS.ordinal(), FAMethodSamples.FA_ONE_GROUP);
@@ -841,14 +831,6 @@ public class Testbed {
 		//! [replacefatwogroups]
 		client.replaceFA(FADataType.GROUPS.ordinal(), FAMethodSamples.FA_TWO_GROUPS);
 		//! [replacefatwogroups]
-		
-		//! [replacefaoneprofile]
-		client.replaceFA(FADataType.PROFILES.ordinal(), FAMethodSamples.FA_ONE_PROFILE);
-		//! [replacefaoneprofile]
-		
-		//! [replacefatwoprofiles]
-		client.replaceFA(FADataType.PROFILES.ordinal(), FAMethodSamples.FA_TWO_PROFILES);
-		//! [replacefatwoprofiles]
 		
                 //! [reqSoftDollarTiers]
                 client.reqSoftDollarTiers(4001);

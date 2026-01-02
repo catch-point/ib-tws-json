@@ -47,8 +47,6 @@ public interface TwsEvents {
 
 	void optionalCapabilities(String optionalCapabilities);
 
-	void faMsgTypeName(String faMsgTypeName);
-
 	void getTwsConnectionTime(String twsConnectionTime);
 
 }

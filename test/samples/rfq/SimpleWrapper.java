@@ -15,7 +15,39 @@ import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
-import com.ib.client.*;
+import com.ib.client.Bar;
+import com.ib.client.CommissionAndFeesReport;
+import com.ib.client.Contract;
+import com.ib.client.ContractDescription;
+import com.ib.client.ContractDetails;
+import com.ib.client.Decimal;
+import com.ib.client.DeltaNeutralContract;
+import com.ib.client.DepthMktDataDescription;
+import com.ib.client.EClientSocket;
+import com.ib.client.EJavaSignal;
+import com.ib.client.EReader;
+import com.ib.client.EWrapper;
+import com.ib.client.Execution;
+import com.ib.client.FamilyCode;
+import com.ib.client.HistogramEntry;
+import com.ib.client.HistoricalSession;
+import com.ib.client.HistoricalTick;
+import com.ib.client.HistoricalTickBidAsk;
+import com.ib.client.HistoricalTickLast;
+import com.ib.client.NewsProvider;
+import com.ib.client.Order;
+import com.ib.client.OrderState;
+import com.ib.client.PriceIncrement;
+import com.ib.client.SoftDollarTier;
+import com.ib.client.TickAttrib;
+import com.ib.client.TickAttribBidAsk;
+import com.ib.client.TickAttribLast;
+import com.ib.client.protobuf.ErrorMessageProto.ErrorMessage;
+import com.ib.client.protobuf.ExecutionDetailsEndProto.ExecutionDetailsEnd;
+import com.ib.client.protobuf.ExecutionDetailsProto.ExecutionDetails;
+import com.ib.client.protobuf.OpenOrderProto.OpenOrder;
+import com.ib.client.protobuf.OpenOrdersEndProto.OpenOrdersEnd;
+import com.ib.client.protobuf.OrderStatusProto.OrderStatus;
 
 
 public class SimpleWrapper implements EWrapper {
@@ -249,12 +281,12 @@ public class SimpleWrapper implements EWrapper {
 	public void marketDataType(int reqId, int marketDataType) {
 		logIn("marketDataType");
 	}
-
-	public void commissionReport(CommissionReport commissionReport) {
-		logIn("commissionReport");
+	
+	@Override
+	public void commissionAndFeesReport(CommissionAndFeesReport arg0) {
+		logIn("commissionAndFeesReport");
 	}
 
-	
 	public void position(String account, Contract contract, double pos, double avgCost) {
 		logIn("position");
 	}
@@ -372,218 +404,160 @@ public class SimpleWrapper implements EWrapper {
 	}
 
 	@Override
-	public void securityDefinitionOptionalParameter(int reqId, String exchange, int underlyingConId, String tradingClass,
-			String multiplier, Set<String> expirations, Set<Double> strikes) {
-		// TODO Auto-generated method stub
-		
+	public void completedOrder(Contract arg0, Order arg1, OrderState arg2) {
+		logIn("completedOrder");
 	}
 
 	@Override
-	public void securityDefinitionOptionalParameterEnd(int reqId) {
-		// TODO Auto-generated method stub
-		
+	public void completedOrdersEnd() {
+		logIn("completedOrdersEnd");
 	}
 
 	@Override
-	public void softDollarTiers(int reqId, SoftDollarTier[] tiers) {
-		// TODO Auto-generated method stub
-		
-	}
-
-    @Override
-    public void familyCodes(FamilyCode[] familyCodes) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void symbolSamples(int reqId, ContractDescription[] contractDescriptions) {
-        // TODO Auto-generated method stub
-
-    }
-	@Override
-	public void historicalDataEnd(int reqId, String startDateStr, String endDateStr) {
-		// TODO Auto-generated method stub
-		
+	public void currentTimeInMillis(long arg0) {
+		logIn("currentTimeInMillis");
 	}
 
 	@Override
-	public void mktDepthExchanges(DepthMktDataDescription[] depthMktDataDescriptions) {
-		// TODO Auto-generated method stub
-		
+	public void error(int arg0, long arg1, int arg2, String arg3, String arg4) {
+		logIn("error");
 	}
 
 	@Override
-	public void tickNews(int tickerId, long timeStamp, String providerCode, String articleId, String headline,
-			String extraData) {
-		// TODO Auto-generated method stub
-		
+	public void errorProtoBuf(ErrorMessage arg0) {
+		logIn("errorProtoBuf");
 	}
 
 	@Override
-	public void smartComponents(int reqId, Map<Integer, Entry<String, Character>> theMap) {
-		// TODO Auto-generated method stub
-		
+	public void execDetailsEndProtoBuf(ExecutionDetailsEnd arg0) {
+		logIn("execDetailsEndProtoBuf");
 	}
 
 	@Override
-	public void tickReqParams(int tickerId, double minTick, String bboExchange, int snapshotPermissions) {
-		// TODO Auto-generated method stub
-		
+	public void execDetailsProtoBuf(ExecutionDetails arg0) {
+		logIn("execDetailsProtoBuf");
 	}
 
 	@Override
-	public void newsProviders(NewsProvider[] newsProviders) {
-		// TODO Auto-generated method stub
-
+	public void familyCodes(FamilyCode[] arg0) {
+		logIn("familyCodes");
 	}
 
 	@Override
-	public void newsArticle(int requestId, int articleType, String articleText) {
-		// TODO Auto-generated method stub
-		
+	public void headTimestamp(int arg0, String arg1) {
+		logIn("headTimestamp");
 	}
 
 	@Override
-	public void historicalNews(int requestId, String time, String providerCode, String articleId, String headline) {
-		// TODO Auto-generated method stub
-		
+	public void histogramData(int arg0, List<HistogramEntry> arg1) {
+		logIn("histogramData");
 	}
 
 	@Override
-	public void historicalNewsEnd(int requestId, boolean hasMore) {
-		// TODO Auto-generated method stub
-		
+	public void historicalDataEnd(int arg0, String arg1, String arg2) {
+		logIn("historicalDataEnd");
 	}
 
 	@Override
-	public void headTimestamp(int reqId, String headTimestamp) {
-		// TODO Auto-generated method stub
-		
+	public void historicalDataUpdate(int arg0, Bar arg1) {
+		logIn("historicalDataUpdate");
 	}
 
 	@Override
-	public void histogramData(int reqId, List<HistogramEntry> items) {
-		// TODO Auto-generated method stub
-		
-	}
-
-    @Override
-    public void historicalDataUpdate(int reqId, Bar bar) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void pnl(int reqId, double dailyPnL, double unrealizedPnL, double realizedPnL) {
-        // TODO Auto-generated method stub
-        
-    }
-
-	@Override
-	public void rerouteMktDataReq(int reqId, int conId, String exchange) {
-		// TODO Auto-generated method stub
-		
+	public void historicalNews(int arg0, String arg1, String arg2, String arg3, String arg4) {
+		logIn("historicalNews");
 	}
 
 	@Override
-	public void rerouteMktDepthReq(int reqId, int conId, String exchange) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void marketRule(int marketRuleId, PriceIncrement[] priceIncrements) {
-		// TODO Auto-generated method stub
-		
-	}
-
-    @Override
-    public void pnlSingle(int reqId, Decimal pos, double dailyPnL, double unrealizedPnL, double realizedPnL, double value) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void historicalTicks(int reqId, List<HistoricalTick> ticks, boolean last) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void historicalTicksBidAsk(int reqId, List<HistoricalTickBidAsk> ticks, boolean done) {
-        // TODO Auto-generated method stub
-        
-    }
-
-
-    @Override
-    public void historicalTicksLast(int reqId, List<HistoricalTickLast> ticks, boolean done) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void tickByTickAllLast(int reqId, int tickType, long time, double price, Decimal size, TickAttribLast tickAttribLast,
-            String exchange, String specialConditions) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void tickByTickBidAsk(int reqId, long time, double bidPrice, double askPrice, Decimal bidSize, Decimal askSize,
-            TickAttribBidAsk tickAttribBidAsk) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void tickByTickMidPoint(int reqId, long time, double midPoint) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void orderBound(long orderId, int apiClientId, int apiOrderId) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void completedOrder(Contract contract, Order order, OrderState orderState) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void completedOrdersEnd() {
-        // TODO Auto-generated method stub
-    }
-
-	@Override
-	public void error(int arg0, int arg1, String arg2, String arg3) {
-		// TODO Auto-generated method stub
-		
+	public void historicalNewsEnd(int arg0, boolean arg1) {
+		logIn("historicalNewsEnd");
 	}
 
 	@Override
 	public void historicalSchedule(int arg0, String arg1, String arg2, String arg3, List<HistoricalSession> arg4) {
-		// TODO Auto-generated method stub
-		
+		logIn("historicalSchedule");
 	}
 
 	@Override
-	public void orderStatus(int arg0, String arg1, Decimal arg2, Decimal arg3, double arg4, int arg5, int arg6,
+	public void historicalTicks(int arg0, List<HistoricalTick> arg1, boolean arg2) {
+		logIn("historicalTicks");
+	}
+
+	@Override
+	public void historicalTicksBidAsk(int arg0, List<HistoricalTickBidAsk> arg1, boolean arg2) {
+		logIn("historicalTicksBidAsk");
+	}
+
+	@Override
+	public void historicalTicksLast(int arg0, List<HistoricalTickLast> arg1, boolean arg2) {
+		logIn("historicalTicksLast");
+	}
+
+	@Override
+	public void marketRule(int arg0, PriceIncrement[] arg1) {
+		logIn("marketRule");
+	}
+
+	@Override
+	public void mktDepthExchanges(DepthMktDataDescription[] arg0) {
+		logIn("mktDepthExchanges");
+	}
+
+	@Override
+	public void newsArticle(int arg0, int arg1, String arg2) {
+		logIn("newsArticle");
+	}
+
+	@Override
+	public void newsProviders(NewsProvider[] arg0) {
+		logIn("newsProviders");
+	}
+
+	@Override
+	public void openOrderProtoBuf(OpenOrder arg0) {
+		logIn("openOrderProtoBuf");
+	}
+
+	@Override
+	public void openOrdersEndProtoBuf(OpenOrdersEnd arg0) {
+		logIn("openOrdersEndProtoBuf");
+	}
+
+	@Override
+	public void orderBound(long arg0, int arg1, int arg2) {
+		logIn("orderBound");
+	}
+
+	@Override
+	public void orderStatus(int arg0, String arg1, Decimal arg2, Decimal arg3, double arg4, long arg5, int arg6,
 			double arg7, int arg8, String arg9, double arg10) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
+	public void orderStatusProtoBuf(OrderStatus arg0) {
+		logIn("orderStatusProtoBuf");
+	}
+
+	@Override
+	public void pnl(int arg0, double arg1, double arg2, double arg3) {
+		logIn("pnl");
+	}
+
+	@Override
+	public void pnlSingle(int arg0, Decimal arg1, double arg2, double arg3, double arg4, double arg5) {
+		logIn("pnlSingle");
+	}
+
+	@Override
 	public void position(String arg0, Contract arg1, Decimal arg2, double arg3) {
-		// TODO Auto-generated method stub
-		
+		logIn("position");
 	}
 
 	@Override
 	public void positionMulti(int arg0, String arg1, String arg2, Contract arg3, Decimal arg4, double arg5) {
-		// TODO Auto-generated method stub
-		
+		logIn("positionMulti");
 	}
 
 	@Override
@@ -594,15 +568,79 @@ public class SimpleWrapper implements EWrapper {
 	}
 
 	@Override
-	public void tickSize(int arg0, int arg1, Decimal arg2) {
+	public void rerouteMktDataReq(int arg0, int arg1, String arg2) {
+		logIn("rerouteMktDataReq");
+	}
+
+	@Override
+	public void rerouteMktDepthReq(int arg0, int arg1, String arg2) {
+		logIn("rerouteMktDepthReq");
+	}
+
+	@Override
+	public void securityDefinitionOptionalParameter(int arg0, String arg1, int arg2, String arg3, String arg4,
+			Set<String> arg5, Set<Double> arg6) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateMktDepth(int arg0, int arg1, int arg2, int arg3, double arg4, Decimal arg5) {
+	public void securityDefinitionOptionalParameterEnd(int arg0) {
+		logIn("securityDefinitionOptionalParameterEnd");
+	}
+
+	@Override
+	public void smartComponents(int arg0, Map<Integer, Entry<String, Character>> arg1) {
+		logIn("smartComponents");
+	}
+
+	@Override
+	public void softDollarTiers(int arg0, SoftDollarTier[] arg1) {
+		logIn("softDollarTiers");
+	}
+
+	@Override
+	public void symbolSamples(int arg0, ContractDescription[] arg1) {
+		logIn("symbolSamples");
+	}
+
+	@Override
+	public void tickByTickAllLast(int arg0, int arg1, long arg2, double arg3, Decimal arg4, TickAttribLast arg5,
+			String arg6, String arg7) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void tickByTickBidAsk(int arg0, long arg1, double arg2, double arg3, Decimal arg4, Decimal arg5,
+			TickAttribBidAsk arg6) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void tickByTickMidPoint(int arg0, long arg1, double arg2) {
+		logIn("tickByTickMidPoint");
+	}
+
+	@Override
+	public void tickNews(int arg0, long arg1, String arg2, String arg3, String arg4, String arg5) {
+		logIn("tickNews");
+	}
+
+	@Override
+	public void tickReqParams(int arg0, double arg1, String arg2, int arg3) {
+		logIn("tickReqParams");
+	}
+
+	@Override
+	public void tickSize(int arg0, int arg1, Decimal arg2) {
+		logIn("tickSize");
+	}
+
+	@Override
+	public void updateMktDepth(int arg0, int arg1, int arg2, int arg3, double arg4, Decimal arg5) {
+		logIn("updateMktDepth");
 	}
 
 	@Override
@@ -621,19 +659,16 @@ public class SimpleWrapper implements EWrapper {
 
 	@Override
 	public void userInfo(int arg0, String arg1) {
-		// TODO Auto-generated method stub
-		
+		logIn("userInfo");
 	}
 
 	@Override
 	public void wshEventData(int arg0, String arg1) {
-		// TODO Auto-generated method stub
-		
+		logIn("wshEventData");
 	}
 
 	@Override
 	public void wshMetaData(int arg0, String arg1) {
-		// TODO Auto-generated method stub
-		
+		logIn("wshMetaData");
 	}
 }

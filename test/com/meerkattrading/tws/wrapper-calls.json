@@ -43,14 +43,14 @@
             "legsStr"
         ]
     ],
-    "CommissionReport": [
+    "CommissionAndFeesReport": [
         [
-            "commissionReport",
+            "commissionAndFeesReport",
             {
-                "commission": "0.7",
                 "currency": "USD",
                 "execId": "ExecId",
-                "realizedPNL": "123.45"
+                "realizedPNL": "123.45",
+                "yield": "0.7"
             }
         ]
     ],

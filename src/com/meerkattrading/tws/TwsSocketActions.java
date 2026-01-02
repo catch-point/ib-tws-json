@@ -135,10 +135,6 @@ public class TwsSocketActions implements TwsActions {
 		}
 	}
 
-	public void faMsgTypeName(int type) throws IOException {
-		events.faMsgTypeName(EClient.faMsgTypeName(type));
-	}
-
 	public void getTwsConnectionTime() throws IOException {
 		events.getTwsConnectionTime(getEClient().getTwsConnectionTime());
 	}

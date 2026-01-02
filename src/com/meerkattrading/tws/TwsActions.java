@@ -45,8 +45,6 @@ public interface TwsActions {
 
 	public void optionalCapabilities(String val) throws IOException;
 
-	public void faMsgTypeName(int type) throws IOException;
-
 	public void getTwsConnectionTime() throws IOException;
 
 	public void help(String name) throws IllegalAccessException, InvocationTargetException, IOException;
