@@ -58,6 +58,7 @@ import com.ib.client.TickAttribBidAsk;
 import com.ib.client.TickAttribLast;
 import com.ib.client.TimeCondition;
 import com.ib.client.VolumeCondition;
+import com.ib.client.WshEventData;
 
 /**
  * Takes the JSON values from stdin command and converts them into Java Object.
@@ -142,6 +143,8 @@ public class Deserializer {
 				return jsonToHistoricalTickLast(obj);
 			} else if (type.isAssignableFrom(TickAttribLast.class)) {
 				return jsonToTickAttribLast(obj);
+			} else if (type.isAssignableFrom(WshEventData.class)) {
+				return jsonToWshEventData(obj);
 			} else {
 				return jsonToJavaObject(obj, ptype);
 			}
@@ -498,6 +501,25 @@ public class Deserializer {
 			return null;
 		JsonObject o = obj.asJsonObject();
 		return new HistogramEntry(jsonToDouble(o.get("price")), jsonToDecimal(o.get("size")));
+	}
+
+	private WshEventData jsonToWshEventData(JsonValue obj) {
+		if (obj == null || obj.getValueType() == ValueType.NULL)
+			return null;
+		JsonObject o = obj.asJsonObject();
+		String filter = jsonToString(o.get("filter"));
+		boolean fillWatchlist = jsonToBoolean(o.get("fillWatchlist"));
+		boolean fillPortfolio = jsonToBoolean(o.get("fillPortfolio"));
+		boolean fillCompetitors = jsonToBoolean(o.get("fillCompetitors"));
+		String startDate = jsonToString(o.get("startDate"));
+		String endDate = jsonToString(o.get("endDate"));
+		int totalLimit = jsonToInteger(o.get("totalLimit"));
+		if (filter != null && filter.length() > 0) {
+			return new WshEventData(filter, fillWatchlist, fillPortfolio, fillCompetitors, startDate, endDate, totalLimit);
+		} else {
+			int conId = jsonToInteger(o.get("conId"));
+			return new WshEventData(conId, fillWatchlist, fillPortfolio, fillCompetitors, startDate, endDate, totalLimit);
+		}
 	}
 
 	private Bar jsonToBar(JsonValue obj) {

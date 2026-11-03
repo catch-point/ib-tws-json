@@ -8,6 +8,19 @@ replies). See [README.md](README.md#json-api) for the message format.
 This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.2.0]
+
+Built with TWS API 10.37.02.
+
+### Fixed
+
+- **`reqWshEventData` works.** Its `WshEventData` parameter could not be built
+  from JSON (it has no no-argument constructor), so the command always failed.
+  It now accepts an object with `conId` or `filter`, plus `fillWatchlist`,
+  `fillPortfolio`, `fillCompetitors`, `startDate`, `endDate` and
+  `totalLimit`, and `help "WshEventData"` lists these fields (it listed none
+  before).
+
 ## [1.1.2]
 
 Built with TWS API 10.37.02. No changes to the JSON interface.

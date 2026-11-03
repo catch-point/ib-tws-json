@@ -3,7 +3,7 @@ plugins {
     id 'java'
 }
 
-version = '1.1.2'
+version = '1.2.0'
 
 // The Java version MUST match the JRE bundled with the latest IBKR TWS,
 // because this extension runs as a -javaagent inside the TWS JVM.

@@ -63,6 +63,14 @@ public class PropertyType {
 			add("public java.lang.String com.ib.client.Bar.time()");
 			add("public com.ib.client.Decimal com.ib.client.Bar.volume()");
 			add("public com.ib.client.Decimal com.ib.client.Bar.wap()");
+			add("public int com.ib.client.WshEventData.conId()");
+			add("public java.lang.String com.ib.client.WshEventData.filter()");
+			add("public boolean com.ib.client.WshEventData.fillWatchlist()");
+			add("public boolean com.ib.client.WshEventData.fillPortfolio()");
+			add("public boolean com.ib.client.WshEventData.fillCompetitors()");
+			add("public java.lang.String com.ib.client.WshEventData.startDate()");
+			add("public java.lang.String com.ib.client.WshEventData.endDate()");
+			add("public int com.ib.client.WshEventData.totalLimit()");
 			add("public double com.ib.client.HistoricalTick.price()");
 			add("public com.ib.client.Decimal com.ib.client.HistoricalTick.size()");
 			add("public long com.ib.client.HistoricalTick.time()");
