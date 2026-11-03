@@ -8,6 +8,67 @@ replies). See [README.md](README.md#json-api) for the message format.
 This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 the project uses [Semantic Versioning](https://semver.org/).
 
+## [2.1.0]
+
+Built with TWS API 10.50.02.
+
+### Added
+
+- **Every version of an overloaded command can be used.** Before 2.1.0, only
+  one version of each overloaded name was available, chosen by the order in
+  which Java's reflection listed the methods. The version is now chosen for
+  each call from the number and JSON types of the values given:
+  - `requestFA 1` or `requestFA "GROUPS"`
+  - `replaceFA 1000 1 "<xml>"` or `replaceFA 1000 "GROUPS" "<xml>"`
+- **Enums accept numbers.** An enum parameter or field accepts its TWS API
+  numeric code as well as its name, as a number or a numeric string. The code
+  comes from the enum's `id()`, `val()`, `value()` or `code()` method (for
+  example `FADataType`: GROUPS is `1`, ALIASES is `3`; `TriggerMethod`:
+  LastOrBidAsk is `7`); enums without one use their position. A number with no
+  matching constant is reported as an `error` event. Where a command also has
+  an `int` version, such as `requestFA`, a number uses that version and is
+  passed to TWS unchanged.
+
+### Changed
+
+- **`help` for overloaded names** now always describes the same version, in
+  the same output format:
+  - for a command, the version with the most parameters, preferring enum
+    parameters over `int` ones. `help "requestFA"` now shows `FADataType`
+    instead of `int` (both are accepted).
+  - for an event, the version with the most parameters. `help "error"` now
+    shows `error(int, long, int, String, String)` instead of `error(String)`.
+    The `error` events themselves are unchanged.
+- **An incomplete overloaded command waits for more input.** If no version of
+  a command takes exactly the values given and a version needs more number or
+  boolean values, the command now continues on the next line, as other
+  commands already did. For example, `replaceFA 1000` now waits for the rest,
+  where 2.0.0 called the enum version with `null` values.
+
+### Removed
+
+- **The TWS API's `*ProtoBuf` commands and events** (such as
+  `placeOrderProtoBuf` and `orderStatusProtoBuf`). The commands could not be
+  used, because their protobuf message parameter cannot be built from JSON, and
+  the events had no usable content and duplicated the regular events that
+  follow them. Sending one of these commands now gets `error "<command>?"`.
+  IB's configuration API (`reqConfigProtoBuf`, `updateConfigProtoBuf`) has no
+  regular equivalent and is not available.
+
+### Other changes
+
+These do not change the JSON interface.
+
+- New [ARCHITECTURE.md](ARCHITECTURE.md) describing the design, the tests and
+  how to upgrade to a new TWS API release, and an updated README with the
+  message format, an example session, a security note and all command-line
+  options.
+- New tests: `TestOrderCalls` replays `orders-calls.json`, and
+  `TestOverloads` covers overloads and enum codes.
+- The fixture generator passes `FADataType.id()` instead of IBKR's sample's
+  `ordinal()`, which no longer matches the TWS API code, and uses a fixed date,
+  so regenerating the fixtures gives the same output every time.
+
 ## [2.0.0]
 
 Built with **TWS API 10.50.02**, up from 10.37.02 in 1.2.0. Commands, events

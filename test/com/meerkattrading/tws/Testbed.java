@@ -23,6 +23,16 @@
  * IClient and Thread.sleep replaced by a no-op. Running main() records every
  * call (round-tripped through Serializer/Deserializer) into client-calls.json,
  * which TestClientCalls replays. Regenerate with: ./gradlew generateClientCalls
+ *
+ * Intentional difference from IB's sample: financialAdvisorOperations passes
+ * FADataType.id() where IB's sample passes FADataType.ordinal(). The ordinal
+ * matched the TWS API code only while the enum was UNUSED, GROUPS, PROFILES,
+ * ALIASES; it is now GROUPS(1), ALIASES(3), so ordinal() sends 0 or the wrong
+ * type. Keep this change when copying a newer IB Testbed.
+ *
+ * Intentional difference from IB's sample: historicalDataRequests uses the fixed
+ * FIXED_END_DATE_TIME where IB's sample uses six months before the current
+ * time, so regenerating client-calls.json gives the same output every time.
  */
 
 package com.meerkattrading.tws;
@@ -34,7 +44,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.json.Json;
@@ -57,6 +66,8 @@ import samples.testbed.scanner.ScannerSubscriptionSamples;
 
 public class Testbed {
 	private static int orderId = 100;
+	/** End date for historicalDataRequests, in IB's yyyyMMdd-HH:mm:ss format (UTC) */
+	private static final String FIXED_END_DATE_TIME = "20260503-11:00:02";
 	private static Map<String, JsonArrayBuilder> calls = new TreeMap<>();
 
 	public static void main(String[] args) throws InterruptedException, IOException {
@@ -487,10 +498,8 @@ public class Testbed {
 		//! [cancelHeadTimestamp]
 		
 		//! [reqhistoricaldata]
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		cal.add(Calendar.MONTH, -6);
-		SimpleDateFormat form = new SimpleDateFormat("yyyyMMdd-HH:mm:ss");
-		String formatted = form.format(cal.getTime());
+		// IB's sample uses six months before now; a fixed date keeps client-calls.json stable
+		String formatted = FIXED_END_DATE_TIME;
 		client.reqHistoricalData(4001, ContractSamples.EurGbpFx(), formatted, "1 M", "1 day", "MIDPOINT", 1, 1, false, null);
 		client.reqHistoricalData(4002, ContractSamples.EuropeanStock(), formatted, "10 D", "1 min", "TRADES", 1, 1, false, null);
         	client.reqHistoricalData(4003, ContractSamples.USStockAtSmart(), formatted, "1 M", "1 day", "SCHEDULE", 1, 1, false, null);
@@ -929,16 +938,16 @@ public class Testbed {
 		
 		/*** Requesting FA information ***/
 		//! [requestfaaliases]
-		client.requestFA(FADataType.ALIASES.ordinal());
+		client.requestFA(FADataType.ALIASES.id());
 		//! [requestfaaliases]
 		
 		//! [requestfagroups]
-		client.requestFA(FADataType.GROUPS.ordinal());
+		client.requestFA(FADataType.GROUPS.id());
 		//! [requestfagroups]
 		
 		/*** Replacing FA information - Fill in with the appropriate XML string. ***/
 		//! [replacefaupdatedgroup]
-		client.replaceFA(1000, FADataType.GROUPS.ordinal(), FAMethodSamples.FA_UPDATED_GROUP);
+		client.replaceFA(1000, FADataType.GROUPS.id(), FAMethodSamples.FA_UPDATED_GROUP);
 		//! [replacefaupdatedgroup]
 		
         //! [reqSoftDollarTiers]

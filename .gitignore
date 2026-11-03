@@ -32,3 +32,9 @@ tmp
 
 # Gradle wrapper must be committed
 !gradle/wrapper/gradle-wrapper.jar
+
+# Eclipse project files
+.classpath
+.project
+.settings/
+bin/

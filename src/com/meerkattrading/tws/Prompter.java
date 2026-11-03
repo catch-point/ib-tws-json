@@ -20,6 +20,14 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Shows the interactive prompts on standard error: "&gt; " for a new command
+ * and "... " while a command continues on the next line. Does nothing when
+ * created without an output stream (used for socket clients and --no-prompt).
+ *
+ * @author James Leigh
+ *
+ */
 public class Prompter {
 	private static final Charset UTF8 = StandardCharsets.UTF_8;
 	private static final String PROMPT = "\r> ";

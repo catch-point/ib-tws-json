@@ -24,7 +24,13 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 
 /**
- * Called via AspectJ to creates a new {@link Server} for each open {@link ServerSocket}
+ * AspectJ aspect (see META-INF/aop.xml) that starts a {@link Server} next to
+ * each TWS API {@link ServerSocket}. When TWS creates or binds a server socket,
+ * a JSON {@link Server} is started on the fixed json-api-port, or on the TWS
+ * port plus the offset (default 100), and connects its clients to the TWS
+ * port. Sockets opened by this package or by TWS's ".rpc." packages are
+ * ignored, and if a tws-api-port is set only that port is used. When the TWS
+ * socket closes, its offset {@link Server} is stopped.
  * 
  * @author James Leigh
  *

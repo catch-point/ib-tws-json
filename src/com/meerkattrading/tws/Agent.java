@@ -39,8 +39,17 @@ import javax.json.JsonValue;
 import javax.json.stream.JsonParser;
 
 /**
- * Finds the IBKR TWS API jar, appends it and this jar to the system class path,
- * then loads AspectJ
+ * The -javaagent entry point, loaded into the TWS or IB Gateway JVM. Finds the
+ * IBKR TWS API jar and appends it and this jar to the system class path. Then,
+ * if a fixed json-api-port is given, starts a {@link Server} on that port;
+ * otherwise loads the AspectJ weaver so {@link ServerSocketHandler} can start a
+ * {@link Server} when TWS opens its API port.
+ *
+ * The agent argument is written by {@link Shell} and read by
+ * {@link #parseAgentArg(String)}. Settings inside an object keyed by a TWS
+ * configuration directory apply when TWS runs with that jtsConfigDir.
+ *
+ * See "Deployment modes" in ARCHITECTURE.md.
  *
  * @author James Leigh
  *
@@ -178,7 +187,17 @@ public class Agent {
 	}
 
 	/**
-	 * Parses this agent (json-like) arg string into a Properties
+	 * Parses this agent (json-like) arg string into a Properties. The format is
+	 * comma separated "key":value pairs, where a value is a JSON string, a
+	 * number, or a JSON object (kept as its JSON text). For example:
+	 *
+	 * <pre>
+	 * "tws-api-jar":"/home/me/IBJts/source/javaclient/TwsApi.jar","json-api-port-offset":100,"/home/me/Jts":{"tws-api-port":7497}
+	 * </pre>
+	 *
+	 * Keys are tws-api-jar, tws-api-path, tws-api-port, json-api-port,
+	 * json-api-port-offset, json-api-inet, or a jtsConfigDir path whose object
+	 * holds the port settings for that TWS configuration.
 	 */
 	static Properties parseAgentArg(String arg) {
 		Properties props = new Properties();

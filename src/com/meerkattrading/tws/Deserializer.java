@@ -20,6 +20,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.AbstractMap;
@@ -73,7 +74,10 @@ public class Deserializer {
 		return jsonToJava(obj, type);
 	}
 
-	private JsonValue parse(String json) {
+	/**
+	 * Parses a JSON value, treating text that is not valid JSON as a string
+	 */
+	JsonValue parse(String json) {
 		try {
 			return Json.createReader(new StringReader(json)).readValue();
 		} catch (JsonParsingException e) {
@@ -426,15 +430,66 @@ public class Deserializer {
 		}
 	}
 
-	private Object jsonToEnum(JsonValue obj, Class<?> enum_type) {
+	private Object jsonToEnum(JsonValue obj, Class<?> enum_type)
+			throws IllegalAccessException, InvocationTargetException {
 		if (obj == null)
 			return null;
 		switch (obj.getValueType()) {
 		case NULL:
 			return null;
+		case NUMBER:
+			return enumFromNumber(enum_type, ((JsonNumber) obj).intValueExact());
 		default:
-			return Enum.valueOf((Class<? extends Enum>) enum_type, jsonToString(obj));
+			String name = jsonToString(obj);
+			try {
+				return Enum.valueOf((Class<? extends Enum>) enum_type, name);
+			} catch (IllegalArgumentException e) {
+				if (name != null && name.matches("-?[0-9]+")) {
+					return enumFromNumber(enum_type, Integer.parseInt(name));
+				}
+				throw e;
+			}
 		}
+	}
+
+	private static final String[] ENUM_CODE_METHODS = { "id", "val", "value", "code" };
+
+	/**
+	 * Accepts the number EClient methods take in place of the enum: the enum's
+	 * own numeric code, when it declares one (such as FADataType.id() or
+	 * TriggerMethod.val()), otherwise its ordinal
+	 */
+	private Object enumFromNumber(Class<?> enum_type, int number)
+			throws IllegalAccessException, InvocationTargetException {
+		Object[] constants = enum_type.getEnumConstants();
+		Method code = getEnumCodeMethod(enum_type);
+		if (code != null) {
+			for (Object constant : constants) {
+				if (((Integer) code.invoke(constant)) == number) {
+					return constant;
+				}
+			}
+			throw new IllegalArgumentException(
+					"No enum constant " + enum_type.getName() + " with " + code.getName() + " " + number);
+		} else if (number < 0 || number >= constants.length) {
+			throw new IllegalArgumentException("No enum constant " + enum_type.getName() + " with ordinal " + number);
+		} else {
+			return constants[number];
+		}
+	}
+
+	private static Method getEnumCodeMethod(Class<?> enum_type) {
+		for (String name : ENUM_CODE_METHODS) {
+			try {
+				Method method = enum_type.getMethod(name);
+				if (method.getReturnType() == Integer.TYPE && !Modifier.isStatic(method.getModifiers())) {
+					return method;
+				}
+			} catch (NoSuchMethodException e) {
+				// try the next name
+			}
+		}
+		return null;
 	}
 
 	private OrderCondition jsonToOrderCondition(JsonValue obj) {

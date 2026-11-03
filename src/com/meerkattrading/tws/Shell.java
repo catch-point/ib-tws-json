@@ -57,7 +57,10 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
- * Stand alone client using the Read-eval-print loop and standard-in/out
+ * The command line, started by {@link Launcher}. Installs or uninstalls this
+ * jar as a -javaagent in TWS's vmoptions file, launches TWS (the default with
+ * no arguments), or runs a stand alone {@link Interpreter} on standard in/out
+ * (--interactive), reading any command files given as arguments first.
  *
  * @author James Leigh
  *

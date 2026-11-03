@@ -45,7 +45,16 @@ import com.ib.client.TimeCondition;
 import com.ib.client.VolumeCondition;
 
 /**
- * Determines the object properties for a Java type
+ * Determines the object properties for a Java type, for {@link Serializer},
+ * {@link Deserializer} and the help command.
+ *
+ * IB's classes use name() getters and name(value) setters rather than JavaBeans
+ * getX/setX, so a property is a no-argument getter with a matching
+ * one-argument setter. A setter taking an int is accepted for an enum property.
+ * Read-only IB classes, which have no setters, list their getters in
+ * {@code GETTERS} and are built by {@link Deserializer} through their
+ * constructors. Collections, arrays and maps record their component (and key)
+ * types.
  *
  * @author James Leigh
  *

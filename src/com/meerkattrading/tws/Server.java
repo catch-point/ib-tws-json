@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * Listens on a TCP port and launches new {@Worker} threads to handle the client
+ * Listens on a TCP port and launches new {@link Worker} threads to handle the client
  * 
  * @author James Leigh
  *

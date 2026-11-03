@@ -173,7 +173,8 @@ public class TwsSocketActions implements TwsActions {
 			events.helpEnd(name);
 		} else if (EWrapper.class.getSimpleName().equals(name)) {
 			for (Method method : EWrapper.class.getDeclaredMethods()) {
-				if (method.getReturnType() == Void.TYPE && Modifier.isPublic(method.getModifiers())) {
+				if (method.getReturnType() == Void.TYPE && Modifier.isPublic(method.getModifiers())
+						&& !ProtoBuf.hasMessageParameter(method)) {
 					events.help(name, method.getName());
 				}
 			}
@@ -212,30 +213,35 @@ public class TwsSocketActions implements TwsActions {
 					return;
 				}
 			}
-			for (Method method : EWrapper.class.getDeclaredMethods()) {
-				if (method.getName().equals(name)) {
-					Type[] types = method.getGenericParameterTypes();
-					Parameter[] params = method.getParameters();
-					for (int i = 0; i < types.length; i++) {
-						events.help(name, params[i].getName(), properties.get(types[i]).getSimpleName());
-					}
-					events.helpEnd(name);
-					return;
-				}
+			Method event = getEventVariant(EWrapper.class, name);
+			if (event == null) {
+				event = getEventVariant(TwsEvents.class, name);
 			}
-			for (Method method : TwsEvents.class.getDeclaredMethods()) {
-				if (method.getName().equals(name)) {
-					Type[] types = method.getGenericParameterTypes();
-					Parameter[] params = method.getParameters();
-					for (int i = 0; i < types.length; i++) {
-						events.help(name, params[i].getName(), properties.get(types[i]).getSimpleName());
-					}
-					events.helpEnd(name);
-					return;
+			if (event != null) {
+				Type[] types = event.getGenericParameterTypes();
+				Parameter[] params = event.getParameters();
+				for (int i = 0; i < types.length; i++) {
+					events.help(name, params[i].getName(), properties.get(types[i]).getSimpleName());
 				}
+				events.helpEnd(name);
+				return;
 			}
 			events.error(name + "?");
 		}
+	}
+
+	/**
+	 * The overload of an event help describes: the one with the most parameters
+	 */
+	private static Method getEventVariant(Class<?> events, String name) {
+		Method best = null;
+		for (Method method : events.getDeclaredMethods()) {
+			if (method.getName().equals(name) && !ProtoBuf.hasMessageParameter(method)
+					&& (best == null || method.getParameterCount() > best.getParameterCount())) {
+				best = method;
+			}
+		}
+		return best;
 	}
 
 	protected EClient getEClient() {

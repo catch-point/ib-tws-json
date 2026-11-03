@@ -31,7 +31,6 @@ import java.util.logging.Logger;
  */
 public class Interpreter {
 	private final Logger logger = Logger.getLogger(Interpreter.class.getName());
-	private final Deserializer deserializer = new Deserializer();
 	private final Invoker controller;
 	private final Printer out;
 	private final LineReader reader;
@@ -117,23 +116,7 @@ public class Interpreter {
 		String command = values.get(0);
 		try {
 			Invoker controller = getInvoker();
-			PropertyType[] types = controller.getParameterTypes(command);
-			if (values.size() < types.length + 1) {
-				for (int i = values.size() - 1; i < types.length; i++) {
-					if (types[i].isPrimitive()) {
-						throw new MoreInputExpected(
-								"Expecting " + (1 + types.length - values.size()) + " more value(s)");
-					}
-				}
-			} else if (values.size() > types.length + 1) {
-				throw new IllegalArgumentException("Expected " + (values.size() - types.length - 1) + " less value(s)");
-			}
-			Object[] args = new Object[types.length];
-			for (int i = 0; i < args.length; i++) {
-				String json = i + 1 < values.size() ? values.get(i + 1) : "null";
-				args[i] = deserializer.deserialize(json, types[i]);
-			}
-			controller.invoke(command, args);
+			controller.invoke(controller.resolve(command, values.subList(1, values.size())));
 		} catch (NoSuchMethodException e) {
 			if (command.length() > 0) {
 				getPrinter().println("error", command + "?");

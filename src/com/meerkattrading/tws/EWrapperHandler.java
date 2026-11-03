@@ -45,6 +45,11 @@ public class EWrapperHandler implements InvocationHandler {
 
 	@Override
 	public Object invoke(Object that, Method method, Object[] args) throws Throwable {
+		if (ProtoBuf.hasMessageParameter(method)) {
+			// Most protobuf events are followed by a regular EWrapper event with the
+			// same data; configuration events have no regular equivalent.
+			return null;
+		}
 		if ("error".equals(method.getName()) && args.length == 1 && args[0] instanceof Throwable) {
 			Throwable ex = (Throwable) args[0];
 			if (!(ex instanceof SocketException) || !"Socket closed".equals(ex.getMessage())) {

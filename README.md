@@ -1,64 +1,160 @@
 # ib-tws-json
-JSON API Extension for Interactive Broker's Trader Workstation and Gateway
+JSON API Extension for Interactive Brokers' Trader Workstation and Gateway
 
 Introduction
 ------------
 
-The TWS API is a simple yet powerful interface through which Interactive Broker clients can automate their trading strategies, request market data and monitor your account balance and portfolio in real time.
+The TWS API is a simple yet powerful interface through which Interactive Brokers clients can automate their trading strategies, request market data and monitor their account balance and portfolio in real time.
 
-This project extends Interactive Broker's Trader Workstation and Gateway by providing a JSON serialized API so that it can be used without an official client library. This is particularly useful for programming languages that do not have an official TWS API Client, such as https://github.com/catch-point/ib-tws-node
+This project extends Interactive Brokers' Trader Workstation (TWS) and IB Gateway with a JSON API, so the TWS API can be used without an official client library. This is particularly useful for programming languages that do not have an official TWS API client, such as Node.js with https://github.com/catch-point/ib-tws-node
 
-This project differentiates from other client libraries by extending the TWS Desktop or Gateway (in the same JVM running the TWS Client) to create a non-binary API that can be used without an official client library.
+Unlike other client libraries, this project runs inside the TWS Desktop or Gateway (in the same JVM as TWS) and offers a text-based API that any language with a TCP socket can use.
+
+To learn how it works, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 Requirements
 ------------
 
-Users must agree to the terms of the Interactive Broker license, download their software and Java Client API.
+* **TWS or IB Gateway.** The TWS API is an interface to TWS or IB Gateway, so a running instance of one of these programs is required. They can be downloaded here: https://www.interactivebrokers.com/en/index.php?f=14099#tws-software
+* **The TWS API Java client (`TwsApi.jar`).** It is not bundled with this project. IBKR distributes it as an installer for each platform:
+  * Windows: https://download2.interactivebrokers.com/installers/tws-api/stable/tws-api-stable-windows-x64.exe
+  * macOS (Apple Silicon): https://download2.interactivebrokers.com/installers/tws-api/stable/tws-api-stable-macos-arm.dmg
+  * macOS (Intel): https://download2.interactivebrokers.com/installers/tws-api/stable/tws-api-stable-macosx-x64.dmg
+  * Linux: https://download2.interactivebrokers.com/installers/tws-api/stable/tws-api-stable-linux-x64.sh
 
-* The TWS API is an interface to TWS or IB Gateway, and as such requires network connectivity to a running instance of one of these programs. They can be downloaded here: https://www.interactivebrokers.com/en/index.php?f=14099#tws-software
-* To obtain the TWS API Java source and sample code download the API Components from here: http://interactivebrokers.github.io and save it to  to C:\TWS API or ~/IBJts
-* A working knowledge of the TWS API programming language.
-* This project makes use of gradle build tool, which is needed to alter the source code. See https://gradle.org/
+  This project searches for `TwsApi.jar` in `C:\TWS API`, `~/IBJts`, `~/Jts`, `~/Downloads` and a few other common folders. If you install it elsewhere, use `--tws-api-jar` or `--tws-api-path` (see [Options](#options)).
+* **A working knowledge of the TWS API.** See https://interactivebrokers.github.io/tws-api/
+
+This version is built and tested with **TWS API 10.50.02** and **Java 17**, the Java version TWS currently bundles.
+
+The TWS API and its samples are licensed by Interactive Brokers under the GNU GPL version 3 or later. This project is licensed under the GNU GPL version 3 (see [LICENSE](LICENSE)).
 
 Note that you do not need an IBKR account to try this out, as you can use IBKR's Free Trial offer, for which there is a link at the top of the homepage on their website.
 
 Installation
 ------------
 
-Run the release JAR by double clicking it or from a terminal run:
+Run the release JAR by double clicking it, or from a terminal run:
 ```
 java -jar ib-tws-json.jar
 ```
 
-This will search for, install the extension, and run IBKR TWS/Gateway. If multiple versions of TWS existing, or it is installed in an alternative location, use the help message `--help` from a terminal to learn how to specify a install location.
+This searches for TWS/Gateway, installs the extension, and launches TWS/Gateway. If several versions of TWS exist, or it is installed in an alternative location, run `java -jar ib-tws-json.jar --help` to see how to specify the install location.
+
+The extension is installed by adding a `-javaagent` line to TWS's `tws.vmoptions` (or `ibgateway.vmoptions`) file, so it starts whenever TWS starts.
 
 Configuration
 -------------
 
-The default options will install the extension in the default location and launch TWS. By default this extension will listen a port offset by 100, for example if TWS API is configured to run on port 7497 then the JSON API will be on port 7547. To specify an alternative (and fixed) port use the `--json-api-port` option from a terminal when installing.
+By default, the JSON API listens on the TWS API port plus 100. For example, if the TWS API is configured to run on port 7497, the JSON API will be on port 7597. To use a different offset, use `--json-api-port-offset`. To use a fixed port, use `--json-api-port` when installing.
+
+### Security
+
+The JSON API has **no authentication**, and any client that can connect to it can trade on the logged-in account. By default it only listens on the loopback interface (`127.0.0.1`), so only programs on the same machine can connect. Only use `--json-api-inet` to listen on another network interface on a network you trust, or behind a firewall or SSH tunnel.
 
 Stand Alone
 -----------
 
-The JSON API can be run stand alone (without installing) using the `--interactive` argument. This is useful to explore and debug the API when developing a client.
+The JSON API can also be run stand alone (without installing it into TWS), using the `--interactive` argument and the TWS API port. This is useful to explore and debug the API when developing a client:
 
-Unistall
---------
+```
+java -jar ib-tws-json.jar --interactive --tws-api-port 7497
+```
+
+Commands are read from stdin and events are written to stdout. Use `--no-prompt` when piping commands in. Command files can also be given as arguments.
+
+Uninstall
+---------
 
 From a terminal run `java -jar ib-tws-json.jar --uninstall`
+
+Options
+-------
+
+| Option | Description |
+|--------|-------------|
+| `-h`, `--help` | Show the options and exit |
+| `-v`, `--version` | Print the current version and exit |
+| `--install` | Install the extension into TWS |
+| `--uninstall` | Uninstall the extension from TWS |
+| `--launch` | Install the extension and start TWS before exiting (the default when no options are given) |
+| `-i`, `--interactive` | Enter interactive (stand alone) client mode |
+| `--no-prompt` | Don't show a prompt in interactive mode |
+| `--tws-api-path <dir>` | The folder to search for `TwsApi.jar` |
+| `-j`, `--tws-api-jar <file>` | The `TwsApi.jar` file |
+| `--tws-api-host <host>` | Host name or IP address running TWS (stand alone mode, default `localhost`) |
+| `-p`, `--tws-api-port <port>` | Port the TWS API is running on |
+| `--json-api-port <port>` | Fixed port for the JSON API to listen on |
+| `--json-api-port-offset <n>` | JSON API port offset from the TWS API port (default 100) |
+| `--json-api-inet <address>` | Network interface for the JSON API to listen on (default loopback) |
+| `--jts-exe-name <name>` | The primary launch file name installed by the TWS software |
+| `--jts-install-dir <dir>` | Location of the Jts, ibgateway, Trader Workstation or IB Gateway folder to use |
+| `--jts-config-dir <dir>` | Where TWS reads and stores its settings. Port settings given with this option apply only to that TWS configuration |
 
 JSON API
 --------
 
-The JSON API mimics the TWS API (actions and events), but in a non-binary form. Most of the action commands of EClient are available in JSON API. See https://interactivebrokers.github.io/tws-api/classIBApi_1_1EClient.html
+The JSON API mirrors the TWS API's actions (`EClient` methods) and events (`EWrapper` callbacks) in text form. Most `EClient` methods are available as commands. See https://interactivebrokers.github.io/tws-api/classIBApi_1_1EClient.html and https://interactivebrokers.github.io/tws-api/interfaceIBApi_1_1EWrapper.html
 
-Each action is the EClient method name followed by whitespace separated JSON encodings of the parameters. Events are the EWrapper method name followed by tab separated JSON encodings of the parameters.
+* **Commands** are one line: the `EClient` method name followed by the parameters as JSON values, separated by whitespace.
+* **Events** are one line: the `EWrapper` method name followed by the parameters as JSON values, separated by tabs.
+
+### Example session
+
+These are commands and real output from the stand alone mode with a TWS running:
+
+```
+> isConnected
+isConnected	false
+> eConnect 0 false
+connectAck
+managedAccounts	"U23004070"
+nextValidId	1
+error	-1	"1793765279677"	2104	"Market data farm connection is OK:usfarm.nj"	""
+error	-1	"1793765279820"	2104	"Market data farm connection is OK:usfuture"	""
+error	-1	"1793765279821"	2104	"Market data farm connection is OK:cafarm"	""
+error	-1	"1793765279821"	2104	"Market data farm connection is OK:usfarm"	""
+error	-1	"1793765279822"	2106	"HMDS data farm connection is OK:ushmds"	""
+error	-1	"1793765279822"	2158	"Sec-def data farm connection is OK:secdefil"	""
+> isConnected
+isConnected	true
+> reqContractDetails 1 {"symbol":"AAPL","secType":"STK","exchange":"SMART","currency":"USD"}
+contractDetails	1	{"aggGroup":1,"category":"Computers","contract":{"conid":265598,"currency":"USD","exchange":"SMART","localSymbol":"AAPL","primaryExch":"NASDAQ","secType":"STK","strike":"0.0","symbol":"AAPL","tradingClass":"NMS"},"industry":"Technology","ineligibilityReasonList":[],"liquidHours":"20261103:0930-20261103:1600;20261104:0930-20261104:1600;20261105:0930-20261105:1600;20261106:0930-20261106:1600","longName":"APPLE INC","marketName":"NMS","marketRuleIds":"4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563,4563","minSize":"0.0001","minTick":"0.01","orderTypes":"ACTIVETIM,AD,ADDONT,ADJUST,ALERT,ALGO,ALLOC,AON,AVGCOST,BASKET,BENCHPX,CASHQTY,COND,CONDORDER,DARKONLY,DARKPOLL,DAY,DEACT,DEACTDIS,DEACTEOD,DIS,DUR,GAT,GTC,GTD,GTT,HID,IBKRATS,ICE,IMB,IOC,LIT,LMT,LOC,MIDPX,MIT,MKT,MOC,MTL,NGCOMB,NODARK,NONALGO,OCA,OPG,OPGREROUT,PEGBENCH,PEGMID,POSTATS,POSTONLY,PREOPGRTH,PRICECHK,REL,REL2MID,RELPCTOFS,RPI,RTH,SCALE,SCALEODD,SCALERST,SIZECHK,SNAPMID,SNAPMKT,SNAPREL,STP,STPLMT,SWEEP,TRAIL,TRAILLIT,TRAILLMT,TRAILMIT,WHATIF","priceMagnifier":1,"secIdList":[{"tag":"ISIN","value":"US0378331005"}],"sizeIncrement":"0.0001","stockType":"COMMON","subcategory":"Computers","suggestedSizeIncrement":"40","timeZoneId":"US/Eastern","tradingHours":"20261103:0400-20261103:2000;20261104:0400-20261104:2000;20261105:0400-20261105:2000;20261106:0400-20261106:2000","validExchanges":"SMART,AMEX,NYSE,CBOE,PHLX,ISE,CHX,ARCA,NASDAQ,DRCTEDGE,BEX,BATS,EDGEA,BYX,IEX,EDGX,FOXRIVER,PEARL,NYSENAT,LTSE,MEMX,IBEOS,OVERNIGHT,TPLUS0,PSX,T24X,TXSE"}
+contractDetailsEnd	1
+> bogus
+error	"bogus?"
+> exit
+connectionClosed
+```
+
+When connected, `reqContractDetails` is answered with `contractDetails` events and a final `contractDetailsEnd	1`, just like the `EWrapper` callbacks.
+
+### Message format
+
+* **Parameters are positional,** in the same order as the Java method. Use `help "<command>"` to list them.
+* **Objects** such as `Contract` and `Order` are JSON objects using the Java client's field names. Fields that are left out keep their defaults. Use `help "<Type>"` to list a type's fields and defaults.
+* **Numbers:** `int` values are written as JSON numbers. `long`, `double` and `Decimal` values are written as JSON strings, so no precision is lost in clients such as JavaScript. Both numbers and numeric strings are accepted as input.
+* **Enums** are written by name, such as `"GROUPS"`. As input, an enum also accepts its TWS API numeric code (for example `1` for `GROUPS`).
+* **Missing parameters:** trailing parameters that are objects, strings or lists can be left out, and are passed as `null`. If a number or boolean parameter is missing, the command continues on the next line, so long commands can span several lines.
+* **Strings** must be JSON strings in double quotes, for example `requestFA "GROUPS"`.
+* **Overloaded methods:** when the TWS API has several versions of a method, the version is chosen from the number and types of the values given. For example, `requestFA 1` and `requestFA "GROUPS"` both work.
+* **Errors** are reported as `error` events: either TWS's `error` callback, or a message about the command, such as `error "bogus?"` for an unknown command.
+* The TWS API's `*ProtoBuf` methods are not available. Each has a regular equivalent, except IB's configuration API (`reqConfigProtoBuf`, `updateConfigProtoBuf`).
 
 A few additional actions are provided below.
 
 #### help
 
-Displays a list of available action commands. If an action or event name is given (in double quotes), it will display the parameters to that command.
+Displays a list of available action commands. If an action, event or type name is given (in double quotes), it displays its parameters or fields, ending with a `helpEnd` event. For example:
+
+```
+help "reqContractDetails"
+help	"reqContractDetails"	"arg0"	"int"
+help	"reqContractDetails"	"arg1"	"Contract"
+helpEnd	"reqContractDetails"
+```
+
+For a type, each line lists a field, its type and its default value, such as `help	"Contract"	"symbol"	"String"	null`. Parameter names are shown as `arg0`, `arg1`, … because the TWS API jar does not include them.
 
 #### sleep
 
@@ -66,7 +162,7 @@ Causes the server to pause the given number of milliseconds before processing th
 
 #### eConnect
 
-This should be run before any EClient commands. This differs from EClient and only takes the clientId and extraAuth parameters.
+This should be run before any EClient commands. Unlike EClient's version, it only takes the clientId and extraAuth parameters:
 
 * clientId
 * true for extra authentication, false for normal authentication
@@ -102,3 +198,18 @@ Provide a string value recognized by the API or issues a "optionalCapabilities" 
 #### getTwsConnectionTime
 
 Issue a "getTwsConnectionTime" event response with the time the connection was established.
+
+Building from Source
+--------------------
+
+```
+./build.sh
+```
+
+or `./gradlew build`. The build:
+
+* uses **JDK 17**, selected by a Java toolchain and `gradle/gradle-daemon-jvm.properties`, so the compiled classes match the Java version TWS bundles. If JDK 17 is not installed, Gradle downloads one.
+* downloads IBKR's TWS API installer for the build machine's platform and runs it unattended into `build/dependencies/twsapi`. To choose a platform, use `-PtwsApiPlatform=windows-x64`, `macos-arm`, `macosx-x64` or `linux-x64`.
+* writes the extension to `build/libs/ib-tws-json-<version>.jar`.
+
+The tests run without TWS, by replaying recorded calls through the JSON layer. See [ARCHITECTURE.md](ARCHITECTURE.md#testing) for what each test covers, how to regenerate the test fixtures, and how to upgrade to a new TWS API release.

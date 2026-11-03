@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.function.Function;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -26,7 +27,15 @@ public class TestClientCalls extends TestCase {
 	private static final String CLIENT_CALLS_JSON = "client-calls.json";
 
 	public static TestSuite suite() {
-		InputStream resource = TestClientCalls.class.getResourceAsStream(CLIENT_CALLS_JSON);
+		return suite(CLIENT_CALLS_JSON, TestClientCalls::new);
+	}
+
+	/**
+	 * Builds a suite that replays every recorded call in the given JSON fixture
+	 * (an object of groups, each an array of [command, args...] calls)
+	 */
+	protected static TestSuite suite(String callsJson, Function<String, TestCase> factory) {
+		InputStream resource = TestClientCalls.class.getResourceAsStream(callsJson);
 		JsonObject obj = Json.createReader(resource).readObject();
 		TestSuite top = new TestSuite();
 		for (String key : obj.keySet()) {
@@ -34,7 +43,7 @@ public class TestClientCalls extends TestCase {
 			TestSuite suite = new TestSuite(key);
 			for (int i = 0, n = calls.size(); i < n; i++) {
 				JsonArray call = calls.getJsonArray(i).asJsonArray();
-				suite.addTest(new TestClientCalls(call.getString(0) + " " + key + " " + i));
+				suite.addTest(factory.apply(call.getString(0) + " " + key + " " + i));
 			}
 			top.addTest(suite);
 		}
@@ -44,9 +53,13 @@ public class TestClientCalls extends TestCase {
 	private final JsonArray call;
 
 	public TestClientCalls(String name) {
+		this(CLIENT_CALLS_JSON, name);
+	}
+
+	protected TestClientCalls(String callsJson, String name) {
 		super(name);
 		String[] split = name.split(" ");
-		InputStream resource = TestClientCalls.class.getResourceAsStream(CLIENT_CALLS_JSON);
+		InputStream resource = TestClientCalls.class.getResourceAsStream(callsJson);
 		JsonObject obj = Json.createReader(resource).readObject();
 		JsonArray calls = obj.getJsonArray(split[1]);
 		int i = Integer.parseInt(split[2]);
