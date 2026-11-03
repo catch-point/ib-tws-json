@@ -29,3 +29,6 @@ build
 # temp files
 tmp
 *.swp
+
+# Gradle wrapper must be committed
+!gradle/wrapper/gradle-wrapper.jar
