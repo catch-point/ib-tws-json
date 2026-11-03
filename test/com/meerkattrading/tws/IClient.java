@@ -6,8 +6,10 @@ import com.ib.client.Contract;
 import com.ib.client.EWrapper;
 import com.ib.client.ExecutionFilter;
 import com.ib.client.Order;
+import com.ib.client.OrderCancel;
 import com.ib.client.ScannerSubscription;
 import com.ib.client.TagValue;
+import com.ib.client.WshEventData;
 
 public interface IClient {
 
@@ -60,6 +62,8 @@ public interface IClient {
 
 	void reqContractDetails(int reqId, Contract contract);
 
+	void cancelContractData(int reqId);
+
 	void reqMktDepth(int tickerId, Contract contract, int numRows, boolean isSmartDepth,
 			List<TagValue> mktDepthOptions);
 
@@ -68,7 +72,7 @@ public interface IClient {
 	void cancelMktDepth(int tickerId, boolean isSmartDepth);
 
 	void exerciseOptions(int tickerId, Contract contract, int exerciseAction, int exerciseQuantity, String account,
-			int override);
+			int override, String manualOrderTime, String customerAccount, boolean professionalCustomer);
 
 	void placeOrder(int id, Contract contract, Order order);
 
@@ -76,7 +80,7 @@ public interface IClient {
 
 	void reqExecutions(int reqId, ExecutionFilter filter);
 
-	void cancelOrder(int id);
+	void cancelOrder(int id, OrderCancel orderCancel);
 
 	void reqOpenOrders();
 
@@ -96,13 +100,11 @@ public interface IClient {
 
 	void requestFA(int faDataType);
 
-	void replaceFA(int faDataType, String xml);
+	void replaceFA(int reqId, int faDataType, String xml);
 
 	void reqCurrentTime();
 
-	void reqFundamentalData(int reqId, Contract contract, String reportType, List<TagValue> fundamentalDataOptions);
-
-	void cancelFundamentalData(int reqId);
+	void reqCurrentTimeInMillis();
 
 	void calculateImpliedVolatility(int reqId, Contract contract, double optionPrice, double underPrice,
 			List<TagValue> impliedVolatilityOptions);
@@ -114,7 +116,7 @@ public interface IClient {
 
 	void cancelCalculateOptionPrice(int reqId);
 
-	void reqGlobalCancel();
+	void reqGlobalCancel(OrderCancel orderCancel);
 
 	void reqMarketDataType(int marketDataType);
 
@@ -187,11 +189,23 @@ public interface IClient {
 	void reqHistoricalTicks(int reqId, Contract contract, String startDateTime, String endDateTime, int numberOfTicks,
 			String whatToShow, int useRth, boolean ignoreSize, List<TagValue> miscOptions);
 
+	void cancelHistoricalTicks(int reqId);
+
 	void reqTickByTickData(int reqId, Contract contract, String tickType, int numberOfTicks, boolean ignoreSize);
 
 	void cancelTickByTickData(int reqId);
 
 	void reqCompletedOrders(boolean apiOnly);
+
+	void reqWshMetaData(int reqId);
+
+	void cancelWshMetaData(int reqId);
+
+	void reqWshEventData(int reqId, WshEventData wshEventData);
+
+	void cancelWshEventData(int reqId);
+
+	void reqUserInfo(int reqId);
 
 	String connectedHost();
 

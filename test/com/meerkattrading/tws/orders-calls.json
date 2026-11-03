@@ -12,49 +12,50 @@
                 "symbol": "NOKIA"
             },
             {
+                "action": "BUY",
                 "conditions": [
                     {
-                        "type": "Price",
-                        "conjunctionConnection": false,
-                        "isMore": false,
                         "conId": 208813720,
+                        "conjunctionConnection": false,
                         "exchange": "SMART",
+                        "isMore": false,
                         "price": "600.0",
-                        "triggerMethod": 0
+                        "triggerMethod": 0,
+                        "type": "Price"
                     },
                     {
-                        "type": "Execution",
                         "conjunctionConnection": true,
                         "exchange": "IDEALPRO",
                         "secType": "CASH",
-                        "symbol": "EUR.USD"
+                        "symbol": "EUR.USD",
+                        "type": "Execution"
                     },
                     {
-                        "type": "Margin",
                         "conjunctionConnection": false,
                         "isMore": true,
-                        "percent": 30
+                        "percent": 30,
+                        "type": "Margin"
                     },
                     {
-                        "type": "PercentChange",
-                        "conjunctionConnection": true,
-                        "isMore": true,
+                        "changePercent": "15.0",
                         "conId": 208813720,
+                        "conjunctionConnection": true,
                         "exchange": "SMART",
-                        "changePercent": "15.0"
+                        "isMore": true,
+                        "type": "PercentChange"
                     },
                     {
-                        "type": "Time",
                         "conjunctionConnection": false,
                         "isMore": true,
-                        "time": "20160118 23:59:59"
+                        "time": "20160118 23:59:59",
+                        "type": "Time"
                     },
                     {
-                        "type": "Volume",
+                        "conId": 208813720,
                         "conjunctionConnection": true,
+                        "exchange": "SMART",
                         "isMore": false,
-                        "conId": 208813720,
-                        "exchange": "SMART",
+                        "type": "Volume",
                         "volume": 100
                     }
                 ],
@@ -74,19 +75,21 @@
                 "symbol": "NOKIA"
             },
             {
+                "action": "BUY",
                 "conditions": [
                     {
-                        "type": "Price",
-                        "conjunctionConnection": false,
-                        "isMore": false,
                         "conId": 208813720,
+                        "conjunctionConnection": false,
                         "exchange": "SMART",
+                        "isMore": false,
                         "price": "600.0",
-                        "triggerMethod": 0
+                        "triggerMethod": 0,
+                        "type": "Price"
                     }
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
+                "orderType": "LMT",
                 "totalQuantity": "100"
             }
         ],
@@ -95,24 +98,26 @@
             1002,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             {
+                "action": "BUY",
                 "conditions": [
                     {
-                        "type": "Price",
-                        "conjunctionConnection": true,
-                        "isMore": true,
                         "conId": 285191782,
+                        "conjunctionConnection": true,
                         "exchange": "NYSE",
+                        "isMore": true,
                         "price": "100.0",
-                        "triggerMethod": 0
+                        "triggerMethod": 0,
+                        "type": "Price"
                     }
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
+                "orderType": "LMT",
                 "totalQuantity": "100"
             }
         ],
@@ -121,22 +126,24 @@
             1003,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             {
+                "action": "BUY",
                 "conditions": [
                     {
-                        "type": "Execution",
                         "conjunctionConnection": true,
                         "exchange": "NYSE",
                         "secType": "STK",
-                        "symbol": "GOOG"
+                        "symbol": "GOOG",
+                        "type": "Execution"
                     }
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
+                "orderType": "LMT",
                 "totalQuantity": "100"
             }
         ],
@@ -145,21 +152,23 @@
             1004,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             {
+                "action": "BUY",
                 "conditions": [
                     {
-                        "type": "Margin",
                         "conjunctionConnection": true,
                         "isMore": true,
-                        "percent": 50
+                        "percent": 50,
+                        "type": "Margin"
                     }
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
+                "orderType": "LMT",
                 "totalQuantity": "100"
             }
         ],
@@ -168,23 +177,25 @@
             1005,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             {
+                "action": "BUY",
                 "conditions": [
                     {
-                        "type": "PercentChange",
-                        "conjunctionConnection": true,
-                        "isMore": true,
+                        "changePercent": "50.0",
                         "conId": 285191782,
+                        "conjunctionConnection": true,
                         "exchange": "NYSE",
-                        "changePercent": "50.0"
+                        "isMore": true,
+                        "type": "PercentChange"
                     }
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
+                "orderType": "LMT",
                 "totalQuantity": "100"
             }
         ],
@@ -193,21 +204,23 @@
             1006,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             {
+                "action": "BUY",
                 "conditions": [
                     {
-                        "type": "Time",
                         "conjunctionConnection": true,
                         "isMore": true,
-                        "time": "20201212 12:00:00"
+                        "time": "20201212 12:00:00",
+                        "type": "Time"
                     }
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
+                "orderType": "LMT",
                 "totalQuantity": "100"
             }
         ],
@@ -216,23 +229,25 @@
             1007,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             {
+                "action": "BUY",
                 "conditions": [
                     {
-                        "type": "Volume",
-                        "conjunctionConnection": true,
-                        "isMore": true,
                         "conId": 285191782,
+                        "conjunctionConnection": true,
                         "exchange": "NYSE",
+                        "isMore": true,
+                        "type": "Volume",
                         "volume": 1
                     }
                 ],
                 "conditionsCancelOrder": true,
                 "lmtPrice": "20.0",
+                "orderType": "LMT",
                 "totalQuantity": "100"
             }
         ]

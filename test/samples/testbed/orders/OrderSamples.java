@@ -1,11 +1,28 @@
-/* Copyright (C) 2019 Interactive Brokers LLC. All rights reserved. This code is subject to the terms
- * and conditions of the IB API Non-Commercial License or the IB API Commercial License, as applicable. */
+/*
+ * Java TWS API Samples
+ *
+ * Copyright (C) 2013-2026  Interactive Brokers LLC
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 package samples.testbed.orders;
 
 import java.util.ArrayList;
 import java.util.List;
 import com.ib.client.VolumeCondition;
+import com.ib.client.Types.TimeInForce;
 import com.ib.client.TimeCondition;
 import com.ib.client.PercentChangeCondition;
 import com.ib.client.MarginCondition;
@@ -13,6 +30,7 @@ import com.ib.client.Decimal;
 import com.ib.client.ExecutionCondition;
 import com.ib.client.PriceCondition;
 import com.ib.client.Order;
+import com.ib.client.OrderCancel;
 import com.ib.client.OrderComboLeg;
 import com.ib.client.OrderCondition;
 import com.ib.client.OrderConditionType;
@@ -220,20 +238,39 @@ public class OrderSamples {
 		order.orderType("LMT");
 		order.totalQuantity(quantity);
 		order.lmtPrice(limitPrice);
+		order.tif(TimeInForce.DAY);
 		// ! [limitorder]
 		return order;
 	}
+
+    public static Order LimitOrderWithStopLossAndProfitTaker(String action, Decimal quantity, double limitPrice, int slOrderId, int ptOrderId) {
+        // ! [limit_order_with_stop_loss_and_profit_taker]
+        Order order = OrderSamples.LimitOrder(action, quantity, limitPrice);
+        order.slOrderId(slOrderId);
+        order.slOrderType("PRESET");
+        order.ptOrderId(ptOrderId);
+        order.ptOrderType("PRESET");
+        // ! [limit_order_with_stop_loss_and_profit_taker]
+        return order;
+    }
+
+    public static Order LimitOrderWithManualOrderTime(String action, Decimal quantity, double limitPrice, String manualOrderTime) {
+        // ! [limitorderwithmanualordertime]
+        Order order = OrderSamples.LimitOrder(action, quantity, limitPrice);
+        order.manualOrderTime(manualOrderTime);
+        // ! [limitorderwithmanualordertime]
+        return order;
+    }
 	
 	// Forex orders can be placed in denomination of second currency in pair using cashQty field
 	// Requires TWS or IBG 963+
 	// https://www.interactivebrokers.com/en/index.php?f=23876#963-02
 	
-	public static Order LimitOrderWithCashQty(String action, Decimal quantity, double limitPrice, double cashQty) {
+	public static Order LimitOrderWithCashQty(String action, double limitPrice, double cashQty) {
 		// ! [limitorderwithcashqty]
 		Order order = new Order();
 		order.action(action);
 		order.orderType("LMT");
-		order.totalQuantity(quantity);
 		order.lmtPrice(limitPrice);
 		order.cashQty(cashQty);
 		// ! [limitorderwithcashqty]
@@ -269,7 +306,7 @@ public class OrderSamples {
 		Order order = new Order();
 		order.action(action);
 		order.tif("OPG");
-		order.orderType("LOC");
+		order.orderType("LMT");
 		order.totalQuantity(quantity);
 		order.lmtPrice(limitPrice);
 		// ! [limitonopen]
@@ -526,7 +563,7 @@ public class OrderSamples {
 	}
 	
 	//! [fhedge]
-	public static Order MarketFHedge(int parentOrderId, String action) {
+	public static Order MarketFxHedge(int parentOrderId, String action) {
 		//FX Hedge orders can only have a quantity of 0
 		Order order = MarketOrder(action, Decimal.ZERO);
 		order.parentId(parentOrderId);
@@ -617,7 +654,7 @@ public class OrderSamples {
         order.adjustedOrderType(OrderType.TRAIL);
         //With a stop price of...
         order.adjustedStopPrice(adjustStopPrice);
-        //trailing by and amount (0) or a percent (1)...
+        //trailing by and amount (0) or a percent (100)...
         order.adjustableTrailingUnit(trailUnit);
         //of...
         order.adjustedTrailingAmount(adjustedTrailAmount);
@@ -725,5 +762,128 @@ public class OrderSamples {
         // ! [whatiflimitorder]
         return order;
     }
+	
+	public static Order LimitIBKRATS(String action, Decimal quantity, double limitPrice) {
+		// ! [limit_ibkrats]
+		Order order = new Order();
+		order.action(action);
+		order.orderType("LMT");
+		order.lmtPrice(limitPrice);
+		order.totalQuantity(quantity);
+		order.notHeld(true);
+		// ! [limit_ibkrats]
+		return order;
+	}
 
+    public static Order PegBestUpToMidOrder(String action, Decimal quantity, double limitPrice, int minTradeQty, 
+            int minCompeteSize, double midOffsetAtWhole, double midOffsetAtHalf) {
+        // ! [peg_best_up_to_mid_order]
+        Order order = new Order();
+        order.action(action);
+        order.orderType("PEG BEST");
+        order.lmtPrice(limitPrice);
+        order.totalQuantity(quantity);
+        order.notHeld(true);
+        order.minTradeQty(minTradeQty);
+        order.minCompeteSize(minCompeteSize);
+        order.competeAgainstBestOffset(Order.COMPETE_AGAINST_BEST_OFFSET_UP_TO_MID);
+        order.midOffsetAtWhole(midOffsetAtWhole);
+        order.midOffsetAtHalf(midOffsetAtHalf);
+        // ! [peg_best_up_to_mid_order]
+        return order;
+    }
+
+    public static Order PegBestOrder(String action, Decimal quantity, double limitPrice, int minTradeQty, 
+            int minCompeteSize, double competeAgainstBestOffset) {
+        // ! [peg_best_order]
+        Order order = new Order();
+        order.action(action);
+        order.orderType("PEG BEST");
+        order.lmtPrice(limitPrice);
+        order.totalQuantity(quantity);
+        order.notHeld(true);
+        order.minTradeQty(minTradeQty);
+        order.minCompeteSize(minCompeteSize);
+        order.competeAgainstBestOffset(competeAgainstBestOffset);
+        // ! [peg_best_order]
+        return order;
+    }
+
+    public static Order PegMidOrder(String action, Decimal quantity, double limitPrice, int minTradeQty, 
+            double midOffsetAtWhole, double midOffsetAtHalf) {
+        // ! [peg_mid_order]
+        Order order = new Order();
+        order.action(action);
+        order.orderType("PEG MID");
+        order.lmtPrice(limitPrice);
+        order.totalQuantity(quantity);
+        order.notHeld(true);
+        order.minTradeQty(minTradeQty);
+        order.midOffsetAtWhole(midOffsetAtWhole);
+        order.midOffsetAtHalf(midOffsetAtHalf);
+        // ! [peg_mid_order]
+        return order;
+    }
+
+    public static Order LimitOrderWithCustomerAccount(String action, Decimal quantity, double limitPrice, String customerAccount) {
+        // ! [limitorderwithcustomeraccount]
+        Order order = OrderSamples.LimitOrder(action, quantity, limitPrice);
+        order.customerAccount(customerAccount);
+        // ! [limitorderwithcustomeraccount]
+        return order;
+    }
+
+    public static Order LimitOrderWithIncludeOvernight(String action, Decimal quantity, double limitPrice) {
+        // ! [limitorderwithincludeovernight]
+        Order order = OrderSamples.LimitOrder(action, quantity, limitPrice);
+        order.includeOvernight(true);
+        // ! [limitorderwithincludeovernight]
+        return order;
+    }
+
+    public static OrderCancel OrderCancelEmpty() {
+        // ! [ordercancelempty]
+        OrderCancel orderCancel = new OrderCancel();
+        // ! [ordercancelempty]
+        return orderCancel;
+    }
+
+    public static OrderCancel OrderCancelWithManualTime(String manualOrderCancelTime) {
+        // ! [ordercancelwithmanualtime]
+        OrderCancel orderCancel = new OrderCancel();
+        orderCancel.manualOrderCancelTime(manualOrderCancelTime);
+        // ! [ordercancelwithmanualtime]
+        return orderCancel;
+    }
+
+    public static Order LimitOrderWithCmeTaggingFields(String action, Decimal quantity, double limitPrice, String extOperator, int manualOrderIndicator) {
+        // ! [limit_order_with_cme_tagging_fields]
+        Order order = OrderSamples.LimitOrder(action, quantity, limitPrice);
+        order.extOperator(extOperator);
+        order.manualOrderIndicator(manualOrderIndicator);
+        // ! [limit_order_with_cme_tagging_fields]
+        return order;
+    }
+
+    public static OrderCancel OrderCancelWithCmeTaggingFields(String extOperator, int manualOrderIndicator) {
+        // ! [order_cancel_with_cme_tagging_fields]
+        OrderCancel orderCancel = new OrderCancel();
+        orderCancel.extOperator(extOperator);
+        orderCancel.manualOrderIndicator(manualOrderIndicator);
+        // ! [order_cancel_with_cme_tagging_fields]
+        return orderCancel;
+    }
+
+    public static Order LimitOnCloseOrderWithImbalance(String action, Decimal quantity, double limitPrice) {
+        // ! [limitoncloseorderwithimbalanceonly]
+        Order order = new Order();
+        order.action(action);
+        order.orderType("LOC");
+        order.totalQuantity(quantity);
+        order.lmtPrice(limitPrice);
+        order.tif(TimeInForce.DAY);
+        order.imbalanceOnly(true);
+        // ! [limitoncloseorderwithimbalanceonly]
+        return order;
+    }
 }

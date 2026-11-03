@@ -1,5 +1,21 @@
-/* Copyright (C) 2019 Interactive Brokers LLC. All rights reserved. This code is subject to the terms
- * and conditions of the IB API Non-Commercial License or the IB API Commercial License, as applicable. */
+/*
+ * Java TWS API Samples
+ *
+ * Copyright (C) 2013-2026  Interactive Brokers LLC
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 package samples.testbed.contracts;
 
@@ -14,13 +30,11 @@ public class ContractSamples {
 	public static Contract USStockWithPrimaryExch() {
 		//! [stkcontractwithprimary]
 		Contract contract = new Contract();
-		contract.symbol("MSFT");
+		contract.symbol("SPY");
 		contract.secType("STK");
 		contract.currency("USD");
 		contract.exchange("SMART");
-		// Specify the Primary Exchange attribute to avoid contract ambiguity
-		// (there is an ambiguity because there is also a MSFT contract with primary exchange = "AEB")
-		contract.primaryExch("ISLAND");
+		contract.primaryExch("ARCA");
 		//! [stkcontractwithprimary]
 		return contract;
 	}
@@ -29,7 +43,7 @@ public class ContractSamples {
 		//! [bondwithcusip]
 		Contract contract = new Contract();
 		// enter CUSIP as symbol
-		contract.symbol("912828C57");
+		contract.symbol("449276AA2");
 		contract.secType("BOND");
 		contract.exchange("SMART");
 		contract.currency("USD");
@@ -40,7 +54,7 @@ public class ContractSamples {
 	public static Contract Bond() {
 		//! [bond]
 		Contract contract = new Contract();
-		contract.conid(285191782);
+		contract.conid(456467716);
 		contract.exchange("SMART");
 		//! [bond]
 		return contract;
@@ -86,7 +100,7 @@ public class ContractSamples {
 		contract.symbol("DAX");
 		contract.secType("IND");
 		contract.currency("EUR");
-		contract.exchange("DTB");
+		contract.exchange("EUREX");
 		//! [indcontract]
 		return contract;
 	}
@@ -161,12 +175,46 @@ public class ContractSamples {
 	public static Contract USStock() {
 		//! [stkcontract]
 		Contract contract = new Contract();
-		contract.symbol("IBKR");
+		contract.symbol("SPY");
 		contract.secType("STK");
 		contract.currency("USD");
-		//In the API side, NASDAQ is always defined as ISLAND
-		contract.exchange("ISLAND");
+		contract.exchange("ARCA");
 		//! [stkcontract]
+		return contract;
+	}
+
+	public static Contract OptForecastx() {
+		//! [optforecastxcontract]
+		Contract contract = new Contract();
+		contract.symbol("CPIY");
+		contract.secType("OPT");
+		contract.lastTradeDateOrContractMonth("202612");
+		contract.currency("USD");
+		contract.exchange("FORECASTX");
+		//! [optforecastxcontract]
+		return contract;
+	}
+
+	public static Contract OptForecastxZeroStrike() {
+		//! [optforecastxcontract]
+		Contract contract = new Contract();
+		contract.symbol("CPIY");
+		contract.secType("OPT");
+		contract.lastTradeDateOrContractMonth("202612");
+		contract.currency("USD");
+		contract.strike(0);
+		contract.right("C");
+		contract.exchange("FORECASTX");
+		//! [optforecastxcontract]
+		return contract;
+	}
+
+	public static Contract OptForecastxByConId() {
+		//! [optforecastxbyconid]
+		Contract contract = new Contract();
+		contract.conid(789013783);
+		contract.exchange("FORECASTX");
+		//! [optforecastxbyconid]
 		return contract;
 	}
 	
@@ -178,6 +226,15 @@ public class ContractSamples {
 		contract.exchange("SMART");
 		return contract;
 	}
+
+    public static Contract etf() {
+        Contract contract = new Contract();
+        contract.symbol("QQQ");
+        contract.secType("STK");
+        contract.currency("USD");
+        contract.exchange("SMART");
+        return contract;
+    }
 	
 	public static Contract USOptionContract() {
 		Contract contract = new Contract();
@@ -185,9 +242,9 @@ public class ContractSamples {
 		contract.secType("OPT");
 		contract.currency("USD");
 		contract.exchange("SMART");
-		contract.lastTradeDateOrContractMonth("20170120");
-		contract.strike(615);
-		contract.right("C");
+		contract.lastTradeDateOrContractMonth("20271217");
+		contract.strike(340);
+		contract.right("P");
 		contract.multiplier("100");
 		return contract;
 	}
@@ -227,11 +284,26 @@ public class ContractSamples {
 		//! [optcontract_localsymbol]
 		Contract contract = new Contract();
 		//Watch out for the spaces within the local symbol!
-		contract.localSymbol("C DBK  DEC 20  1600");
+		contract.localSymbol("P BMW  20221216 72 M");
 		contract.secType("OPT");
-		contract.exchange("DTB");
+		contract.exchange("EUREX");
 		contract.currency("EUR");
 		//! [optcontract_localsymbol]
+		return contract;
+	}
+	
+	public static Contract optionSample() {
+		//! [optcontract_localsymbol]
+		Contract contract = new Contract();
+		contract.conid(785790272);
+		contract.symbol("BMW");        // BMW AG
+		contract.secType("OPT");       // Option
+		contract.exchange("EUREX");      // Deutsche Terminbörse (Eurex)
+		contract.currency("EUR");      // Euro
+		contract.lastTradeDateOrContractMonth("202507");  // July 2025
+		contract.strike(83);           // 83 EUR strike price
+		contract.right("P");           // Put option
+		contract.multiplier("100");    // Standard multiplier for German options
 		return contract;
 	}
 	
@@ -252,8 +324,8 @@ public class ContractSamples {
 		contract.symbol("ES");
 		contract.secType("FUT");
 		contract.currency("USD");
-		contract.exchange("GLOBEX");
-		contract.lastTradeDateOrContractMonth("201803");
+		contract.exchange("CME");
+		contract.lastTradeDateOrContractMonth("202503");
 		//! [futcontract]
 		return contract;
 	}
@@ -261,10 +333,10 @@ public class ContractSamples {
 	public static Contract FutureWithLocalSymbol() {
 		//! [futcontract_local_symbol]
 		Contract contract = new Contract();
-		contract.localSymbol("ESU6");
+		contract.localSymbol("FGBL MAR 23");
 		contract.secType("FUT");
-		contract.currency("USD");
-		contract.exchange("GLOBEX");
+		contract.currency("EUR");
+		contract.exchange("EUREX");
 		//! [futcontract_local_symbol]
 		return contract;
 	}
@@ -275,9 +347,9 @@ public class ContractSamples {
 		contract.symbol("DAX");
 		contract.secType("FUT");
 		contract.currency("EUR");
-		contract.exchange("DTB");
-		contract.lastTradeDateOrContractMonth("201609");
-		contract.multiplier("5");
+		contract.exchange("EUREX");
+		contract.lastTradeDateOrContractMonth("202303");
+		contract.multiplier("1");
 		//! [futcontract_multiplier]
 		return contract;
 	}
@@ -295,15 +367,30 @@ public class ContractSamples {
 	public static Contract FuturesOnOptions() {
 		//! [fopcontract]
 		Contract contract = new Contract();
-		contract.symbol("ES");
+		contract.symbol("GBL");
 		contract.secType("FOP");
-		contract.currency("USD");
-		contract.exchange("GLOBEX");
-		contract.lastTradeDateOrContractMonth("20180316");
+		contract.currency("EUR");
+		contract.exchange("EUREX");
+		contract.lastTradeDateOrContractMonth("20230224");
 		contract.right("C");
-		contract.strike(2800);
-		contract.multiplier("50");
+		contract.strike(138);
+		contract.multiplier("1000");
 		//! [fopcontract]
+		return contract;
+	}
+	
+	public static Contract Warrants() {
+		//! [warcontract]
+		Contract contract = new Contract();
+		contract.symbol("GOOG");
+		contract.secType("WAR");
+		contract.currency("EUR");
+		contract.exchange("FWB");
+		contract.lastTradeDateOrContractMonth("20201117");
+		contract.right("C");
+		contract.strike(1500.0);
+		contract.multiplier("0.01");
+		//! [warcontract]
 		return contract;
 	}
 	
@@ -342,22 +429,22 @@ public class ContractSamples {
 		contract.symbol("DBK");
 		contract.secType("BAG");
 		contract.currency("EUR");
-		contract.exchange("DTB");
+		contract.exchange("EUREX");
 		
 		ComboLeg leg1 = new ComboLeg();
 		ComboLeg leg2 = new ComboLeg();
 
 		List<ComboLeg> addAllLegs = new ArrayList<>();
 
-		leg1.conid(197397509);//DBK JUN 15 '18 C
+		leg1.conid(577164786);//DBK Jun21'24 2 CALL @EUREX
 		leg1.ratio(1);
 		leg1.action("BUY");
-		leg1.exchange("DTB");
+		leg1.exchange("EUREX");
 
-		leg2.conid(197397584);//DBK JUN 15 '18 P
+		leg2.conid(577164767);//DBK Dec15'23 2 CALL @EUREX
 		leg2.ratio(1);
 		leg2.action("SELL");
-		leg2.exchange("DTB");
+		leg2.exchange("EUREX");
 
 		addAllLegs.add(leg1);
 		addAllLegs.add(leg2);
@@ -467,25 +554,25 @@ public class ContractSamples {
 	public static Contract InterCmdtyFuturesContract() {
 		//! [intcmdfutcontract]
 		Contract contract = new Contract();
-		contract.symbol("CL.BZ");
+		contract.symbol("COIL.WTI");
 		contract.secType("BAG");
 		contract.currency("USD");
-		contract.exchange("NYMEX");
+		contract.exchange("IPE");
 		
 		ComboLeg leg1 = new ComboLeg();
 		ComboLeg leg2 = new ComboLeg();
 
 		List<ComboLeg> addAllLegs = new ArrayList<>();
 
-		leg1.conid(47207310); //CL Dec'16 @NYMEX
+		leg1.conid(183405603); //WTI�Dec'23�@IPE
 		leg1.ratio(1);
 		leg1.action("BUY");
-		leg1.exchange("NYMEX");
+		leg1.exchange("IPE");
 
-		leg2.conid(47195961); //BZ Dec'16 @NYMEX
+		leg2.conid(254011009); //COIL�Dec'23�@IPE
 		leg2.ratio(1);
 		leg2.action("SELL");
-		leg2.exchange("NYMEX");
+		leg2.exchange("IPE");
 
 		addAllLegs.add(leg1);
 		addAllLegs.add(leg2);
@@ -534,23 +621,13 @@ public class ContractSamples {
 		//! [newscontractfly]
 		return contract;
 	}
-	
-        public static Contract MTbroadtapeNewsFeed() {
-		//! [newscontractmt]
-		Contract contract = new Contract();
-		contract.symbol("MT:MT_ALL"); //BroadTape All News
-		contract.secType("NEWS");
-		contract.exchange("MT"); //Midnight Trader
-		//! [newscontractmt]
-		return contract;
-	}
 
 	public static Contract ContFut() {
 		//! [continuousfuturescontract]
 		Contract contract = new Contract();
-		contract.symbol("ES");
+		contract.symbol("GBL");
 		contract.secType("CONTFUT");
-		contract.exchange("GLOBEX");
+		contract.exchange("EUREX");
 		//! [continuousfuturescontract]
 		return contract;
 	}
@@ -558,44 +635,73 @@ public class ContractSamples {
     public static Contract ContAndExpiringFut() {
         //! [contandexpiringfut]
         Contract contract = new Contract();
-        contract.symbol("ES");
+        contract.symbol("GBL");
         contract.secType("FUT+CONTFUT");
-        contract.exchange("GLOBEX");
+        contract.exchange("EUREX");
         //! [contandexpiringfut]
         return contract;
     }
 	
-	public static Contract JefferiesContract() {
-		//! [jefferies_contract]
+	public static Contract IBKRATSContract() {
+		//! [ibkrats_contract]
 		Contract contract = new Contract();
-		contract.symbol("AAPL");
+		contract.symbol("SPY");
 		contract.secType("STK");
-		contract.exchange("JEFFALGO"); // must be direct-routed to JEFFALGO
-		contract.currency("USD");    // only available for US stocks
-		//! [jefferies_contract]
-		return contract;
-	}
-
-	public static Contract CSFBContract() {
-		//! [csfb_contract]
-		Contract contract = new Contract();
-		contract.symbol("IBKR");
-		contract.secType("STK");
-		contract.exchange("CSFBALGO"); // must be direct-routed to CSFBALGO
-		contract.currency("USD");    // only available for US stocks
-		//! [csfb_contract]
+		contract.exchange("IBKRATS"); 
+		contract.currency("USD");    
+		//! [ibkrats_contract]
 		return contract;
 	}
 	
-	public static Contract QBAlgoContract() {
-		//! [qbalgo_contract]
+	public static Contract CryptoContract() {
+		//! [crypto_contract]
 		Contract contract = new Contract();
-		contract.symbol("ES");
-		contract.secType("FUT");
-		contract.exchange("QBALGO");
-		contract.currency("USD");
-		contract.lastTradeDateOrContractMonth("202003");
-		//! [qbalgo_contract]
+		contract.symbol("ETH");
+		contract.secType("CRYPTO");
+		contract.exchange("PAXOS"); 
+		contract.currency("USD");    
+		//! [crypto_contract]
 		return contract;
 	}
+	
+	public static Contract StockWithIPOPrice() {
+		//! [stock_with_IPO_price]
+		Contract contract = new Contract();
+		contract.symbol("EMCGU");
+		contract.secType("STK");
+		contract.currency("USD");
+		contract.exchange("SMART");
+		//! [stock_with_IPO_price]
+		return contract;
+	}
+
+	public static Contract ByFIGI() {
+		//! [ByFIGI]
+		Contract contract = new Contract();
+		contract.secIdType("FIGI");
+		contract.secId("BBG000B9XRY4");
+		contract.exchange("SMART");
+		//! [ByFIGI]
+		return contract;
+	}
+	
+	public static Contract ByIssuerId() {
+		//! [ByIssuerId]
+		Contract contract = new Contract();
+		contract.issuerId("e1453318");  
+		//! [ByIssuerId]
+		return contract;
+	}
+	
+	public static Contract Fund() {
+		//! [Fund]
+		Contract contract = new Contract();
+		contract.symbol("I406801954");
+		contract.secType("FUND");
+		contract.currency("USD");
+		contract.exchange("ALLFUNDS");
+		//! [Fund]
+		return contract;
+	}
+	
 }

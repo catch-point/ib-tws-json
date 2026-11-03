@@ -3,7 +3,7 @@ plugins {
     id 'java'
 }
 
-version = '1.2.0'
+version = '2.0.0'
 
 // The Java version MUST match the JRE bundled with the latest IBKR TWS,
 // because this extension runs as a -javaagent inside the TWS JVM.
@@ -35,20 +35,126 @@ sourceSets {
 
 def twsApiDir = layout.buildDirectory.dir('dependencies/twsapi')
 
+// IBKR distributes the TWS API as a per-platform install4j installer (no zip archive).
+// The platform is detected from the build machine; override with -PtwsApiPlatform=<name>
+def twsApiInstallers = [
+    'windows-x64': 'tws-api-stable-windows-x64.exe',
+    'macos-arm'  : 'tws-api-stable-macos-arm.dmg',
+    'macosx-x64' : 'tws-api-stable-macosx-x64.dmg',
+    'linux-x64'  : 'tws-api-stable-linux-x64.sh',
+]
+def twsApiPlatform = providers.gradleProperty('twsApiPlatform').orElse(providers.provider {
+    def os = System.getProperty('os.name').toLowerCase(Locale.ROOT)
+    def arch = System.getProperty('os.arch').toLowerCase(Locale.ROOT)
+    if (os.contains('windows')) {
+        'windows-x64'
+    } else if (os.contains('mac')) {
+        arch in ['aarch64', 'arm64'] ? 'macos-arm' : 'macosx-x64'
+    } else {
+        'linux-x64'
+    }
+})
+def twsApiInstallerName = twsApiPlatform.map { platform ->
+    def name = twsApiInstallers[platform]
+    if (name == null) {
+        throw new GradleException("Unknown twsApiPlatform '${platform}', expected one of ${twsApiInstallers.keySet()}")
+    }
+    name
+}
+def twsApiInstaller = layout.buildDirectory.file(twsApiInstallerName.map { "dependencies/${it}" })
+
 // @seeAlso https://github.com/michel-kraemer/gradle-download-task
-tasks.register('downloadTWSAPIZipFile', Download) {
-    src 'https://interactivebrokers.github.io/downloads/twsapi_macunix.1037.02.zip'
-    dest layout.buildDirectory.file('dependencies/twsapi.zip')
+tasks.register('downloadTWSAPIInstaller', Download) {
+    src twsApiInstallerName.map { "https://download2.interactivebrokers.com/installers/tws-api/stable/${it}" }
+    dest twsApiInstaller
+    // "stable" is not a versioned URL; only re-download when IBKR publishes a new one
+    onlyIfModified true
+    useETag true
 }
 
-tasks.register('downloadAndUnzipTWSAPI', Copy) {
-    dependsOn 'downloadTWSAPIZipFile'
-    from { zipTree(tasks.named('downloadTWSAPIZipFile').get().dest) }
-    into twsApiDir
+/**
+ * Runs the IBKR install4j installer in unattended mode (-q -dir) for the
+ * current platform: the .sh with sh, the .exe directly, and the .dmg by
+ * mounting it with hdiutil and running the installer app's launcher.
+ */
+abstract class InstallTwsApi extends DefaultTask {
+    @InputFile
+    abstract RegularFileProperty getInstaller()
+
+    @OutputDirectory
+    abstract DirectoryProperty getInstallDir()
+
+    @Inject
+    abstract ExecOperations getExecOperations()
+
+    @Inject
+    abstract FileSystemOperations getFileSystemOperations()
+
+    @TaskAction
+    void install() {
+        File installer = getInstaller().get().asFile
+        File dir = getInstallDir().get().asFile
+        getFileSystemOperations().delete { delete dir }
+        String name = installer.name
+        if (name.endsWith('.sh')) {
+            run(['sh', installer.absolutePath, '-q', '-dir', dir.absolutePath])
+        } else if (name.endsWith('.exe')) {
+            run([installer.absolutePath, '-q', '-dir', dir.absolutePath])
+        } else if (name.endsWith('.dmg')) {
+            File mount = new File(getTemporaryDir(), 'mount')
+            // an interrupted build may have left the image mounted here
+            detach(mount)
+            // hdiutil -mountpoint requires an existing directory
+            if (!mount.isDirectory() && !mount.mkdirs()) {
+                throw new GradleException("Could not create mount point ${mount}")
+            }
+            run(['hdiutil', 'attach', '-nobrowse', '-readonly', '-noautoopen', '-mountpoint', mount.absolutePath,
+                    installer.absolutePath])
+            try {
+                // the app is named after the release, such as "TWS API 1050.02 Installer.app"
+                File app = (mount.listFiles() ?: new File[0]).find { it.name.endsWith('.app') }
+                if (app == null) {
+                    throw new GradleException("No installer app found in ${installer}")
+                }
+                run([new File(app, 'Contents/MacOS/JavaApplicationStub').absolutePath, '-q', '-dir', dir.absolutePath])
+            } finally {
+                detach(mount)
+            }
+        } else {
+            throw new GradleException("Unsupported TWS API installer ${installer}")
+        }
+    }
+
+    private void run(List<String> command) {
+        getExecOperations().exec { commandLine command }
+    }
+
+    /**
+     * Unmounts a disk image if one is mounted there. Failures are only logged,
+     * so they never hide the install's own error.
+     */
+    private void detach(File mount) {
+        if (mount.isDirectory() && mount.list()?.length) {
+            def result = getExecOperations().exec {
+                commandLine 'hdiutil', 'detach', mount.absolutePath, '-force'
+                ignoreExitValue = true
+            }
+            if (result.exitValue != 0) {
+                logger.warn("Could not unmount ${mount} (hdiutil exit ${result.exitValue})")
+            }
+        }
+    }
+}
+
+// Installs into build/dependencies/twsapi
+tasks.register('installTWSAPI', InstallTwsApi) {
+    dependsOn 'downloadTWSAPIInstaller'
+    installer = twsApiInstaller
+    installDir = twsApiDir
 }
 
 tasks.named('compileJava') {
-    dependsOn 'downloadAndUnzipTWSAPI'
+    dependsOn 'installTWSAPI'
 }
 
 repositories {
@@ -56,8 +162,10 @@ repositories {
 }
 
 dependencies {
-    implementation files(twsApiDir.map { it.file('IBJts/source/JavaClient/TwsApi.jar') })
-    implementation fileTree(dir: twsApiDir.map { it.dir('IBJts/source/JavaClient/jars') })
+    // TwsApi.jar and its jars/ (protobuf), wherever the platform's installer puts the Java client
+    implementation fileTree(dir: twsApiDir, includes: [
+            '**/javaclient/TwsApi.jar', '**/javaclient/jars/*.jar',
+            '**/JavaClient/TwsApi.jar', '**/JavaClient/jars/*.jar'])
     implementation 'javax.json:javax.json-api:1.1'
     implementation 'org.glassfish:javax.json:1.1'
     implementation 'commons-cli:commons-cli:1.4'
@@ -82,4 +190,21 @@ jar {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+}
+
+// Regenerates the JSON fixtures from IB's sample calls (see test/com/meerkattrading/tws/Testbed.java)
+tasks.register('generateClientCalls', JavaExec) {
+    group = 'verification'
+    description = 'Regenerates test/com/meerkattrading/tws/client-calls.json from the IB Testbed samples'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.meerkattrading.tws.Testbed'
+    workingDir = projectDir
+}
+
+tasks.register('generateOrderCalls', JavaExec) {
+    group = 'verification'
+    description = 'Regenerates test/com/meerkattrading/tws/orders-calls.json from order condition samples'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.meerkattrading.tws.TestbedOrderConditions'
+    workingDir = projectDir
 }

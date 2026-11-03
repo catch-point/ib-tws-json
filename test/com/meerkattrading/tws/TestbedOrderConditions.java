@@ -72,7 +72,7 @@ public class TestbedOrderConditions {
 			object.add(group, calls.get(group).build());
 		}
 		JsonWriterFactory factory = Json.createWriterFactory(new HashMap<String,Boolean>(){{put(JsonGenerator.PRETTY_PRINTING, true);}});
-		FileWriter writer = new FileWriter("/home/james/Projects/2020/tws-shell/develop/test/com/meerkattrading/tws/orders-calls.json");
+		FileWriter writer = new FileWriter(args.length > 0 ? args[0] : "test/com/meerkattrading/tws/orders-calls.json");
 		factory.createWriter(writer).write(object.build());
 		writer.close();
 	}

@@ -75,6 +75,10 @@
         ],
         [
             "cancelPositions"
+        ],
+        [
+            "reqUserInfo",
+            0
         ]
     ],
     "bracketSample": [
@@ -151,20 +155,20 @@
             "reqContractDetails",
             18001,
             {
-                "exchange": "GLOBEX",
+                "exchange": "EUREX",
                 "secType": "CONTFUT",
-                "symbol": "ES"
+                "symbol": "GBL"
             }
         ],
         [
             "reqHistoricalData",
             18002,
             {
-                "exchange": "GLOBEX",
+                "exchange": "EUREX",
                 "secType": "CONTFUT",
-                "symbol": "ES"
+                "symbol": "GBL"
             },
-            "20201216 20:57:16",
+            "",
             "1 Y",
             "1 month",
             "TRADES",
@@ -203,7 +207,7 @@
             "reqContractDetails",
             212,
             {
-                "conid": 285191782,
+                "conid": 456467716,
                 "exchange": "SMART"
             }
         ],
@@ -211,14 +215,14 @@
             "reqContractDetails",
             213,
             {
-                "currency": "USD",
-                "exchange": "GLOBEX",
-                "lastTradeDateOrContractMonth": "20180316",
-                "multiplier": "50",
+                "currency": "EUR",
+                "exchange": "EUREX",
+                "lastTradeDateOrContractMonth": "20230224",
+                "multiplier": "1000",
                 "right": "Call",
                 "secType": "FOP",
-                "strike": "2800.0",
-                "symbol": "ES"
+                "strike": "138.0",
+                "symbol": "GBL"
             }
         ],
         [
@@ -226,94 +230,119 @@
             214,
             {
                 "currency": "USD",
-                "exchange": "GLOBEX",
-                "lastTradeDateOrContractMonth": "201803",
+                "exchange": "CME",
+                "lastTradeDateOrContractMonth": "202503",
                 "secType": "FUT",
                 "symbol": "ES"
+            }
+        ],
+        [
+            "reqContractDetails",
+            215,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            }
+        ],
+        [
+            "reqContractDetails",
+            216,
+            {
+                "currency": "USD",
+                "exchange": "PAXOS",
+                "secType": "CRYPTO",
+                "symbol": "ETH"
+            }
+        ],
+        [
+            "reqContractDetails",
+            217,
+            {
+                "issuerId": "e1453318"
+            }
+        ],
+        [
+            "reqContractDetails",
+            218,
+            {
+                "currency": "USD",
+                "exchange": "ALLFUNDS",
+                "secType": "FUND",
+                "symbol": "I406801954"
+            }
+        ],
+        [
+            "reqContractDetails",
+            219,
+            {
+                "currency": "USD",
+                "exchange": "ARCA",
+                "secType": "STK",
+                "symbol": "SPY"
+            }
+        ],
+        [
+            "reqContractDetails",
+            220,
+            {
+                "currency": "USD",
+                "exchange": "FORECASTX",
+                "lastTradeDateOrContractMonth": "202612",
+                "secType": "OPT",
+                "symbol": "CPIY"
+            }
+        ],
+        [
+            "reqContractDetails",
+            221,
+            {
+                "currency": "USD",
+                "exchange": "FORECASTX",
+                "lastTradeDateOrContractMonth": "202612",
+                "right": "Call",
+                "secType": "OPT",
+                "strike": "0.0",
+                "symbol": "CPIY"
+            }
+        ],
+        [
+            "reqContractDetails",
+            222,
+            {
+                "conid": 789013783,
+                "exchange": "FORECASTX"
             }
         ],
         [
             "reqMatchingSymbols",
             211,
             "IB"
+        ],
+        [
+            "cancelContractData",
+            210
         ]
     ],
-    "fundamentals": [
+    "financialAdvisorOperations": [
         [
-            "reqFundamentalData",
-            8001,
-            {
-                "currency": "USD",
-                "exchange": "ISLAND",
-                "secType": "STK",
-                "symbol": "IBKR"
-            },
-            "ReportsFinSummary",
-            null
+            "requestFA",
+            1
         ],
         [
-            "reqFundamentalData",
-            8002,
-            {
-                "currency": "USD",
-                "exchange": "ISLAND",
-                "secType": "STK",
-                "symbol": "IBKR"
-            },
-            "ReportSnapshot",
-            null
+            "requestFA",
+            0
         ],
         [
-            "reqFundamentalData",
-            8003,
-            {
-                "currency": "USD",
-                "exchange": "ISLAND",
-                "secType": "STK",
-                "symbol": "IBKR"
-            },
-            "ReportRatios",
-            null
+            "replaceFA",
+            1000,
+            0,
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ListOfGroups><Group><name>MyTestProfile1</name><defaultMethod>ContractsOrShares</defaultMethod><ListOfAccts varName=\"list\"><Account><acct>DU6202167</acct><amount>100.0</amount></Account><Account><acct>DU6202168</acct><amount>200.0</amount></Account></ListOfAccts></Group><Group><name>MyTestProfile2</name><defaultMethod>Ratio</defaultMethod><ListOfAccts varName=\"list\"><Account><acct>DU6202167</acct><amount>1.0</amount></Account><Account><acct>DU6202168</acct><amount>2.0</amount></Account></ListOfAccts></Group><Group><name>MyTestProfile3</name><defaultMethod>Percent</defaultMethod><ListOfAccts varName=\"list\"><Account><acct>DU6202167</acct><amount>60.0</amount></Account><Account><acct>DU6202168</acct><amount>40.0</amount></Account></ListOfAccts></Group><Group><name>MyTestProfile4</name><defaultMethod>MonetaryAmount</defaultMethod><ListOfAccts varName=\"list\"><Account><acct>DU6202167</acct><amount>1000.0</amount></Account><Account><acct>DU6202168</acct><amount>2000.0</amount></Account></ListOfAccts></Group><Group><name>Group_1</name><defaultMethod>NetLiq</defaultMethod><ListOfAccts varName=\"list\"><Account><acct>DU6202167</acct></Account><Account><acct>DU6202168</acct></Account></ListOfAccts></Group><Group><name>MyTestGroup1</name><defaultMethod>AvailableEquity</defaultMethod><ListOfAccts varName=\"list\"><Account><acct>DU6202167</acct></Account><Account><acct>DU6202168</acct></Account></ListOfAccts></Group><Group><name>MyTestGroup2</name><defaultMethod>NetLiq</defaultMethod><ListOfAccts varName=\"list\"><Account><acct>DU6202167</acct></Account><Account><acct>DU6202168</acct></Account></ListOfAccts></Group><Group><name>MyTestGroup3</name><defaultMethod>Equal</defaultMethod><ListOfAccts varName=\"list\"><Account><acct>DU6202167</acct></Account><Account><acct>DU6202168</acct></Account></ListOfAccts></Group><Group><name>Group_2</name><defaultMethod>AvailableEquity</defaultMethod><ListOfAccts varName=\"list\"><Account><acct>DU6202167</acct></Account><Account><acct>DU6202168</acct></Account></ListOfAccts></Group></ListOfGroups>"
         ],
         [
-            "reqFundamentalData",
-            8004,
-            {
-                "currency": "USD",
-                "exchange": "ISLAND",
-                "secType": "STK",
-                "symbol": "IBKR"
-            },
-            "ReportsFinStatements",
-            null
-        ],
-        [
-            "reqFundamentalData",
-            8005,
-            {
-                "currency": "USD",
-                "exchange": "ISLAND",
-                "secType": "STK",
-                "symbol": "IBKR"
-            },
-            "RESC",
-            null
-        ],
-        [
-            "reqFundamentalData",
-            8006,
-            {
-                "currency": "USD",
-                "exchange": "ISLAND",
-                "secType": "STK",
-                "symbol": "IBKR"
-            },
-            "CalendarReport",
-            null
-        ],
-        [
-            "cancelFundamentalData",
-            8001
+            "reqSoftDollarTiers",
+            4001
         ]
     ],
     "hedgeSample": [
@@ -349,7 +378,8 @@
                 "action": "BUY",
                 "hedgeType": "Fx",
                 "orderType": "MKT",
-                "parentId": 102
+                "parentId": 102,
+                "totalQuantity": "0"
             }
         ]
     ],
@@ -359,9 +389,9 @@
             4002,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             false,
             "3 days"
@@ -377,9 +407,9 @@
             4003,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             "TRADES",
             1,
@@ -398,7 +428,7 @@
                 "secType": "CASH",
                 "symbol": "EUR"
             },
-            "20200616 20:57:16",
+            "20260503-11:00:02",
             "1 M",
             "1 day",
             "MIDPOINT",
@@ -417,10 +447,28 @@
                 "secType": "STK",
                 "symbol": "NOKIA"
             },
-            "20200616 20:57:16",
+            "20260503-11:00:02",
             "10 D",
             "1 min",
             "TRADES",
+            1,
+            1,
+            false,
+            null
+        ],
+        [
+            "reqHistoricalData",
+            4003,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            "20260503-11:00:02",
+            "1 M",
+            "1 day",
+            "SCHEDULE",
             1,
             1,
             false,
@@ -433,6 +481,10 @@
         [
             "cancelHistoricalData",
             4002
+        ],
+        [
+            "cancelHistoricalData",
+            4003
         ]
     ],
     "historicalTicks": [
@@ -445,7 +497,7 @@
                 "secType": "STK",
                 "symbol": "IBM"
             },
-            "20170712 21:39:33",
+            "20220808 10:00:00 US/Eastern",
             null,
             10,
             "TRADES",
@@ -462,7 +514,7 @@
                 "secType": "STK",
                 "symbol": "IBM"
             },
-            "20170712 21:39:33",
+            "20220808 10:00:00 US/Eastern",
             null,
             10,
             "BID_ASK",
@@ -479,13 +531,56 @@
                 "secType": "STK",
                 "symbol": "IBM"
             },
-            "20170712 21:39:33",
+            "20220808 10:00:00 US/Eastern",
             null,
             10,
             "MIDPOINT",
             1,
             true,
             null
+        ],
+        [
+            "cancelHistoricalTicks",
+            18001
+        ]
+    ],
+    "ibkratsSample": [
+        [
+            "placeOrder",
+            106,
+            {
+                "currency": "USD",
+                "exchange": "IBKRATS",
+                "secType": "STK",
+                "symbol": "SPY"
+            },
+            {
+                "action": "BUY",
+                "lmtPrice": "330.0",
+                "notHeld": true,
+                "orderType": "LMT",
+                "totalQuantity": "100"
+            }
+        ]
+    ],
+    "linkingOperations": [
+        [
+            "queryDisplayGroups",
+            9001
+        ],
+        [
+            "subscribeToGroupEvents",
+            9002,
+            1
+        ],
+        [
+            "updateDisplayGroup",
+            9002,
+            "8314@SMART"
+        ],
+        [
+            "unsubscribeFromGroupEvents",
+            9002
         ]
     ],
     "marketDataType": [
@@ -542,16 +637,16 @@
             17001,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             }
         ],
         [
             "reqContractDetails",
             17002,
             {
-                "conid": 285191782,
+                "conid": 456467716,
                 "exchange": "SMART"
             }
         ],
@@ -632,6 +727,14 @@
             7003
         ]
     ],
+    "miscellaneous": [
+        [
+            "reqCurrentTime"
+        ],
+        [
+            "reqCurrentTimeInMillis"
+        ]
+    ],
     "newsOperations": [
         [
             "reqMktData",
@@ -672,6 +775,82 @@
             null
         ]
     ],
+    "optionsOperations": [
+        [
+            "reqSecDefOptParams",
+            0,
+            "IBM",
+            "",
+            "STK",
+            8314
+        ],
+        [
+            "calculateImpliedVolatility",
+            5001,
+            {
+                "conid": 785790272,
+                "currency": "EUR",
+                "exchange": "EUREX",
+                "lastTradeDateOrContractMonth": "202507",
+                "multiplier": "100",
+                "right": "Put",
+                "secType": "OPT",
+                "strike": "83.0",
+                "symbol": "BMW"
+            },
+            "20.0",
+            "90.0",
+            null
+        ],
+        [
+            "cancelCalculateImpliedVolatility",
+            5001
+        ],
+        [
+            "calculateOptionPrice",
+            5002,
+            {
+                "conid": 785790272,
+                "currency": "EUR",
+                "exchange": "EUREX",
+                "lastTradeDateOrContractMonth": "202507",
+                "multiplier": "100",
+                "right": "Put",
+                "secType": "OPT",
+                "strike": "83.0",
+                "symbol": "BMW"
+            },
+            "0.5",
+            "80.0",
+            null
+        ],
+        [
+            "cancelCalculateOptionPrice",
+            5002
+        ],
+        [
+            "exerciseOptions",
+            5003,
+            {
+                "currency": "EUR",
+                "exchange": "MEFFRV",
+                "lastTradeDateOrContractMonth": "20190621",
+                "multiplier": "100",
+                "right": "Call",
+                "secType": "OPT",
+                "strike": "7.5",
+                "symbol": "SANT",
+                "tradingClass": "SANEU"
+            },
+            1,
+            1,
+            "",
+            1,
+            "20231018-12:00:00",
+            "CustAcct",
+            true
+        ]
+    ],
     "orderOperations": [
         [
             "reqIds",
@@ -692,9 +871,9 @@
             101,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             {
                 "action": "SELL",
@@ -724,9 +903,9 @@
             103,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             {
                 "account": "DU119915",
@@ -740,15 +919,15 @@
             104,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "SMART",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "IBM"
             },
             {
-                "action": "SELL",
-                "faGroup": "Group_Equal",
-                "faMethod": "Equal",
-                "lmtPrice": "2000.0",
+                "action": "BUY",
+                "faGroup": "MyTestGroup1",
+                "faMethod": "AvailableEquity",
+                "lmtPrice": "10.0",
                 "orderType": "LMT",
                 "totalQuantity": "200"
             }
@@ -757,44 +936,27 @@
             "placeOrder",
             105,
             {
-                "currency": "GBP",
-                "exchange": "IDEALPRO",
-                "secType": "CASH",
-                "symbol": "EUR"
-            },
-            {
-                "action": "BUY",
-                "faGroup": "Group_Percent",
-                "faMethod": "Percent",
-                "faPercentage": "100",
-                "orderType": "MKT"
-            }
-        ],
-        [
-            "placeOrder",
-            106,
-            {
-                "currency": "EUR",
+                "currency": "USD",
                 "exchange": "SMART",
-                "primaryExch": "HEX",
                 "secType": "STK",
-                "symbol": "NOKIA"
+                "symbol": "IBM"
             },
             {
                 "action": "BUY",
-                "lmtPrice": "100.0",
+                "faGroup": "MyTestProfile1",
+                "lmtPrice": "10.0",
                 "orderType": "LMT",
                 "totalQuantity": "200"
             }
         ],
         [
             "placeOrder",
-            107,
+            106,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             {
                 "account": "DF12345",
@@ -809,18 +971,291 @@
             "reqExecutions",
             10001,
             {
+                "lastNDays": 7
+            }
+        ],
+        [
+            "reqExecutions",
+            10002,
+            {
+                "specificDates": [
+                    20250221,
+                    20250220
+                ]
             }
         ],
         [
             "cancelOrder",
-            107
+            106,
+            {
+                "manualOrderCancelTime": "20240614-00:00:04"
+            }
         ],
         [
-            "reqGlobalCancel"
+            "reqGlobalCancel",
+            {
+            }
         ],
         [
             "reqCompletedOrders",
             false
+        ],
+        [
+            "placeOrder",
+            107,
+            {
+                "currency": "USD",
+                "exchange": "PAXOS",
+                "secType": "CRYPTO",
+                "symbol": "ETH"
+            },
+            {
+                "action": "BUY",
+                "lmtPrice": "3370.0",
+                "orderType": "LMT",
+                "totalQuantity": "0.00001234"
+            }
+        ],
+        [
+            "placeOrder",
+            108,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "action": "BUY",
+                "lmtPrice": "111.11",
+                "manualOrderTime": "20220314-13:00:00",
+                "orderType": "LMT",
+                "totalQuantity": "100"
+            }
+        ],
+        [
+            "placeOrder",
+            109,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "action": "BUY",
+                "includeOvernight": true,
+                "lmtPrice": "110.11",
+                "orderType": "LMT",
+                "totalQuantity": "100"
+            }
+        ],
+        [
+            "cancelOrder",
+            109,
+            {
+                "manualOrderCancelTime": "20220314-19:00:00"
+            }
+        ],
+        [
+            "placeOrder",
+            110,
+            {
+                "currency": "USD",
+                "exchange": "IBKRATS",
+                "secType": "STK",
+                "symbol": "SPY"
+            },
+            {
+                "action": "BUY",
+                "competeAgainstBestOffset": "Infinity",
+                "lmtPrice": "111.11",
+                "midOffsetAtHalf": "0.025",
+                "midOffsetAtWhole": "0.02",
+                "minCompeteSize": 200,
+                "minTradeQty": 100,
+                "notHeld": true,
+                "orderType": "PEG BEST",
+                "totalQuantity": "100"
+            }
+        ],
+        [
+            "placeOrder",
+            111,
+            {
+                "currency": "USD",
+                "exchange": "IBKRATS",
+                "secType": "STK",
+                "symbol": "SPY"
+            },
+            {
+                "action": "BUY",
+                "competeAgainstBestOffset": "0.03",
+                "lmtPrice": "111.11",
+                "minCompeteSize": 200,
+                "minTradeQty": 100,
+                "notHeld": true,
+                "orderType": "PEG BEST",
+                "totalQuantity": "100"
+            }
+        ],
+        [
+            "placeOrder",
+            112,
+            {
+                "currency": "USD",
+                "exchange": "IBKRATS",
+                "secType": "STK",
+                "symbol": "SPY"
+            },
+            {
+                "action": "BUY",
+                "lmtPrice": "111.11",
+                "midOffsetAtHalf": "0.025",
+                "midOffsetAtWhole": "0.02",
+                "minTradeQty": 100,
+                "notHeld": true,
+                "orderType": "PEG MID",
+                "totalQuantity": "100"
+            }
+        ],
+        [
+            "placeOrder",
+            113,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "action": "BUY",
+                "customerAccount": "CustAcct",
+                "lmtPrice": "111.11",
+                "orderType": "LMT",
+                "totalQuantity": "100"
+            }
+        ],
+        [
+            "placeOrder",
+            114,
+            {
+                "currency": "USD",
+                "exchange": "CME",
+                "lastTradeDateOrContractMonth": "202503",
+                "secType": "FUT",
+                "symbol": "ES"
+            },
+            {
+                "action": "BUY",
+                "extOperator": "ABCD",
+                "lmtPrice": "5333.0",
+                "manualOrderIndicator": 1,
+                "orderType": "LMT",
+                "totalQuantity": "1"
+            }
+        ],
+        [
+            "cancelOrder",
+            114,
+            {
+                "extOperator": "BCDE",
+                "manualOrderIndicator": 0
+            }
+        ],
+        [
+            "placeOrder",
+            115,
+            {
+                "currency": "USD",
+                "exchange": "CME",
+                "lastTradeDateOrContractMonth": "202503",
+                "secType": "FUT",
+                "symbol": "ES"
+            },
+            {
+                "action": "BUY",
+                "extOperator": "CDEF",
+                "lmtPrice": "5444.0",
+                "manualOrderIndicator": 0,
+                "orderType": "LMT",
+                "totalQuantity": "1"
+            }
+        ],
+        [
+            "reqGlobalCancel",
+            {
+                "extOperator": "DEFG",
+                "manualOrderIndicator": 1
+            }
+        ],
+        [
+            "placeOrder",
+            116,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "action": "BUY",
+                "imbalanceOnly": true,
+                "lmtPrice": "44.44",
+                "orderType": "LOC",
+                "totalQuantity": "100"
+            }
+        ],
+        [
+            "placeOrder",
+            117,
+            {
+                "currency": "USD",
+                "exchange": "FORECASTX",
+                "lastTradeDateOrContractMonth": "202612",
+                "right": "Call",
+                "secType": "OPT",
+                "strike": "0.0",
+                "symbol": "CPIY"
+            },
+            {
+                "action": "BUY",
+                "lmtPrice": "0.05",
+                "orderType": "LMT",
+                "totalQuantity": "1"
+            }
+        ],
+        [
+            "placeOrder",
+            118,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "action": "BUY",
+                "lmtPrice": "40.0",
+                "orderType": "LMT",
+                "ptOrderId": 120,
+                "ptOrderType": "PRESET",
+                "slOrderId": 119,
+                "slOrderType": "PRESET",
+                "totalQuantity": "100"
+            }
+        ]
+    ],
+    "pnl": [
+        [
+            "reqPnL",
+            17001,
+            "DUD00029",
+            ""
+        ],
+        [
+            "cancelPnL",
+            17001
         ]
     ],
     "pnlSingle": [
@@ -834,17 +1269,26 @@
         [
             "cancelPnLSingle",
             17001
+        ]
+    ],
+    "realTimeBars": [
+        [
+            "reqRealTimeBars",
+            3001,
+            {
+                "currency": "GBP",
+                "exchange": "IDEALPRO",
+                "secType": "CASH",
+                "symbol": "EUR"
+            },
+            5,
+            "MIDPOINT",
+            true,
+            null
         ],
         [
-            "reqPnLSingle",
-            17001,
-            "DUD00029",
-            "",
-            268084
-        ],
-        [
-            "cancelPnLSingle",
-            17001
+            "cancelRealTimeBars",
+            3001
         ]
     ],
     "rerouteCFDOperations": [
@@ -971,35 +1415,31 @@
                 "action": "BUY",
                 "algoParams": [
                     {
-                        "tag": "maxPctVol",
-                        "value": "0.1"
+                        "tag": "timeBetweenOrders",
+                        "value": "5"
                     },
                     {
-                        "tag": "riskAversion",
-                        "value": "Aggressive"
+                        "tag": "routeOrderType",
+                        "value": "MKT"
                     },
                     {
-                        "tag": "startTime",
-                        "value": "09:00:00 CET"
+                        "tag": "componentSize",
+                        "value": "100"
                     },
                     {
-                        "tag": "endTime",
-                        "value": "16:00:00 CET"
+                        "tag": "activeTimeStart",
+                        "value": "10:00:00"
                     },
                     {
-                        "tag": "forceCompletion",
-                        "value": "1"
+                        "tag": "activeTimeEnd",
+                        "value": "11:00:00"
                     },
                     {
-                        "tag": "allowPastEndTime",
-                        "value": "1"
-                    },
-                    {
-                        "tag": "monetaryValue",
-                        "value": "100000.0"
+                        "tag": "activeTimeTz",
+                        "value": "EST"
                     }
                 ],
-                "algoStrategy": "ArrivalPx",
+                "algoStrategy": "AccuDistr",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
                 "totalQuantity": "1000"
@@ -1018,24 +1458,63 @@
                 "action": "BUY",
                 "algoParams": [
                     {
+                        "tag": "maxPctVol",
+                        "value": "0.1"
+                    },
+                    {
+                        "tag": "riskAversion",
+                        "value": "Aggressive"
+                    },
+                    {
+                        "tag": "startTime",
+                        "value": "09:00:00 US/Eastern"
+                    },
+                    {
+                        "tag": "endTime",
+                        "value": "16:00:00 US/Eastern"
+                    },
+                    {
+                        "tag": "forceCompletion",
+                        "value": "1"
+                    },
+                    {
+                        "tag": "allowPastEndTime",
+                        "value": "1"
+                    }
+                ],
+                "algoStrategy": "ArrivalPx",
+                "lmtPrice": "1.0",
+                "orderType": "LMT",
+                "totalQuantity": "1000"
+            }
+        ],
+        [
+            "placeOrder",
+            106,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "action": "BUY",
+                "algoParams": [
+                    {
                         "tag": "displaySize",
                         "value": "10"
                     },
                     {
                         "tag": "startTime",
-                        "value": "09:00:00 CET"
+                        "value": "09:00:00 US/Eastern"
                     },
                     {
                         "tag": "endTime",
-                        "value": "16:00:00 CET"
+                        "value": "16:00:00 US/Eastern"
                     },
                     {
                         "tag": "allowPastEndTime",
                         "value": "1"
-                    },
-                    {
-                        "tag": "monetaryValue",
-                        "value": "100000.0"
                     }
                 ],
                 "algoStrategy": "DarkIce",
@@ -1046,7 +1525,7 @@
         ],
         [
             "placeOrder",
-            106,
+            107,
             {
                 "currency": "USD",
                 "exchange": "SMART",
@@ -1086,53 +1565,14 @@
                     },
                     {
                         "tag": "activeTimeStart",
-                        "value": "20161010-12:00:00 GMT"
+                        "value": "12:00:00"
                     },
                     {
                         "tag": "activeTimeEnd",
-                        "value": "20161010-16:00:00 GMT"
+                        "value": "16:00:00"
                     }
                 ],
                 "algoStrategy": "AD",
-                "lmtPrice": "1.0",
-                "orderType": "LMT",
-                "totalQuantity": "1000"
-            }
-        ],
-        [
-            "placeOrder",
-            107,
-            {
-                "currency": "USD",
-                "exchange": "SMART",
-                "secType": "STK",
-                "symbol": "IBM"
-            },
-            {
-                "action": "BUY",
-                "algoParams": [
-                    {
-                        "tag": "strategyType",
-                        "value": "Marketable"
-                    },
-                    {
-                        "tag": "startTime",
-                        "value": "09:00:00 CET"
-                    },
-                    {
-                        "tag": "endTime",
-                        "value": "16:00:00 CET"
-                    },
-                    {
-                        "tag": "allowPastEndTime",
-                        "value": "1"
-                    },
-                    {
-                        "tag": "monetaryValue",
-                        "value": "100000.0"
-                    }
-                ],
-                "algoStrategy": "Twap",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
                 "totalQuantity": "1000"
@@ -1151,16 +1591,47 @@
                 "action": "BUY",
                 "algoParams": [
                     {
+                        "tag": "startTime",
+                        "value": "10:00:00 US/Eastern"
+                    },
+                    {
+                        "tag": "endTime",
+                        "value": "11:00:00 US/Eastern"
+                    },
+                    {
+                        "tag": "allowPastEndTime",
+                        "value": "1"
+                    }
+                ],
+                "algoStrategy": "Twap",
+                "lmtPrice": "1.0",
+                "orderType": "LMT",
+                "totalQuantity": "1000"
+            }
+        ],
+        [
+            "placeOrder",
+            109,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "IBM"
+            },
+            {
+                "action": "BUY",
+                "algoParams": [
+                    {
                         "tag": "maxPctVol",
                         "value": "0.2"
                     },
                     {
                         "tag": "startTime",
-                        "value": "09:00:00 CET"
+                        "value": "09:00:00 US/Eastern"
                     },
                     {
                         "tag": "endTime",
-                        "value": "16:00:00 CET"
+                        "value": "16:00:00 US/Eastern"
                     },
                     {
                         "tag": "allowPastEndTime",
@@ -1173,10 +1644,6 @@
                     {
                         "tag": "speedUp",
                         "value": "1"
-                    },
-                    {
-                        "tag": "monetaryValue",
-                        "value": "100000.0"
                     }
                 ],
                 "algoStrategy": "Vwap",
@@ -1187,15 +1654,15 @@
         ],
         [
             "placeOrder",
-            109,
+            110,
             {
                 "currency": "USD",
                 "exchange": "SMART",
-                "lastTradeDateOrContractMonth": "20170120",
+                "lastTradeDateOrContractMonth": "20271217",
                 "multiplier": "100",
-                "right": "Call",
+                "right": "Put",
                 "secType": "OPT",
-                "strike": "615.0",
+                "strike": "340.0",
                 "symbol": "GOOG"
             },
             {
@@ -1222,15 +1689,15 @@
         ],
         [
             "placeOrder",
-            110,
+            111,
             {
                 "currency": "USD",
                 "exchange": "SMART",
-                "lastTradeDateOrContractMonth": "20170120",
+                "lastTradeDateOrContractMonth": "20271217",
                 "multiplier": "100",
-                "right": "Call",
+                "right": "Put",
                 "secType": "OPT",
-                "strike": "615.0",
+                "strike": "340.0",
                 "symbol": "GOOG"
             },
             {
@@ -1241,7 +1708,7 @@
                         "value": "0.3"
                     }
                 ],
-                "algoStrategy": "BalanceImpactRisk",
+                "algoStrategy": "MinImpact",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
                 "totalQuantity": "1000"
@@ -1249,7 +1716,7 @@
         ],
         [
             "placeOrder",
-            111,
+            112,
             {
                 "currency": "USD",
                 "exchange": "SMART",
@@ -1272,7 +1739,7 @@
         ],
         [
             "placeOrder",
-            112,
+            113,
             {
                 "currency": "USD",
                 "exchange": "SMART",
@@ -1292,15 +1759,11 @@
                     },
                     {
                         "tag": "startTime",
-                        "value": "12:00:00 EST"
+                        "value": "12:00:00 US/Eastern"
                     },
                     {
                         "tag": "forceCompletion",
                         "value": "1"
-                    },
-                    {
-                        "tag": "monetaryValue",
-                        "value": "100000.0"
                     }
                 ],
                 "algoStrategy": "ClosePx",
@@ -1311,7 +1774,7 @@
         ],
         [
             "placeOrder",
-            113,
+            114,
             {
                 "currency": "USD",
                 "exchange": "SMART",
@@ -1327,19 +1790,15 @@
                     },
                     {
                         "tag": "startTime",
-                        "value": "12:00:00 EST"
+                        "value": "12:00:00 US/Eastern"
                     },
                     {
                         "tag": "endTime",
-                        "value": "14:00:00 EST"
+                        "value": "14:00:00 US/Eastern"
                     },
                     {
                         "tag": "noTakeLiq",
                         "value": "1"
-                    },
-                    {
-                        "tag": "monetaryValue",
-                        "value": "100000.0"
                     }
                 ],
                 "algoStrategy": "PctVol",
@@ -1350,7 +1809,7 @@
         ],
         [
             "placeOrder",
-            114,
+            115,
             {
                 "currency": "USD",
                 "exchange": "SMART",
@@ -1378,65 +1837,18 @@
                     },
                     {
                         "tag": "startTime",
-                        "value": "12:00:00 EST"
+                        "value": "12:00:00 US/Eastern"
                     },
                     {
                         "tag": "endTime",
-                        "value": "14:00:00 EST"
+                        "value": "14:00:00 US/Eastern"
                     },
                     {
                         "tag": "noTakeLiq",
                         "value": "1"
-                    },
-                    {
-                        "tag": "monetaryValue",
-                        "value": "100000.0"
                     }
                 ],
                 "algoStrategy": "PctVolPx",
-                "lmtPrice": "1.0",
-                "orderType": "LMT",
-                "totalQuantity": "1000"
-            }
-        ],
-        [
-            "placeOrder",
-            115,
-            {
-                "currency": "USD",
-                "exchange": "SMART",
-                "secType": "STK",
-                "symbol": "IBM"
-            },
-            {
-                "action": "BUY",
-                "algoParams": [
-                    {
-                        "tag": "startPctVol",
-                        "value": "0.2"
-                    },
-                    {
-                        "tag": "endPctVol",
-                        "value": "0.4"
-                    },
-                    {
-                        "tag": "startTime",
-                        "value": "12:00:00 EST"
-                    },
-                    {
-                        "tag": "endTime",
-                        "value": "14:00:00 EST"
-                    },
-                    {
-                        "tag": "noTakeLiq",
-                        "value": "1"
-                    },
-                    {
-                        "tag": "monetaryValue",
-                        "value": "100000.0"
-                    }
-                ],
-                "algoStrategy": "PctVolSz",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
                 "totalQuantity": "1000"
@@ -1464,22 +1876,18 @@
                     },
                     {
                         "tag": "startTime",
-                        "value": "12:00:00 EST"
+                        "value": "12:00:00 US/Eastern"
                     },
                     {
                         "tag": "endTime",
-                        "value": "14:00:00 EST"
+                        "value": "14:00:00 US/Eastern"
                     },
                     {
                         "tag": "noTakeLiq",
                         "value": "1"
-                    },
-                    {
-                        "tag": "monetaryValue",
-                        "value": "100000.0"
                     }
                 ],
-                "algoStrategy": "PctVolTm",
+                "algoStrategy": "PctVolSz",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
                 "totalQuantity": "1000"
@@ -1490,170 +1898,35 @@
             117,
             {
                 "currency": "USD",
-                "exchange": "JEFFALGO",
+                "exchange": "SMART",
                 "secType": "STK",
-                "symbol": "AAPL"
+                "symbol": "IBM"
             },
             {
                 "action": "BUY",
                 "algoParams": [
                     {
-                        "tag": "StartTime",
-                        "value": "10:00:00 EST"
+                        "tag": "startPctVol",
+                        "value": "0.2"
                     },
                     {
-                        "tag": "EndTime",
-                        "value": "16:00:00 EST"
+                        "tag": "endPctVol",
+                        "value": "0.4"
                     },
                     {
-                        "tag": "RelativeLimit",
-                        "value": "10.0"
+                        "tag": "startTime",
+                        "value": "12:00:00 US/Eastern"
                     },
                     {
-                        "tag": "MaxVolumeRate",
-                        "value": "10.0"
+                        "tag": "endTime",
+                        "value": "14:00:00 US/Eastern"
                     },
                     {
-                        "tag": "ExcludeAuctions",
-                        "value": "Exclude_Both"
-                    },
-                    {
-                        "tag": "TriggerPrice",
-                        "value": "130.0"
-                    },
-                    {
-                        "tag": "WowPrice",
-                        "value": "135.0"
-                    },
-                    {
-                        "tag": "MinFillSize",
-                        "value": "1"
-                    },
-                    {
-                        "tag": "WowOrderPct",
-                        "value": "10.0"
-                    },
-                    {
-                        "tag": "WowMode",
-                        "value": "Patience"
-                    },
-                    {
-                        "tag": "IsBuyBack",
-                        "value": "0"
-                    },
-                    {
-                        "tag": "WowReference",
-                        "value": "Midpoint"
-                    }
-                ],
-                "algoStrategy": "VWAP",
-                "lmtPrice": "1.0",
-                "orderType": "LMT",
-                "totalQuantity": "1000"
-            }
-        ],
-        [
-            "placeOrder",
-            118,
-            {
-                "currency": "USD",
-                "exchange": "CSFBALGO",
-                "secType": "STK",
-                "symbol": "IBKR"
-            },
-            {
-                "action": "BUY",
-                "algoParams": [
-                    {
-                        "tag": "StartTime",
-                        "value": "10:00:00 EST"
-                    },
-                    {
-                        "tag": "EndTime",
-                        "value": "16:00:00 EST"
-                    },
-                    {
-                        "tag": "ExecStyle",
-                        "value": "Patient"
-                    },
-                    {
-                        "tag": "MinPercent",
-                        "value": "10"
-                    },
-                    {
-                        "tag": "MaxPercent",
-                        "value": "20"
-                    },
-                    {
-                        "tag": "DisplaySize",
-                        "value": "100"
-                    },
-                    {
-                        "tag": "Auction",
-                        "value": "Default"
-                    },
-                    {
-                        "tag": "BlockFinder",
-                        "value": "0"
-                    },
-                    {
-                        "tag": "BlockPrice",
-                        "value": "40.0"
-                    },
-                    {
-                        "tag": "MinBlockSize",
-                        "value": "100"
-                    },
-                    {
-                        "tag": "MaxBlockSize",
-                        "value": "100"
-                    },
-                    {
-                        "tag": "IWouldPrice",
-                        "value": "35.0"
-                    }
-                ],
-                "algoStrategy": "INLINE",
-                "lmtPrice": "1.0",
-                "orderType": "LMT",
-                "totalQuantity": "1000"
-            }
-        ],
-        [
-            "placeOrder",
-            119,
-            {
-                "currency": "USD",
-                "exchange": "QBALGO",
-                "lastTradeDateOrContractMonth": "202003",
-                "secType": "FUT",
-                "symbol": "ES"
-            },
-            {
-                "action": "BUY",
-                "algoParams": [
-                    {
-                        "tag": "StartTime",
-                        "value": "10:00:00 EST"
-                    },
-                    {
-                        "tag": "EndTime",
-                        "value": "16:00:00 EST"
-                    },
-                    {
-                        "tag": "Benchmark",
-                        "value": "TWAP"
-                    },
-                    {
-                        "tag": "PercentVolume",
-                        "value": "0.25"
-                    },
-                    {
-                        "tag": "NoCleanUp",
+                        "tag": "noTakeLiq",
                         "value": "1"
                     }
                 ],
-                "algoStrategy": "STROBE",
+                "algoStrategy": "PctVolTm",
                 "lmtPrice": "1.0",
                 "orderType": "LMT",
                 "totalQuantity": "1000"
@@ -1803,269 +2076,8 @@
     ],
     "tickDataOperations": [
         [
-            "reqMktData",
-            1001,
-            {
-                "comboLegs": [
-                    {
-                        "action": "BUY",
-                        "conid": 43645865,
-                        "exchange": "SMART",
-                        "ratio": 1
-                    },
-                    {
-                        "action": "SELL",
-                        "conid": 9408,
-                        "exchange": "SMART",
-                        "ratio": 1
-                    }
-                ],
-                "currency": "USD",
-                "exchange": "SMART",
-                "secType": "BAG",
-                "symbol": "MCD"
-            },
-            "",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqSmartComponents",
-            1013,
-            "a6"
-        ],
-        [
-            "reqMktData",
-            1003,
-            {
-                "comboLegs": [
-                    {
-                        "action": "BUY",
-                        "conid": 195538625,
-                        "exchange": "CFE",
-                        "ratio": 1
-                    },
-                    {
-                        "action": "SELL",
-                        "conid": 197436571,
-                        "exchange": "CFE",
-                        "ratio": 1
-                    }
-                ],
-                "currency": "USD",
-                "exchange": "CFE",
-                "secType": "BAG",
-                "symbol": "VIX"
-            },
-            "",
-            true,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1004,
-            {
-                "currency": "USD",
-                "exchange": "SMART",
-                "secType": "STK",
-                "symbol": "IBM"
-            },
-            "233,236,258",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1005,
-            {
-                "currency": "USD",
-                "exchange": "ISLAND",
-                "secType": "STK",
-                "symbol": "IBKR"
-            },
-            "mdoff,292:BZ",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1006,
-            {
-                "currency": "USD",
-                "exchange": "ISLAND",
-                "secType": "STK",
-                "symbol": "IBKR"
-            },
-            "mdoff,292:BT",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1007,
-            {
-                "currency": "USD",
-                "exchange": "ISLAND",
-                "secType": "STK",
-                "symbol": "IBKR"
-            },
-            "mdoff,292:FLY",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1008,
-            {
-                "currency": "USD",
-                "exchange": "ISLAND",
-                "secType": "STK",
-                "symbol": "IBKR"
-            },
-            "mdoff,292:MT",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1009,
-            {
-                "exchange": "BRF",
-                "secType": "NEWS",
-                "symbol": "BRF:BRF_ALL"
-            },
-            "mdoff,292",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1010,
-            {
-                "exchange": "BZ",
-                "secType": "NEWS",
-                "symbol": "BZ:BZ_ALL"
-            },
-            "mdoff,292",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1011,
-            {
-                "exchange": "FLY",
-                "secType": "NEWS",
-                "symbol": "FLY:FLY_ALL"
-            },
-            "mdoff,292",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1012,
-            {
-                "exchange": "MT",
-                "secType": "NEWS",
-                "symbol": "MT:MT_ALL"
-            },
-            "mdoff,292",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1002,
-            {
-                "currency": "EUR",
-                "exchange": "DTB",
-                "localSymbol": "C DBK  DEC 20  1600",
-                "secType": "OPT"
-            },
-            "",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1014,
-            {
-                "currency": "USD",
-                "exchange": "GLOBEX",
-                "lastTradeDateOrContractMonth": "201803",
-                "secType": "FUT",
-                "symbol": "ES"
-            },
-            "mdoff,588",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1015,
-            {
-                "currency": "USD",
-                "exchange": "GLOBEX",
-                "lastTradeDateOrContractMonth": "201803",
-                "secType": "FUT",
-                "symbol": "ES"
-            },
-            "",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
-            1016,
-            {
-                "currency": "USD",
-                "exchange": "SMART",
-                "secType": "STK",
-                "symbol": "IBM"
-            },
-            "mdoff,105",
-            false,
-            false,
-            null
-        ],
-        [
-            "cancelMktData",
-            1001
-        ],
-        [
-            "cancelMktData",
-            1002
-        ],
-        [
-            "cancelMktData",
-            1003
-        ],
-        [
-            "cancelMktData",
-            1014
-        ],
-        [
-            "cancelMktData",
-            1015
-        ],
-        [
-            "cancelMktData",
-            1016
+            "reqMarketDataType",
+            4
         ],
         [
             "reqMktData",
@@ -2137,7 +2149,7 @@
                 "secType": "STK",
                 "symbol": "IBM"
             },
-            "233,236,258",
+            "233,236",
             false,
             false,
             null
@@ -2147,9 +2159,9 @@
             1005,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             "mdoff,292:BZ",
             false,
@@ -2161,9 +2173,9 @@
             1006,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             "mdoff,292:BT",
             false,
@@ -2175,9 +2187,9 @@
             1007,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
             "mdoff,292:FLY",
             false,
@@ -2189,11 +2201,11 @@
             1008,
             {
                 "currency": "USD",
-                "exchange": "ISLAND",
+                "exchange": "ARCA",
                 "secType": "STK",
-                "symbol": "IBKR"
+                "symbol": "SPY"
             },
-            "mdoff,292:MT",
+            "mdoff,292:DJ-RT",
             false,
             false,
             null
@@ -2239,24 +2251,11 @@
         ],
         [
             "reqMktData",
-            1012,
-            {
-                "exchange": "MT",
-                "secType": "NEWS",
-                "symbol": "MT:MT_ALL"
-            },
-            "mdoff,292",
-            false,
-            false,
-            null
-        ],
-        [
-            "reqMktData",
             1002,
             {
                 "currency": "EUR",
-                "exchange": "DTB",
-                "localSymbol": "C DBK  DEC 20  1600",
+                "exchange": "EUREX",
+                "localSymbol": "P BMW  20221216 72 M",
                 "secType": "OPT"
             },
             "",
@@ -2269,8 +2268,8 @@
             1014,
             {
                 "currency": "USD",
-                "exchange": "GLOBEX",
-                "lastTradeDateOrContractMonth": "201803",
+                "exchange": "CME",
+                "lastTradeDateOrContractMonth": "202503",
                 "secType": "FUT",
                 "symbol": "ES"
             },
@@ -2284,8 +2283,8 @@
             1015,
             {
                 "currency": "USD",
-                "exchange": "GLOBEX",
-                "lastTradeDateOrContractMonth": "201803",
+                "exchange": "CME",
+                "lastTradeDateOrContractMonth": "202503",
                 "secType": "FUT",
                 "symbol": "ES"
             },
@@ -2304,6 +2303,46 @@
                 "symbol": "IBM"
             },
             "mdoff,105",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1017,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "QQQ"
+            },
+            "mdoff,577,614,623",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1018,
+            {
+                "currency": "USD",
+                "exchange": "SMART",
+                "secType": "STK",
+                "symbol": "EMCGU"
+            },
+            "mdoff,586",
+            false,
+            false,
+            null
+        ],
+        [
+            "reqMktData",
+            1019,
+            {
+                "conid": 456467716,
+                "exchange": "SMART"
+            },
+            "",
             false,
             false,
             null
@@ -2331,21 +2370,33 @@
         [
             "cancelMktData",
             1016
+        ],
+        [
+            "cancelMktData",
+            1017
+        ],
+        [
+            "cancelMktData",
+            1018
+        ],
+        [
+            "cancelMktData",
+            1019
         ]
     ],
     "tickOptionComputations": [
         [
+            "reqMarketDataType",
+            4
+        ],
+        [
             "reqMktData",
             2001,
             {
-                "currency": "USD",
-                "exchange": "GLOBEX",
-                "lastTradeDateOrContractMonth": "20180316",
-                "multiplier": "50",
-                "right": "Call",
-                "secType": "FOP",
-                "strike": "2800.0",
-                "symbol": "ES"
+                "currency": "EUR",
+                "exchange": "EUREX",
+                "localSymbol": "P BMW  20221216 72 M",
+                "secType": "OPT"
             },
             "",
             false,
@@ -2364,16 +2415,62 @@
             {
                 "currency": "USD",
                 "exchange": "SMART",
-                "secType": "STK",
-                "symbol": "IBM"
+                "secType": "BOND",
+                "symbol": "449276AA2"
             },
             {
                 "action": "BUY",
-                "lmtPrice": "120.0",
+                "lmtPrice": "20.0",
                 "orderType": "LMT",
                 "totalQuantity": "200",
                 "whatIf": true
             }
+        ]
+    ],
+    "wshCalendarOperations": [
+        [
+            "reqWshMetaData",
+            1100
+        ],
+        [
+            "cancelWshMetaData",
+            1100
+        ],
+        [
+            "reqWshEventData",
+            1101,
+            {
+                "conId": 8314,
+                "endDate": "",
+                "fillCompetitors": false,
+                "fillPortfolio": false,
+                "fillWatchlist": false,
+                "filter": "",
+                "startDate": "20220511",
+                "totalLimit": 5
+            }
+        ],
+        [
+            "reqWshEventData",
+            1102,
+            {
+                "conId": 2147483647,
+                "endDate": "20220512",
+                "fillCompetitors": false,
+                "fillPortfolio": false,
+                "fillWatchlist": false,
+                "filter": "{\"watchlist\":[\"8314\"]}",
+                "startDate": "",
+                "totalLimit": 2147483647
+            }
+        ],
+        [
+            "cancelWshEventData",
+            1101
+        ],
+        [
+            "cancelWshEventData",
+            1102
         ]
     ]
 }

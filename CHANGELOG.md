@@ -8,6 +8,60 @@ replies). See [README.md](README.md#json-api) for the message format.
 This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 the project uses [Semantic Versioning](https://semver.org/).
 
+## [2.0.0]
+
+Built with **TWS API 10.50.02**, up from 10.37.02 in 1.2.0. Commands, events
+and types come from the TWS API by reflection, so these changes come from
+IBKR's own API changes.
+
+No command or event that exists in both 1.2.0 and 2.0.0 changed its
+parameters. **Upgrading from 1.0.0?** Version 1.0.1 already contained breaking
+command and event signature changes (TWS API 10.19 to 10.37); see
+[1.0.1](#101) below.
+
+### Removed
+
+These commands and events no longer exist. A client that sends a removed
+command gets `error "<command>?"`.
+
+- **Fundamental data** (removed from the TWS API by IBKR):
+  - command `reqFundamentalData(int, Contract, String, [TagValue])`
+  - command `cancelFundamentalData(int)`
+  - event `fundamentalData(int, String)`
+- **Connection redirects** (removed from the TWS API by IBKR):
+  - command `allowRedirect(boolean)`
+  - command `redirect(String)`
+
+### Added
+
+- **Commands** (new in the TWS API):
+  - `cancelContractData(int)`: cancels a `reqContractDetails` request
+  - `cancelHistoricalTicks(int)`: cancels a `reqHistoricalTicks` request
+- **`Order` fields** (new in the TWS API): `allowPreOpen` (boolean),
+  `conditionsIncludeOvernight` (boolean), `deactivate` (boolean),
+  `hedgeMaxSize` (int), `ignoreOpenAuction` (boolean), `postOnly` (boolean),
+  `ptOrderId` (int), `ptOrderType` (String), `seekPriceImprovement` (Boolean),
+  `slOrderId` (int), `slOrderType` (String), `whatIfType` (int)
+- **`ContractDetails` fields** (new in the TWS API): `eventContract1`,
+  `eventContractDescription1`, `eventContractDescription2`, `settlementMethod`
+  (String), and `lastPricePrecision`, `lastSizePrecision`, `minAlgoSize`
+  (Decimal, written as strings)
+
+### Changed
+
+- **`Order.routeMarketableToBbo`** is now a `Boolean` that can be `null`
+  (unset), instead of a `boolean` (changed in the TWS API).
+
+### Other changes
+
+These do not change the JSON interface.
+
+- The build downloads IBKR's TWS API installer for Windows, macOS (Apple
+  Silicon or Intel) or Linux and runs it unattended, as IBKR no longer
+  publishes a zip archive. Use `-PtwsApiPlatform` to choose the platform.
+- The test fixtures are regenerated from IBKR's 10.50 sample code
+  (`./gradlew generateClientCalls generateOrderCalls`).
+
 ## [1.2.0]
 
 Built with TWS API 10.37.02.
