@@ -44,7 +44,8 @@ Each JSON client connection gets its own `Worker`, `Interpreter` and
 
 `Agent` is the `-javaagent` entry point (`Premain-Class` and `Agent-Class` in
 the jar manifest). `Shell --install` adds it to TWS's `tws.vmoptions` (or
-`ibgateway.vmoptions`), and `--uninstall` removes it.
+`ibgateway.vmoptions`, or `Contents/vmoptions.txt` inside the macOS `.app`), and
+`--uninstall` removes it.
 
 | Mode | How it starts | How the TWS API port is found |
 |------|---------------|-------------------------------|
@@ -55,8 +56,11 @@ the jar manifest). `Shell --install` adds it to TWS's `tws.vmoptions` (or
 `TwsApi.jar` is not bundled. The jar build excludes `com/ib/**`, so users get
 the official client from IBKR directly. Both `Launcher` (standalone) and
 `Agent` (in TWS) search for it when they start: `--tws-api-jar`,
-`--tws-api-path`, then the usual install folders (`~/IBJts`, `C:\TWS API`,
-`~/Jts`, `~/Downloads`, …), choosing the highest version number first.
+`--tws-api-path`, then the installer's default `TWS API <version>` folder (at
+the drive root on Windows, in `~/Applications` on macOS, in the home folder on
+Linux), then `~/tws-api` (an unattended `-q` install on Linux), then the older
+`C:\TWS API` and `~/IBJts`, then `~/Jts`,
+`~/Downloads`, …, choosing the highest version number first.
 
 ### Agent arguments
 
@@ -64,7 +68,7 @@ The agent argument string is JSON-like: comma-separated `"key":value` pairs,
 written by `Shell` and parsed by `Agent.parseAgentArg`:
 
 ```
--javaagent:/opt/ib-tws-json-2.1.0.jar="tws-api-jar":"/home/me/IBJts/source/javaclient/TwsApi.jar","json-api-port-offset":100
+-javaagent:/opt/ib-tws-json-2.1.1.jar="tws-api-jar":"/home/me/IBJts/source/javaclient/TwsApi.jar","json-api-port-offset":100
 ```
 
 Settings for one TWS configuration directory (`--jts-config-dir`) go in a JSON

@@ -22,7 +22,7 @@ Requirements
   * macOS (Intel): https://download2.interactivebrokers.com/installers/tws-api/stable/tws-api-stable-macosx-x64.dmg
   * Linux: https://download2.interactivebrokers.com/installers/tws-api/stable/tws-api-stable-linux-x64.sh
 
-  This project searches for `TwsApi.jar` in `C:\TWS API`, `~/IBJts`, `~/Jts`, `~/Downloads` and a few other common folders. If you install it elsewhere, use `--tws-api-jar` or `--tws-api-path` (see [Options](#options)).
+  This project searches for `TwsApi.jar` in the installer's default folder (`C:\TWS API 1050.02` on Windows, `~/Applications/TWS API 1050.02` on macOS, `~/TWS API 1050.02` on Linux, choosing the highest version, or `~/tws-api` for an unattended `-q` install on Linux), the older `C:\TWS API` and `~/IBJts`, and `~/Jts`, `~/Downloads` and a few other common folders. If you install it elsewhere, use `--tws-api-jar` or `--tws-api-path` (see [Options](#options)).
 * **A working knowledge of the TWS API.** See https://interactivebrokers.github.io/tws-api/
 
 This version is built and tested with **TWS API 10.50.02** and **Java 17**, the Java version TWS currently bundles.
@@ -39,9 +39,9 @@ Run the release JAR by double clicking it, or from a terminal run:
 java -jar ib-tws-json.jar
 ```
 
-This searches for TWS/Gateway, installs the extension, and launches TWS/Gateway. If several versions of TWS exist, or it is installed in an alternative location, run `java -jar ib-tws-json.jar --help` to see how to specify the install location.
+This searches for TWS/Gateway in the installers' default folders (`C:\Jts` on Windows, `~/Jts` on Linux, or `~/tws` and `~/ibgateway` for an unattended `-q` install on Linux, `~/Applications` on macOS), installs the extension, and launches TWS/Gateway. If several versions of TWS exist, or it is installed in an alternative location, run `java -jar ib-tws-json.jar --help` to see how to specify the install location.
 
-The extension is installed by adding a `-javaagent` line to TWS's `tws.vmoptions` (or `ibgateway.vmoptions`) file, so it starts whenever TWS starts.
+The extension is installed by adding a `-javaagent` line to TWS's `tws.vmoptions` (or `ibgateway.vmoptions`) file (on macOS, the `Contents/vmoptions.txt` file inside the `.app`), so it starts whenever TWS starts.
 
 Configuration
 -------------

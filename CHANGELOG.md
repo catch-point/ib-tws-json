@@ -8,6 +8,23 @@ replies). See [README.md](README.md#json-api) for the message format.
 This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 the project uses [Semantic Versioning](https://semver.org/).
 
+## [2.1.1]
+
+Built with TWS API 10.50.02.
+
+### Fixed
+
+- **Default install folders are found.** Starting the jar (to install the
+  extension or launch TWS) now finds TWS, IB Gateway and `TwsApi.jar` where
+  IBKR's current installers put them:
+  - `TwsApi.jar` in `C:\TWS API <version>` (Windows),
+    `~/Applications/TWS API <version>` (macOS), `~/TWS API <version>` (Linux),
+    and `~/tws-api` (unattended `-q` install on Linux).
+  - TWS and IB Gateway on Windows (`tws.exe`/`ibgateway.exe` in `C:\Jts`), on
+    macOS (the `.app` in `~/Applications`, whose `Contents/vmoptions.txt` gets
+    the `-javaagent` line), and in `~/tws` and `~/ibgateway` (unattended `-q`
+    install on Linux).
+
 ## [2.1.0]
 
 Built with TWS API 10.50.02.

@@ -40,7 +40,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.json.Json;
@@ -69,10 +68,38 @@ public class Shell {
 	private static final String JSON_API_EXTENSION_REF = "JSON API Extension See https://github.com/catch-point/ib-tws-json";
 	private static final String HEADER = "where [options] include:";
 	private static final String FOOTER = "Please report issues at https://github.com/catch-point/ib-tws-json/issues";
+	/**
+	 * Where IBKR's TWS and IB Gateway installers put them by default: C:\Jts on
+	 * Windows, ~/Jts on Linux (the standalone releases in a version subfolder
+	 * such as 1051, and IB Gateway under ibgateway), and ~/Applications on macOS
+	 * ("Trader Workstation", "Trader Workstation 10.51", "IB Gateway 10.51").
+	 * Unattended (-q) installs on Linux go to ~/ibgateway and ~/tws instead.
+	 */
 	private static final File[] tws_path_search = new File[] { new File("C:\\Jts\\ibgateway"), new File("C:\\Jts"),
 			new File(new File(System.getProperty("user.home"), "Jts"), "ibgateway"),
 			new File(System.getProperty("user.home"), "Jts"),
-			new File(System.getProperty("user.home"), "Applications") };
+			new File(System.getProperty("user.home"), "ibgateway"), new File(System.getProperty("user.home"), "tws"),
+			new File(System.getProperty("user.home"), "Applications"), new File("/Applications") };
+	/**
+	 * Subfolders of a search folder that may hold a TWS or IB Gateway install
+	 */
+	private static final Pattern JTS_INSTALL_SUBDIR = Pattern
+			.compile("^([0-9]+|ibgateway|(IB Gateway|Trader Workstation)( [0-9]+(\\.[0-9]+)*)?)$");
+	/**
+	 * The program that install4j's macOS launchers (.app) run
+	 */
+	private static final String MACOS_APP_STUB = "Contents/MacOS/JavaApplicationStub";
+	/**
+	 * The vmoptions file of install4j's macOS launchers (.app)
+	 */
+	private static final String MACOS_APP_VMOPTIONS = "Contents/vmoptions.txt";
+
+	/**
+	 * An installed TWS or IB Gateway: the program that starts it and its vmoptions
+	 * file
+	 */
+	private record JtsLauncher(File exec, File vmoptions) {
+	}
 
 	/**
 	 * Called when TwsApi.jar is in the classpath
@@ -228,7 +255,11 @@ public class Shell {
 	 * Launches IBKR TWS in a separate process VM
 	 */
 	private static Process launchJts(CommandLine cmd) throws IOException {
-		String exec = getTwsExecFile(cmd).getAbsolutePath();
+		JtsLauncher launcher = findJtsLauncher(cmd);
+		if (launcher == null) {
+			return null;
+		}
+		String exec = launcher.exec().getAbsolutePath();
 		String ibDir = cmd.hasOption("jts-config-dir") ? cmd.getOptionValue("jts-config-dir")
 				: System.getProperty("jtsConfigDir") != null ? System.getProperty("jtsConfigDir") : null;
 		String[] command = ibDir == null ? new String[] { exec }
@@ -266,11 +297,8 @@ public class Shell {
 	 * Finds the vmoptions file in the TWS install directory
 	 */
 	private static File getVMOptionsFile(CommandLine cmd) {
-		File exec = getTwsExecFile(cmd);
-		if (exec == null) {
-			return null;
-		}
-		return new File(exec.getParent(), exec.getName() + ".vmoptions");
+		JtsLauncher launcher = findJtsLauncher(cmd);
+		return launcher == null ? null : launcher.vmoptions();
 	}
 
 	/**
@@ -391,42 +419,14 @@ public class Shell {
 	}
 
 	/**
-	 * Finds the executable file in the TWS install directory
+	 * Finds the TWS or IB Gateway launcher, checking the install folders in the
+	 * order of {@link #getJtsInstallDirs(CommandLine)}
 	 */
-	private static File getTwsExecFile(CommandLine cmd) {
-		Pattern regex = Pattern.compile("gateway", Pattern.CASE_INSENSITIVE);
-		for (File jts_path : getJtsPathSearch(cmd)) {
-			String version = getJtsVersion(jts_path, cmd);
-			boolean isGateway = regex.matcher(jts_path.getPath()).find();
-			String exe = cmd.hasOption("jts-exe-name") ? cmd.getOptionValue("jts-exe-name")
-					: isGateway ? "ibgateway" : "tws";
-			String vmoptions = exe + ".vmoptions";
-			File[] search = version != null
-					? new File[] { new File(new File(jts_path, version), vmoptions), new File(jts_path, vmoptions),
-							new File(new File(new File(jts_path, "ibgateway"), version), vmoptions),
-							new File(new File(jts_path, "IB Gateway " + version), vmoptions),
-							new File(new File(jts_path, "Trader Workstation " + version), vmoptions),
-							new File(new File(System.getProperty("user.home"), "Jts"),
-									cmd.hasOption("jts-exe-name") ? vmoptions
-											: (isGateway ? "ibgateway-" : "tws-") + version + ".vmoptions"),
-							new File(new File(jts_path, "ibgateway"), vmoptions),
-							new File(new File(jts_path, "IB Gateway"), vmoptions),
-							new File(new File(jts_path, "Trader Workstation"), vmoptions),
-							new File(new File(System.getProperty("user.home"), "Jts"), vmoptions) }
-					: new File[] { new File(jts_path, vmoptions),
-							new File(new File(System.getProperty("user.home"), "Jts"),
-									cmd.hasOption("jts-exe-name") ? vmoptions
-											: (isGateway ? "ibgateway-" : "tws-") + version + ".vmoptions"),
-							new File(new File(jts_path, "ibgateway"), vmoptions),
-							new File(new File(jts_path, "IB Gateway"), vmoptions),
-							new File(new File(jts_path, "Trader Workstation"), vmoptions),
-							new File(new File(System.getProperty("user.home"), "Jts"), vmoptions) };
-			for (File vmoption : search) {
-				String dir = vmoption.getParent();
-				String name = vmoption.getName();
-				File exec = new File(dir, name.substring(0, name.length() - ".vmoptions".length()));
-				if (vmoption.isFile() && exec.isFile())
-					return exec;
+	private static JtsLauncher findJtsLauncher(CommandLine cmd) {
+		for (File dir : getJtsInstallDirs(cmd)) {
+			JtsLauncher launcher = getJtsLauncher(dir, cmd);
+			if (launcher != null) {
+				return launcher;
 			}
 		}
 		if (!cmd.hasOption("jts-install-dir")) {
@@ -532,17 +532,64 @@ public class Shell {
 	}
 
 	/**
-	 * Looks for installed TWS versions on the system
+	 * Folders that may hold a TWS or IB Gateway install: each search folder after
+	 * its TWS/IB Gateway subfolders (two levels deep, for Jts/ibgateway/1051), so
+	 * the highest version found in a search folder is used first
 	 */
-	private static String getJtsVersion(File jts_path, CommandLine cmd) {
-		if (cmd.hasOption("jts-install-dir") && cmd.hasOption("jts-exe-name"))
-			return null;
-		Pattern regex = Pattern.compile("^(IB Gateway |Trader Workstation |ibgateway-|tws-)?([0-9]+)(\\.vmoptions)?$");
-		for (String ls : listNumerically(jts_path)) {
-			File dir = new File(jts_path, ls);
-			Matcher m = regex.matcher(ls);
-			if (dir.exists() && m.find()) {
-				return m.group(2);
+	private static List<File> getJtsInstallDirs(CommandLine cmd) {
+		boolean exact = cmd.hasOption("jts-install-dir") && cmd.hasOption("jts-exe-name");
+		List<File> dirs = new ArrayList<>();
+		for (File path : getJtsPathSearch(cmd)) {
+			if (!exact) {
+				addJtsInstallSubdirs(path, 2, dirs);
+			}
+			dirs.add(path);
+		}
+		return dirs;
+	}
+
+	private static void addJtsInstallSubdirs(File path, int depth, List<File> dirs) {
+		for (String ls : listNumerically(path)) {
+			File dir = new File(path, ls);
+			if (JTS_INSTALL_SUBDIR.matcher(ls).matches() && dir.isDirectory()) {
+				if (depth > 1) {
+					addJtsInstallSubdirs(dir, depth - 1, dirs);
+				}
+				dirs.add(dir);
+			}
+		}
+	}
+
+	/**
+	 * Finds the launcher installed in dir: tws (Linux) or tws.exe (Windows) next to
+	 * tws.vmoptions (ibgateway for IB Gateway, or --jts-exe-name), or on macOS an
+	 * install4j .app with its Contents/vmoptions.txt
+	 */
+	private static JtsLauncher getJtsLauncher(File dir, CommandLine cmd) {
+		boolean isGateway = Pattern.compile("gateway", Pattern.CASE_INSENSITIVE).matcher(dir.getPath()).find();
+		String exe = cmd.getOptionValue("jts-exe-name", isGateway ? "ibgateway" : "tws");
+		File vmoptions = new File(dir, exe + ".vmoptions");
+		for (String name : new String[] { exe, exe + ".exe" }) {
+			File exec = new File(dir, name);
+			if (vmoptions.isFile() && exec.isFile()) {
+				return new JtsLauncher(exec, vmoptions);
+			}
+		}
+		List<String> apps = new ArrayList<>();
+		if (cmd.hasOption("jts-exe-name")) {
+			apps.add(exe.endsWith(".app") ? exe : exe + ".app");
+		} else {
+			for (String ls : listNumerically(dir)) {
+				if (ls.endsWith(".app") && !ls.contains("Uninstaller")) {
+					apps.add(ls);
+				}
+			}
+		}
+		for (String app : apps) {
+			File exec = new File(new File(dir, app), MACOS_APP_STUB);
+			File appVMOptions = new File(new File(dir, app), MACOS_APP_VMOPTIONS);
+			if (appVMOptions.isFile() && exec.isFile()) {
+				return new JtsLauncher(exec, appVMOptions);
 			}
 		}
 		return null;

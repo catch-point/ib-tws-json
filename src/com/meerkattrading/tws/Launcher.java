@@ -40,12 +40,47 @@ import org.apache.commons.cli.CommandLine;
  */
 public class Launcher {
 	private static final String TWS_API_JAR = "TwsApi.jar";
-	private static final File[] tws_api_path_search = new File[] { new File("C:\\TWS API"),
-			new File(System.getProperty("user.home"), "IBJts"), new File(System.getProperty("user.home"), "Jts"),
-			new File(System.getProperty("user.home"), "Downloads"),
-			new File(System.getProperty("user.home"), "Download"), new File(System.getProperty("user.home"), "lib"),
-			new File(System.getProperty("user.home"), "libs"),
-			new File(System.getProperty("java.class.path").split("path.separator")[0]).getParentFile() };
+	/**
+	 * IBKR's TWS API installer installs into a folder named after the release,
+	 * such as "TWS API 1050.02": at the drive root on Windows, in ~/Applications
+	 * on macOS and in the home folder on Linux. Unattended (-q) installs on Linux
+	 * go to ~/tws-api instead. Older installers used "C:\TWS API" and ~/IBJts.
+	 */
+	private static final String TWS_API_DIR_PREFIX = "TWS API";
+
+	/**
+	 * Folders searched for TwsApi.jar, in order
+	 */
+	private static List<File> getTwsApiPathSearch() {
+		String home = System.getProperty("user.home");
+		List<File> search = new ArrayList<>();
+		for (File root : File.listRoots()) {
+			search.addAll(listTwsApiDirs(root));
+		}
+		search.addAll(listTwsApiDirs(new File(home, "Applications")));
+		search.addAll(listTwsApiDirs(new File("/Applications")));
+		search.addAll(listTwsApiDirs(new File(home)));
+		for (String dir : new String[] { "tws-api", "IBJts", "Jts", "Downloads", "Download", "lib", "libs" }) {
+			search.add(new File(home, dir));
+		}
+		String classpath = System.getProperty("java.class.path");
+		String first = classpath.split(Pattern.quote(System.getProperty("path.separator")))[0];
+		search.add(new File(first).getAbsoluteFile().getParentFile());
+		return search;
+	}
+
+	/**
+	 * The "TWS API*" folders in parent, highest version first
+	 */
+	private static List<File> listTwsApiDirs(File parent) {
+		List<File> dirs = new ArrayList<>();
+		for (String ls : listNumerically(parent)) {
+			if (ls.startsWith(TWS_API_DIR_PREFIX) && new File(parent, ls).isDirectory()) {
+				dirs.add(new File(parent, ls));
+			}
+		}
+		return dirs;
+	}
 
 	/**
 	 * Primary entry point to search for TwsApi.jar and launch {@link Shell}
@@ -110,8 +145,8 @@ public class Launcher {
 		if (path != null) {
 			return searchFor(new File(path), TWS_API_JAR);
 		}
-		for (File dir : tws_api_path_search) {
-			if (dir.isDirectory()) {
+		for (File dir : getTwsApiPathSearch()) {
+			if (dir != null && dir.isDirectory()) {
 				File found = searchFor(dir, TWS_API_JAR);
 				if (found != null) {
 					return found;
